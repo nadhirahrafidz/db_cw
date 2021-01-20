@@ -3,7 +3,7 @@ Team 11 Database Coursework repo
 ## Docker Containers
 Reference: https://www.youtube.com/watch?v=svlcIIp-S9w&ab_channel=TechOpenS.
 
-#### About docker-compose.yaml
+#### About docker-compose.yml
 Compose is a tool for defining and running multi-container Docker applications. The file creates containers for the following services (images): 
 1. MySQL (version 8)
 2. PHP-apache webserver (which is built from the Dockerfile in ./LAMPcontainer)
