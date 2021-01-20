@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  mySQLcontainer:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=team11
+    ports:
+      - 3306:3306
+
+  websvr_container:
+    build: ./LAMPcontainer
+    volumes:
+      - ./LAMPcontainer/data:/var/www/html
+    ports:
+      - 80:80
+    links:
+      - mySQLcontainer
+    depends_on:
+      - mySQLcontainer
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: PMAcontainer
+    environment:
+      - PMA_HOST=mySQLcontainer
+      - MYSQL_ROOT_PASSWORD=team11
+      - PMA_PORT=3306
+    ports:
+      - 8080:80
