@@ -23,7 +23,6 @@ CREATE TABLE Movies (
   director VARCHAR(200),
   runtime INTEGER,
   releaseDate VARCHAR(200),
-  certification VARCHAR(200),
   PRIMARY KEY (movie_id)
 )
 ENGINE = InnoDB;
@@ -95,7 +94,6 @@ LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (@movieId
 , @releaseDate
-, @Certification
 , @title
 , @genres
 , @Main_director
@@ -106,7 +104,6 @@ SET `movie_id` = @movieId
   , `director` = @Main_director
   , `runtime` = @Duration
   , `releaseDate` = @releaseDate
-  , `certification` = @Certification
 ;
 
 LOAD DATA INFILE '/data/ratings_v2.csv'
