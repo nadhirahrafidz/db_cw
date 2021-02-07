@@ -4,7 +4,12 @@ services:
   mySQLcontainer:
     image: mysql:8.0
     environment:
+      - MYSQL_DATABASE=test
       - MYSQL_ROOT_PASSWORD=team11
+    volumes:
+      - ./dump:/docker-entrypoint-initdb.d
+      - ./mysql_data:/data
+    command: --secure-file-priv="./data"
     ports:
       - 3306:3306
 
