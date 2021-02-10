@@ -1,16 +1,26 @@
 version: '3'
 
 services:
+
+  pre-processing:
+    build: .
+    volumes:
+      - ./init/mysql_data/ml-latest-small:/init/mysql_data/ml-latest-small
+      - ./init/mysql_data/scraped_data:/init/mysql_data/scraped_data
+      - ./init/mysql_data/final_data:/init/mysql_data/final_data
+
   mySQLcontainer:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=team11
     volumes:
-      - ./dump/setup.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./mysql_data:/data
-    command: --secure-file-priv="./data"
+      - ./init/setup.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init/mysql_data:/init/data
+    command: --secure-file-priv="init/data"
     ports:
       - 3306:3306
+    depends_on:
+      - pre-processing
 
   websvr_container:
     build: ./LAMPcontainer
