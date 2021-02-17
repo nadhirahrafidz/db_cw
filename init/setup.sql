@@ -27,8 +27,6 @@ CREATE TABLE Movies (
 )
 ENGINE = InnoDB;
 
-# user_id should not Auto_increment
-# movie_id is a foreign key
 CREATE TABLE Ratings (
   user_id INTEGER NOT NULL,
   movie_id INTEGER,
@@ -40,8 +38,6 @@ CREATE TABLE Ratings (
 )
 ENGINE = InnoDB;
 
-
-# user_id should not Auto_increment
 CREATE TABLE Tags (
   user_id INTEGER NOT NULL,
   movie_id INTEGER,
@@ -85,8 +81,58 @@ CREATE TABLE Genre_Movie (
 )
 ENGINE = InnoDB;
 
+CREATE TABLE Personality (
+  user_id VARCHAR(50) NOT NULL,
+  openness INTEGER NOT NULL,
+  agreeableness INTEGER NOT NULL,
+  emotional_stability INTEGER NOT NULL,
+  conscientiousness INTEGER NOT NULL,
+  extraversion INTEGER NOT NULL,
+  assigned_metric VARCHAR(20) NOT NULL CHECK(assigned_metric IN ('serendipity', 'all', 'popularity', 'diversity')),
+  assigned_condition VARCHAR(20) NOT NULL CHECK(assigned_condition IN ('high', 'default', 'medium', 'low')),
+  movie_1 INTEGER NOT NULL,
+  predicted_rating_1 FLOAT NOT NULL,
+  movie_2 INTEGER NOT NULL,
+  predicted_rating_2 FLOAT NOT NULL,
+  movie_3 INTEGER NOT NULL,
+  predicted_rating_3 FLOAT NOT NULL,
+  movie_4 INTEGER NOT NULL,
+  predicted_rating_4 FLOAT NOT NULL,
+  movie_5 INTEGER NOT NULL,
+  predicted_rating_5 FLOAT NOT NULL,
+  movie_6 INTEGER NOT NULL,
+  predicted_rating_6 FLOAT NOT NULL,
+  movie_7 INTEGER NOT NULL,
+  predicted_rating_7 FLOAT NOT NULL,
+  movie_8 INTEGER NOT NULL,
+  predicted_rating_8 FLOAT NOT NULL,
+  movie_9 INTEGER NOT NULL,
+  predicted_rating_9 FLOAT NOT NULL,
+  movie_10 INTEGER NOT NULL,
+  predicted_rating_10 FLOAT NOT NULL,
+  movie_11 INTEGER NOT NULL,
+  predicted_rating_11 FLOAT NOT NULL,
+  movie_12 INTEGER NOT NULL,
+  predicted_rating_12 FLOAT NOT NULL,
+  is_personalized INTEGER NOT NULL,
+  enjoy_watching INTEGER NOT NULL,
+  PRIMARY KEY (user_id), 
+  FOREIGN KEY (movie_1) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_2) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_3) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_4) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_5) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_6) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_7) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_8) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_9) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_10) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_11) REFERENCES Movies(movie_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_12) REFERENCES Movies(movie_id) ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
 -- -- LOADING DATA INTO TABLES
-SHOW VARIABLES LIKE "secure_file_priv";
 
 LOAD DATA INFILE '/init/data/final_data/users.csv'
 INTO TABLE Users
@@ -96,7 +142,6 @@ LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 
 
--- Populate Movies table with new values
 LOAD DATA INFILE '/init/data/final_data/movies.csv'
 INTO TABLE Movies
 FIELDS TERMINATED BY ','
@@ -157,5 +202,17 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 
+LOAD DATA INFILE '/init/data/final_data/personality.csv'
+INTO TABLE Personality
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
 
 
+-- -- CREATING NEW USERS
+-- SELECT user, host FROM mysql.user;
+
+-- CREATE USER 'dev'@'%' IDENTIFIED BY 'team11';
+-- GRANT ALL PRIVILEGES ON MovieLens.* TO 'dev'@'%';
+-- FLUSH PRIVILEGES;

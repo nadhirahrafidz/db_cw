@@ -6,6 +6,7 @@ services:
     build: .
     volumes:
       - ./init/mysql_data/ml-latest-small:/init/mysql_data/ml-latest-small
+      - ./init/mysql_data/personality-isf2018:/init/mysql_data/personality-isf2018
       - ./init/mysql_data/scraped_data:/init/mysql_data/scraped_data
       - ./init/mysql_data/final_data:/init/mysql_data/final_data
 

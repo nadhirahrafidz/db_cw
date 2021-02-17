@@ -2,6 +2,7 @@ import csv
 import re
 import datetime
 from shutil import copyfile
+import pandas as pd
 
 # Extract unique genres
 uniqueGenres = []
@@ -91,3 +92,28 @@ with open('init/mysql_data/final_data/users.csv', 'w') as output:
     writer.writerow(["userID"])
     for i in range(1, 611):
         writer.writerow([i])
+
+personality = pd.read_csv('/init/mysql_data/personality-isf2018/personality-data.csv')
+movies = pd.read_csv('/init/mysql_data/ml-latest-small/movies.csv')
+
+movie_ids = movies.movieId.unique()
+def stripping(row):
+    row[' assigned metric'] = row[' assigned metric'].strip()
+    row[' assigned condition'] = row[' assigned condition'].strip()
+    return row
+personality2 = personality.apply(stripping, axis=1)
+final_personality = personality2[
+    (personality2[' movie_1'].isin(movie_ids)) &
+    (personality2[' movie_2'].isin(movie_ids)) &
+    (personality2[' movie_3'].isin(movie_ids)) &
+    (personality2[' movie_4'].isin(movie_ids)) &
+    (personality2[' movie_5'].isin(movie_ids)) &
+    (personality2[' movie_6'].isin(movie_ids)) &
+    (personality2[' movie_7'].isin(movie_ids)) &
+    (personality2[' movie_8'].isin(movie_ids)) &
+    (personality2[' movie_9'].isin(movie_ids)) &
+    (personality2[' movie_10'].isin(movie_ids)) &
+    (personality2[' movie_11'].isin(movie_ids)) &
+    (personality2[' movie_12'].isin(movie_ids))]
+final_personality = final_personality.drop_duplicates(keep='first') 
+final_personality.to_csv('init/mysql_data/final_data/personality.csv', index=False)
