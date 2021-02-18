@@ -47,8 +47,7 @@ services:
   frontend:
     build: ./frontend
     volumes:
-      - '.:/frontend'
-      - '/frontend/node_modules'
+      - './frontend:/frontend'
     ports:
       - 3000:3000
     environment:
