@@ -1,0 +1,11 @@
+.container-block{
+    padding-left: 3%;
+    padding-top: 1.5%;
+    padding-bottom: 1.5%;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 10px;
+    position: relative;
+    left: 2%;
+    width: 50%;
+}

@@ -1,0 +1,124 @@
+{
+    "movies":[
+        {
+            "name":"Space jam 2",
+            "image":"https://m.media-amazon.com/images/M/MV5BZTE3YjBlMzAtYmQ2OS00Yjg0LWJkM2MtZmYzZjcwZjRjOTA2XkEyXkFqcGdeQXVyMTAzMDc3MzIx._V1_UY268_CR43,0,182,268_AL_.jpg",
+            "genres":[
+                "Animation",
+                "Children",
+                "Comedy",
+                "Fantasy"
+            ],
+            "stars": [
+                "Lebron James",
+                "A D",
+                "Dame Lillard"
+            ]
+        },
+        {
+            "name":"End game",
+            "image":"https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Action",
+                "Sci Fi"
+            ],
+            "stars": [
+                "Robbert DJ",
+                "Chris Hems"
+            ]
+        },
+        {
+            "name":"Wolf of wallstreet",
+            "image":"https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Reality TV",
+                "Comedy"
+            ],
+            "stars": [
+                "Leo decaprio",
+                "Margret robbie",
+                "Jonah hill"
+            ]
+        },
+        {
+            "name":"Space jam 2",
+            "image":"https://m.media-amazon.com/images/M/MV5BZTE3YjBlMzAtYmQ2OS00Yjg0LWJkM2MtZmYzZjcwZjRjOTA2XkEyXkFqcGdeQXVyMTAzMDc3MzIx._V1_UY268_CR43,0,182,268_AL_.jpg",
+            "genres":[
+                "Animation",
+                "Children",
+                "Comedy",
+                "Fantasy"
+            ],
+            "stars": [
+                "Lebron James",
+                "A D",
+                "Dame Lillard"
+            ]
+        },
+        {
+            "name":"End game",
+            "image":"https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Action",
+                "Sci Fi"
+            ],
+            "stars": [
+                "Robbert DJ",
+                "Chris Hems"
+            ]
+        },
+        {
+            "name":"Wolf of wallstreet",
+            "image":"https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Reality TV",
+                "Comedy"
+            ],
+            "stars": [
+                "Leo decaprio",
+                "Margret robbie",
+                "Jonah hill"
+            ]
+        },
+        {
+            "name":"Space jam 2",
+            "image":"https://m.media-amazon.com/images/M/MV5BZTE3YjBlMzAtYmQ2OS00Yjg0LWJkM2MtZmYzZjcwZjRjOTA2XkEyXkFqcGdeQXVyMTAzMDc3MzIx._V1_UY268_CR43,0,182,268_AL_.jpg",
+            "genres":[
+                "Animation",
+                "Children",
+                "Comedy",
+                "Fantasy"
+            ],
+            "stars": [
+                "Lebron James",
+                "A D",
+                "Dame Lillard"
+            ]
+        },
+        {
+            "name":"End game",
+            "image":"https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Action",
+                "Sci Fi"
+            ],
+            "stars": [
+                "Robbert DJ",
+                "Chris Hems"
+            ]
+        },
+        {
+            "name":"Wolf of wallstreet",
+            "image":"https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_UX182_CR0,0,182,268_AL_.jpg",
+            "genres":[
+                "Reality TV",
+                "Comedy"
+            ],
+            "stars": [
+                "Leo decaprio",
+                "Margret robbie",
+                "Jonah hill"
+            ]
+        }
+    ]
+}
