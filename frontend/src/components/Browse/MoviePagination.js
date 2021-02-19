@@ -14,21 +14,44 @@ function MoviePagination(props) {
   }
 
   let items = [
-    <Pagination.First onClick={() => props.pageChange(1)} />,
-    <Pagination.Prev onClick={() => props.pageChange(props.pageNo - 1)} />,
+    <Pagination.First
+      key={-2}
+      disabled={props.pageNo === 1}
+      onClick={() => props.pageChange(1)}
+    />,
+    <Pagination.Prev
+      key={-1}
+      disabled={props.pageNo === 1}
+      onClick={() => props.pageChange(props.pageNo - 1)}
+    />,
   ];
 
   let lastPage = Math.ceil(props.noOfResults / 10);
+  var firstPage;
+  if (props.pageNo < 4) {
+    firstPage = 1;
+  } else if (lastPage - props.pageNo < 9) {
+    firstPage = lastPage - 9;
+  } else {
+    firstPage = props.pageNo - 2;
+  }
+  // let firstPage = props.pageNo < 4 ? 1 : props.pageNo - 2;
 
-  for (let number = props.pageNo; number <= lastPage; number++) {
-    if (number - props.pageNo > 10) {
-      items.push(<Pagination.Ellipsis />);
+  for (let number = firstPage; number <= lastPage; number++) {
+    if (number - firstPage > 10 && number !== lastPage) {
+      items.push(<Pagination.Ellipsis key={0} />);
       items.push(newPaginationItem(lastPage));
       items.push(
-        <Pagination.Next onClick={() => props.pageChange(props.pageNo + 1)} />
+        <Pagination.Next
+          key={lastPage + 1}
+          onClick={() => props.pageChange(props.pageNo + 1)}
+        />
       );
       items.push(
-        <Pagination.Last onClick={() => props.pageChange(lastPage)} />
+        <Pagination.Last
+          key={lastPage + 2}
+          onClick={() => props.pageChange(lastPage)}
+        />
       );
       break;
     }

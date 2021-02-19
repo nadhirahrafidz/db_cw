@@ -66,19 +66,30 @@ function Browse() {
   var displayedMovies;
   if (dataLoaded) {
     displayedMovies = (
-      <div className="movies">
-        {movies.map((movie) => {
-          return (
-            <MovieStrip
-              name={movie.title}
-              image="https://m.media-amazon.com/images/M/MV5BMjQxM2YyNjMtZjUxYy00OGYyLTg0MmQtNGE2YzNjYmUyZTY1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg"
-              genres={["placeholder"]}
-              stars={["placeholder"]}
-              click={handleClick}
-            ></MovieStrip>
-          );
-        })}
-      </div>
+      <>
+        <div className="movies">
+          {movies.map((movie, index) => {
+            return (
+              <MovieStrip
+                key={index}
+                name={movie.title}
+                image="https://m.media-amazon.com/images/M/MV5BMjQxM2YyNjMtZjUxYy00OGYyLTg0MmQtNGE2YzNjYmUyZTY1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg"
+                genres={movie.genres}
+                stars={["placeholder"]}
+                click={handleClick}
+              ></MovieStrip>
+            );
+          })}
+        </div>
+        <div className="pagination">
+          <MoviePagination
+            pageChange={pageChange}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
+            noOfResults={noOfResults}
+          />
+        </div>
+      </>
     );
   } else {
     displayedMovies = (
@@ -101,12 +112,6 @@ function Browse() {
         <div className="Body">
           <MovieSearchForm onSubmit={setSearch} />
           {displayedMovies}
-          <MoviePagination
-            pageChange={pageChange}
-            pageNo={pageNo}
-            setPageNo={setPageNo}
-            noOfResults={noOfResults}
-          />
         </div>
       </div>
     );
