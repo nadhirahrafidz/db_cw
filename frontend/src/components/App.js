@@ -13,7 +13,6 @@ import Home from "./Home";
 import Released from "./Released/Released";
 import Polarising from "./Polarising/Polarising";
 import Footer from "./Footer";
-import NewBrowse from "./Browse/NewBrowse";
 
 function App() {
   return (
@@ -46,7 +45,7 @@ function App() {
         <Route path="/popular" component={Popular} />
         <Route path="/released" component={Released} />
         <Route path="/polarising" component={Polarising} />
-        <Route path="/browse" component={NewBrowse} />
+        <Route path="/browse" component={Browse} />
         <Route path="" component={Home} />
       </Switch>
 
