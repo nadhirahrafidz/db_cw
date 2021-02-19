@@ -5,9 +5,8 @@ import Button from "react-bootstrap/Button";
 import Title from "../Title";
 import MovieStrip from "./MovieStrip";
 import AllMovies from "../../Data/AllMovies";
-import SingleMovie from "../Display/SingleMovie"
+import SingleMovie from "../Display/SingleMovie";
 import "./Browse.css";
-
 
 class Browse extends React.Component {
   constructor(props) {
@@ -17,40 +16,64 @@ class Browse extends React.Component {
     const movielist = this.getData();
 
     this.state = {
-      movies: movielist['movies'],
+      movies: movielist["movies"],
       singleDisplay: false,
-      selectedMovie: null
+      selectedMovie: null,
     };
 
     this.handleClick = this.handleClick.bind(this);
-    this.back = this.back.bind(this); 
+    this.back = this.back.bind(this);
   }
 
-  handleClick(movieID){
+  handleClick(movieID) {
     this.setState({
-      singleDisplay:true,
-      selectedMovie:movieID
-    })
+      singleDisplay: true,
+      selectedMovie: movieID,
+    });
   }
 
-  back(){
+  back() {
     this.setState({
-      singleDisplay:false
-    })
+      singleDisplay: false,
+    });
   }
 
   //function to make api call. For now uses dummy data
   getData() {
     //can use fetch() then promise chaining
+    const url =
+      "http://localhost/getMovies.php?" +
+      new URLSearchParams({
+        id: "hahaha",
+        bar: 2,
+      });
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      // body: temp})
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data[0]);
+        // return data;
+      })
+      .catch((err) => {
+        // err.then((data) => console.log(data))
+        console.log(err);
+      });
     return AllMovies;
   }
 
   render() {
     if (this.state.singleDisplay) {
       return (
-      <div>
-        <SingleMovie back={this.back}></SingleMovie>
-      </div>)
+        <div>
+          <SingleMovie back={this.back}></SingleMovie>
+        </div>
+      );
     } else {
       return (
         <div>
@@ -70,15 +93,18 @@ class Browse extends React.Component {
             </div>
 
             <div className="movies">
-              {this.state.movies.map((movie) => (
-                <MovieStrip
-                  name={movie.name}
-                  image={movie.image}
-                  genres={movie.genres}
-                  stars={movie.stars}
-                  click={this.handleClick}
-                ></MovieStrip>
-              ))}
+              {this.state.movies.map((movie) => {
+                console.log(movie);
+                return (
+                  <MovieStrip
+                    name={movie.name}
+                    image="https://m.media-amazon.com/images/M/MV5BMjQxM2YyNjMtZjUxYy00OGYyLTg0MmQtNGE2YzNjYmUyZTY1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg"
+                    genres={["placeholder"]}
+                    stars={["placeholder"]}
+                    click={this.handleClick}
+                  ></MovieStrip>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -18,18 +18,15 @@ class Home extends React.Component {
             <Carousel>
               <Carousel.Item className="carousel-item" id="software-skills">
                 <img className="image" src={toy} alt="First slide" />
-                <Carousel.Caption className="text-carousel">
-                </Carousel.Caption>
+                <Carousel.Caption className="text-carousel"></Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item className="carousel-item" id="languages-skills">
                 <img className="image" src={aven} alt="First slide" />
-                <Carousel.Caption className="text-carousel">
-                </Carousel.Caption>
+                <Carousel.Caption className="text-carousel"></Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item className="carousel-item" id="languages-skills">
                 <img className="image" src={pc} alt="First slide" />
-                <Carousel.Caption className="text-carousel">
-                </Carousel.Caption>
+                <Carousel.Caption className="text-carousel"></Carousel.Caption>
               </Carousel.Item>
             </Carousel>
           </div>

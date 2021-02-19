@@ -32,7 +32,6 @@ class Popular extends React.Component {
           <Title text="Popular movies now"></Title>
           <div className="Body">
           <CardDeck>
-
               {this.state.movies.map((movie) => (
                   <MovieColumn name={movie.name} image={movie.image}></MovieColumn>
               ))}

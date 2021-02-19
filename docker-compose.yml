@@ -1,7 +1,6 @@
-version: '3'
+version: "3"
 
 services:
-
   pre-processing:
     build: .
     volumes:
@@ -47,7 +46,7 @@ services:
   frontend:
     build: ./frontend
     volumes:
-      - './frontend:/frontend'
+      - "./frontend:/frontend"
     ports:
       - 3000:3000
     environment:
