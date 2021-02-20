@@ -3,6 +3,7 @@ import "./MovieStrip.css";
 
 function MovieStrip(props) {
   var genres = props.genres.split(",");
+  var stars = props.stars.split(",");
 
   return (
     <div className="moviestrip">
@@ -17,16 +18,17 @@ function MovieStrip(props) {
           {genres.map((genre, index) => (
             <p className="list" key={index}>
               {genre.trim()}
-              {", "}
+              {index === genres.length - 1 ? "" : ", "}
             </p>
           ))}
         </div>
         <br />
         <div>
-          stars:
-          {props.stars.map((star, index) => (
+          {"Stars: "}
+          {stars.map((star, index) => (
             <p className="list" key={index}>
               {star}
+              {index === stars.length - 1 ? "" : ", "}
             </p>
           ))}
         </div>
