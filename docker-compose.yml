@@ -12,9 +12,10 @@ services:
   mySQLcontainer:
     image: mysql:8.0
     environment:
+      - MYSQL_DATABASE=MovieLens
       - MYSQL_ROOT_PASSWORD=team11
     volumes:
-      - ./init/setup.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init/db_setup:/docker-entrypoint-initdb.d/
       - ./init/mysql_data:/init/data
     command: --secure-file-priv="init/data"
     ports:
