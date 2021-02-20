@@ -211,8 +211,8 @@ IGNORE 1 LINES;
 
 
 -- -- CREATING NEW USERS
--- SELECT user, host FROM mysql.user;
 
--- CREATE USER 'dev'@'%' IDENTIFIED BY 'team11';
--- GRANT ALL PRIVILEGES ON MovieLens.* TO 'dev'@'%';
+-- CREATE USER 'admin'@'localhost' IDENTIFIED BY 'team11';
+-- GRANT ALL ON MovieLens.* TO 'admin'@'localhost';
 -- FLUSH PRIVILEGES;
+
