@@ -1,36 +1,38 @@
 import React from "react";
 import "./MovieStrip.css";
 
-class MovieStrip extends React.Component {
-  render() {
-    return (
-      <div className="moviestrip">
-        <img className="stripimage" src={this.props.image} />
+function MovieStrip(props) {
+  var genres = props.genres.split(",");
 
-        <div className="details">
-          <h2 onClick={this.props.click}>{this.props.name}</h2>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
+  return (
+    <div className="moviestrip">
+      <img className="stripimage" src={props.image} />
 
-          <p>
-            Genres:{" "}
-            {this.props.genres.map(genre => (
-              <p className="list"> {genre} </p>
-            ))}
-          </p>
+      <div className="details">
+        <h2 onClick={props.click}>{props.name}</h2>
+        <br />
 
-          <p>
-            stars:{" "}
-            {this.props.stars.map(star => (
-              <p className="list"> {star} </p>
-            ))}
-          </p>
+        <div>
+          {"Genres: "}
+          {genres.map((genre, index) => (
+            <p className="list" key={index}>
+              {genre.trim()}
+              {", "}
+            </p>
+          ))}
+        </div>
+        <br />
+        <div>
+          stars:
+          {props.stars.map((star, index) => (
+            <p className="list" key={index}>
+              {star}
+            </p>
+          ))}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default MovieStrip;

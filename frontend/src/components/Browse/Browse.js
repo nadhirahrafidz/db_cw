@@ -1,89 +1,120 @@
-import React, { Component } from "react";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import React, { useEffect, useState } from "react";
+import Spinner from "react-bootstrap/Spinner";
 
 import Title from "../Title";
 import MovieStrip from "./MovieStrip";
-import AllMovies from "../../Data/AllMovies";
-import SingleMovie from "../Display/SingleMovie"
+import SingleMovie from "../Display/SingleMovie";
 import "./Browse.css";
+import MovieSearchForm from "./MovieSearchForm";
+import MoviePagination from "./MoviePagination";
 
+function Browse() {
+  const [singleDisplay, setSingleDisplay] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [noOfResults, setNoOfResults] = useState(0);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [search, setSearch] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [pageNo, setPageNo] = useState(1);
 
-class Browse extends React.Component {
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    getData();
+  }, [pageNo, search]);
 
-    //make sure to make the api call before the component is rendered. Compoment will mount is depreciated
-    const movielist = this.getData();
-
-    this.state = {
-      movies: movielist['movies'],
-      singleDisplay: false,
-      selectedMovie: null
+  function getData() {
+    var params = {
+      offset: (pageNo - 1) * 10,
     };
 
-    this.handleClick = this.handleClick.bind(this);
-    this.back = this.back.bind(this); 
-  }
-
-  handleClick(movieID){
-    this.setState({
-      singleDisplay:true,
-      selectedMovie:movieID
-    })
-  }
-
-  back(){
-    this.setState({
-      singleDisplay:false
-    })
-  }
-
-  //function to make api call. For now uses dummy data
-  getData() {
-    //can use fetch() then promise chaining
-    return AllMovies;
-  }
-
-  render() {
-    if (this.state.singleDisplay) {
-      return (
-      <div>
-        <SingleMovie back={this.back}></SingleMovie>
-      </div>)
-    } else {
-      return (
-        <div>
-          <Title text="Movies database"></Title>
-
-          <div className="Body">
-            <div className="search">
-              <Form>
-                <Form.Group controlId="formBasicSearch">
-                  <Form.Label>Search for a movie</Form.Label>
-                  <Form.Control placeholder="Enter Search" />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Form>
-            </div>
-
-            <div className="movies">
-              {this.state.movies.map((movie) => (
-                <MovieStrip
-                  name={movie.name}
-                  image={movie.image}
-                  genres={movie.genres}
-                  stars={movie.stars}
-                  click={this.handleClick}
-                ></MovieStrip>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
+    if (search !== "") {
+      params.search = search;
     }
+
+    const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setNoOfResults(data.total);
+        setMovies(data.movies);
+        setDataLoaded(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function handleClick(movieID) {
+    setSingleDisplay(true);
+    setSelectedMovie(movieID);
+  }
+
+  function back() {
+    setSingleDisplay(false);
+  }
+
+  function pageChange(number) {
+    setDataLoaded(false);
+    setPageNo(number);
+  }
+
+  var displayedMovies;
+  if (dataLoaded) {
+    displayedMovies = (
+      <>
+        <div className="movies">
+          {movies.map((movie, index) => {
+            return (
+              <MovieStrip
+                key={index}
+                name={movie.title}
+                image="https://m.media-amazon.com/images/M/MV5BMjQxM2YyNjMtZjUxYy00OGYyLTg0MmQtNGE2YzNjYmUyZTY1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg"
+                genres={movie.genres}
+                stars={["placeholder"]}
+                click={handleClick}
+              ></MovieStrip>
+            );
+          })}
+        </div>
+        <div className="pagination">
+          <MoviePagination
+            pageChange={pageChange}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
+            noOfResults={noOfResults}
+          />
+        </div>
+      </>
+    );
+  } else {
+    displayedMovies = (
+      <div style={{ textAlign: "center" }}>
+        <Spinner animation="border" />
+      </div>
+    );
+  }
+
+  if (singleDisplay) {
+    return (
+      <div>
+        <SingleMovie back={back}></SingleMovie>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <Title text="Movies database"></Title>
+        <div className="Body">
+          <MovieSearchForm onSubmit={setSearch} />
+          {displayedMovies}
+        </div>
+      </div>
+    );
   }
 }
 
