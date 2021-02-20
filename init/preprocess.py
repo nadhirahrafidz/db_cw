@@ -44,9 +44,9 @@ with open('init/mysql_data/ml-latest-small/movies.csv', 'r') as file1:
 with open('init/mysql_data/ml-latest-small/movies.csv', 'r') as file1:
     with open('init/mysql_data/scraped_data/all_movie_scraped_data.csv', 'r') as file2:
         with open('init/mysql_data/final_data/movies.csv', 'w') as output:
-            writer = csv.writer(output)
-            list1 = [line.split(",") for line in file1]
-            list2 = [line.split(",") for line in file2]
+            writer = csv.writer(output,delimiter='|')
+            list1 = [['{}'.format(x) for x in list(csv.reader([line], delimiter=',', quotechar='"'))[0] ] for line in file1]
+            list2 = [['{}'.format(x) for x in list(csv.reader([line], delimiter=',', quotechar='"'))[0] ] for line in file2]
             for i in range(0, len(list1)):
                 assert list1[i][0] == list2[i][0]
                 list2[i][-1] = list2[i][-1].strip()

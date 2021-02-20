@@ -73,9 +73,9 @@ function Browse() {
               <MovieStrip
                 key={index}
                 name={movie.title}
-                image="https://m.media-amazon.com/images/M/MV5BMjQxM2YyNjMtZjUxYy00OGYyLTg0MmQtNGE2YzNjYmUyZTY1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL_.jpg"
+                image={movie.movieURL}
                 genres={movie.genres}
-                stars={["placeholder"]}
+                stars={movie.stars}
                 click={handleClick}
               ></MovieStrip>
             );
