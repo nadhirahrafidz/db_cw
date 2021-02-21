@@ -6,22 +6,21 @@ function MoviePagination(props) {
       <Pagination.Item
         onClick={() => props.pageChange(pageNumber)}
         key={pageNumber}
-        active={pageNumber === props.pageNo}
+        active={pageNumber == props.pageNo}
       >
         {pageNumber}
       </Pagination.Item>
     );
   }
-
   let items = [
     <Pagination.First
       key={-2}
-      disabled={props.pageNo === 1}
+      disabled={props.pageNo == 1}
       onClick={() => props.pageChange(1)}
     />,
     <Pagination.Prev
       key={-1}
-      disabled={props.pageNo === 1}
+      disabled={props.pageNo == 1}
       onClick={() => props.pageChange(props.pageNo - 1)}
     />,
   ];

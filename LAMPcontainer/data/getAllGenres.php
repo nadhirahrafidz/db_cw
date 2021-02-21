@@ -9,7 +9,7 @@ $dbname = "MovieLens";
 $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
-$movieID_query = 'SELECT genre FROM Genres';
+$movieID_query = 'SELECT genre FROM Genres ORDER BY genre ASC';
 
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 mysqli_stmt_execute($movieID_stmt);

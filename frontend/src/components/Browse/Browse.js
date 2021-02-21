@@ -1,113 +1,75 @@
 import React, { useEffect, useState } from "react";
-import Spinner from "react-bootstrap/Spinner";
 
 import Title from "../Title";
-import MovieStrip from "./MovieStrip";
 import "./Browse.css";
 import MovieSearchForm from "./MovieSearchForm";
-import MoviePagination from "./MoviePagination";
+import DisplayMovies from "./DisplayMovies";
+import { useLocation } from "react-router-dom";
 
 function Browse() {
-  const [noOfResults, setNoOfResults] = useState(0);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [search, setSearch] = useState("");
   const [genres, setGenres] = useState([]);
-  const [movies, setMovies] = useState([]);
-  const [pageNo, setPageNo] = useState(1);
+  const [pageNo, setPageNo] = useState(-1);
+  let location = useLocation();
 
   useEffect(() => {
-    getData();
-  }, [pageNo]);
+    const urlParams = new URLSearchParams(window.location.search);
+    const pathPageNo =
+      urlParams.get("page") === null ? 1 : urlParams.get("page");
+    const pathSearch =
+      urlParams.get("search") === null ? "" : urlParams.get("search");
+    const pathGenres =
+      urlParams.get("genres") === null
+        ? []
+        : urlParams.get("genres").split(",");
+    if (pageNo != pathPageNo || search != pathSearch || genres != pathGenres) {
+      setPageNo(pathPageNo);
+      setGenres(pathGenres);
+      setSearch(pathSearch);
+    }
+  }, [location]);
 
-  useEffect(() => {
-    setPageNo(1);
-    getData();
-  }, [search, genres]);
-
-  function handleSubmit(search, genres) {
-    setSearch(search);
-    setGenres(genres);
-  }
-
-  function getData() {
+  function pushURL(newSearch, newGenres, newPageNo) {
     var params = {
-      offset: (pageNo - 1) * 10,
+      page: newPageNo,
     };
-
-    if (search !== "") {
-      params.search = search;
+    if (newSearch !== "") {
+      params.search = newSearch;
     }
-    if (genres.length > 0) {
-      params.genres = JSON.stringify(genres);
-      // console.log(JSON.stringify(genres));
+    if (newGenres.length > 0) {
+      params.genres = newGenres.join();
     }
-
-    const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
-
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setNoOfResults(data.total);
-        setMovies(data.movies);
-        setDataLoaded(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    window.history.pushState(
+      "pageNumber",
+      "Title",
+      "/browse?" + new URLSearchParams(params)
+    );
   }
 
-  function pageChange(number) {
-    setDataLoaded(false);
-    setPageNo(number);
+  function handleSubmit(newSearch, newGenres) {
+    setSearch(newSearch);
+    setGenres(newGenres);
+    setPageNo(1);
+
+    pushURL(newSearch, newGenres, 1);
   }
 
-  var displayedMovies;
-  if (dataLoaded) {
-    displayedMovies = (
-      <>
-        <div className="movies">
-          {movies.map((movie, index) => {
-            return (
-              <MovieStrip
-                key={index}
-                name={movie.title}
-                image={movie.movieURL}
-                genres={movie.genres}
-                stars={movie.stars}
-                rating={movie.rating}
-              ></MovieStrip>
-            );
-          })}
-        </div>
-        <div className="pagination">
-          <MoviePagination
-            pageChange={pageChange}
-            pageNo={pageNo}
-            setPageNo={setPageNo}
-            noOfResults={noOfResults}
-          />
-        </div>
-      </>
-    );
-  } else {
-    displayedMovies = (
-      <div style={{ textAlign: "center" }}>
-        <Spinner animation="border" />
-      </div>
-    );
+  function pageChange(newPageNo) {
+    setPageNo(newPageNo);
+    pushURL(search, genres, newPageNo);
   }
 
   return (
     <div>
       <Title text="Movies database"></Title>
       <div className="Body">
-        <MovieSearchForm onSubmit={handleSubmit} />
-        {displayedMovies}
+        <MovieSearchForm genres={genres} onSubmit={handleSubmit} />
+        <DisplayMovies
+          pageChange={pageChange}
+          genres={genres}
+          search={search}
+          pageNo={pageNo}
+        />
       </div>
     </div>
   );

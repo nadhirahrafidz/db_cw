@@ -2,15 +2,15 @@ import React from "react";
 import "./MovieStrip.css";
 
 function MovieStrip(props) {
-  var genres = props.genres.split(",");
-  var stars = props.stars.split(",");
+  const genres = props.movie.genres.split(",");
+  const stars = props.movie.stars.split(",");
 
   return (
     <div className="moviestrip">
-      <img className="stripimage" src={props.image} />
+      <img className="stripimage" src={props.movie.movieURL} />
 
       <div className="details">
-        <h2>{props.name}</h2>
+        <h2>{props.movie.title}</h2>
         <br />
         <div>
           {"Genres: "}
@@ -32,7 +32,7 @@ function MovieStrip(props) {
           ))}
         </div>
         <br />
-        <div>{"Average Rating: " + props.rating}</div>
+        <div>{"Average Rating: " + props.movie.rating}</div>
       </div>
     </div>
   );
