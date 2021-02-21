@@ -11,29 +11,59 @@ $connection = mysqli_connect($host, $user, $password,$dbname)
 
 $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 
-$movieID_stmt;
-$count_stmt;
+$movieID_query = 'SELECT DISTINCT Movies.movie_id FROM Movies';
+$count_query = 'SELECT COUNT(DISTINCT Movies.movie_id) AS Total FROM Movies';
+$search;
+$genres;
+$where_clause_started = false;
+
+if (isset($_GET['genres'])) {
+  $where_clause_started = true;
+  $genres = json_decode($_GET['genres']);
+  $genres = implode("\r,",$genres)."\r";
+  $movieID_query = $movieID_query.", Genres, Genre_Movie 
+  WHERE Movies.movie_id = Genre_Movie.movie_id 
+  AND Genre_Movie.genre_id = Genres.genre_id 
+  AND find_in_set(Genres.genre, ?)";
+  $count_query = $count_query.", Genres, Genre_Movie 
+  WHERE Movies.movie_id = Genre_Movie.movie_id 
+  AND Genre_Movie.genre_id = Genres.genre_id 
+  AND find_in_set(Genres.genre, ?)";
+}
 
 if (isset($_GET['search'])) {
-  $temp = $_GET['search'].'%';
-  
-  $movieID_query = 'SELECT Movies.movie_id FROM Movies 
-  WHERE Movies.title LIKE ? GROUP BY Movies.movie_id LIMIT 10 OFFSET ?';
-  $movieID_stmt = mysqli_prepare($connection, $movieID_query);
-  mysqli_stmt_bind_param($movieID_stmt, "si", $temp, $offset);
+  if (!$where_clause_started) {
+    $movieID_query = $movieID_query.' WHERE ';
+    $count_query = $count_query.' WHERE ';
+    $where_clause_started = true;
+  } else {
+    $movieID_query = $movieID_query.' AND ';
+    $count_query = $count_query.' AND ';
+  }
 
-  $count_query = 'SELECT COUNT(*) AS Total FROM Movies WHERE title LIKE ?';
-  $count_stmt = mysqli_prepare($connection, $count_query);
-  mysqli_stmt_bind_param($count_stmt, "s", $temp);
+  $search = $_GET['search'].'%';
+  $movieID_query = $movieID_query.'Movies.title LIKE ?';
+  $count_query = $count_query.'title LIKE ?';
+  $where_clause_started = true;
+}
 
+$movieID_query = $movieID_query.' GROUP BY Movies.movie_id LIMIT 10 OFFSET ?';
+$movieID_stmt = mysqli_prepare($connection, $movieID_query);
+$count_stmt = mysqli_prepare($connection, $count_query);
+
+if (isset($_GET['genres'])) {
+  if (isset($_GET['search'])) {
+    mysqli_stmt_bind_param($movieID_stmt, "ssi", $genres, $search, $offset);
+    mysqli_stmt_bind_param($count_stmt, "ss", $genres, $search);
+  } else {
+    mysqli_stmt_bind_param($movieID_stmt, "si", $genres, $offset);
+    mysqli_stmt_bind_param($count_stmt, "s", $genres);
+  }
+} else if (isset($_GET['search'])) {
+  mysqli_stmt_bind_param($movieID_stmt, "si", $search, $offset);
+  mysqli_stmt_bind_param($count_stmt, "s", $search);
 } else {
-  $movieID_query = 'SELECT Movies.movie_id FROM Movies
-  GROUP BY Movies.movie_id LIMIT 10 OFFSET ?';
-  $movieID_stmt = mysqli_prepare($connection, $movieID_query);
   mysqli_stmt_bind_param($movieID_stmt, "i", $offset);
-
-  $count_query = "SELECT COUNT(*) AS Total FROM Movies";
-  $count_stmt = mysqli_prepare($connection, $count_query);
 }
 
 mysqli_stmt_execute($movieID_stmt);
@@ -43,18 +73,21 @@ while ($row = mysqli_fetch_row($movieID_result)) {
   $movies_data[] = $row[0];
 }
 
-$a = implode("','",$movies_data);
+$movieIDs = implode("','",$movies_data);
 
 $movie_data_query = "SELECT Movies.movie_id, Movies.title, Movies.movieURL,
 GROUP_CONCAT(DISTINCT Stars.star_name) AS stars, 
-GROUP_CONCAT(DISTINCT Genres.genre) AS genres 
-FROM Movies, Stars, Star_Movie, Genres, Genre_Movie
-WHERE Movies.movie_id IN('".$a."')
+GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
+ROUND(AVG(Ratings.rating),1) AS rating
+FROM Movies, Stars, Star_Movie, Genres, Genre_Movie, Ratings
+WHERE Movies.movie_id IN('".$movieIDs."')
 AND Movies.movie_id = Star_Movie.movie_id
 AND Star_Movie.star_id = Stars.star_id 
 AND Movies.movie_id = Genre_Movie.movie_id
 AND Genre_Movie.genre_id = Genres.genre_id
-GROUP BY Movies.movie_id";
+AND Ratings.movie_id = Movies.movie_id
+GROUP BY Movies.movie_id
+";
 
 $movie_data_result = mysqli_query($connection,$movie_data_query);
 $movie_data = mysqli_fetch_all($movie_data_result, MYSQLI_ASSOC);

@@ -10,9 +10,8 @@ function MovieStrip(props) {
       <img className="stripimage" src={props.image} />
 
       <div className="details">
-        <h2 onClick={props.click}>{props.name}</h2>
+        <h2>{props.name}</h2>
         <br />
-
         <div>
           {"Genres: "}
           {genres.map((genre, index) => (
@@ -32,6 +31,8 @@ function MovieStrip(props) {
             </p>
           ))}
         </div>
+        <br />
+        <div>{"Average Rating: " + props.rating}</div>
       </div>
     </div>
   );

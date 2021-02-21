@@ -3,23 +3,31 @@ import Spinner from "react-bootstrap/Spinner";
 
 import Title from "../Title";
 import MovieStrip from "./MovieStrip";
-import SingleMovie from "../Display/SingleMovie";
 import "./Browse.css";
 import MovieSearchForm from "./MovieSearchForm";
 import MoviePagination from "./MoviePagination";
 
 function Browse() {
-  const [singleDisplay, setSingleDisplay] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
   const [noOfResults, setNoOfResults] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [search, setSearch] = useState("");
+  const [genres, setGenres] = useState([]);
   const [movies, setMovies] = useState([]);
   const [pageNo, setPageNo] = useState(1);
 
   useEffect(() => {
     getData();
-  }, [pageNo, search]);
+  }, [pageNo]);
+
+  useEffect(() => {
+    setPageNo(1);
+    getData();
+  }, [search, genres]);
+
+  function handleSubmit(search, genres) {
+    setSearch(search);
+    setGenres(genres);
+  }
 
   function getData() {
     var params = {
@@ -28,6 +36,10 @@ function Browse() {
 
     if (search !== "") {
       params.search = search;
+    }
+    if (genres.length > 0) {
+      params.genres = JSON.stringify(genres);
+      // console.log(JSON.stringify(genres));
     }
 
     const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
@@ -49,15 +61,6 @@ function Browse() {
       });
   }
 
-  function handleClick(movieID) {
-    setSingleDisplay(true);
-    setSelectedMovie(movieID);
-  }
-
-  function back() {
-    setSingleDisplay(false);
-  }
-
   function pageChange(number) {
     setDataLoaded(false);
     setPageNo(number);
@@ -76,7 +79,7 @@ function Browse() {
                 image={movie.movieURL}
                 genres={movie.genres}
                 stars={movie.stars}
-                click={handleClick}
+                rating={movie.rating}
               ></MovieStrip>
             );
           })}
@@ -99,23 +102,15 @@ function Browse() {
     );
   }
 
-  if (singleDisplay) {
-    return (
-      <div>
-        <SingleMovie back={back}></SingleMovie>
+  return (
+    <div>
+      <Title text="Movies database"></Title>
+      <div className="Body">
+        <MovieSearchForm onSubmit={handleSubmit} />
+        {displayedMovies}
       </div>
-    );
-  } else {
-    return (
-      <div>
-        <Title text="Movies database"></Title>
-        <div className="Body">
-          <MovieSearchForm onSubmit={setSearch} />
-          {displayedMovies}
-        </div>
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default Browse;
