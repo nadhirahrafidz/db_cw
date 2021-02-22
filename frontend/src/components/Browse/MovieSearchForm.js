@@ -83,6 +83,7 @@ function MovieSearchForm(props) {
             <Badge
               pill
               variant={moreFilters ? "danger" : "success"}
+              style={{ cursor: "pointer" }}
               onClick={() => toggleMoreFilters(!moreFilters)}
             >
               {moreFilters ? "Less Filters -" : "More Filters +"}
