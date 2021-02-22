@@ -23,6 +23,7 @@ function Movie() {
         setDataLoaded(true);
       })
       .catch((err) => {
+        console.log(url);
         console.log(err);
       });
   }, []);

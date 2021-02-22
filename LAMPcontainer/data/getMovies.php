@@ -13,6 +13,7 @@ $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 
 $search = "";
 $genres = "";
+$order_by = 0;
 
 if (isset($_GET['genres'])) {
   $genres = json_decode($_GET['genres']);
@@ -23,16 +24,20 @@ if (isset($_GET['search'])) {
   $search = $_GET['search'].'%';
 }
 
-$movieID_query = 'CALL getMoviesIDs(10, ?, ?, ?)';
+if (isset($_GET['sort'])) {
+  $order_by = (int) $_GET['sort'];
+}
+
+$movieID_query = 'CALL getMoviesIDs(10, ?, ?, ?, ?)';
 $count_query = 'CALL countMovieIDs(?, ?)';
-$movie_data_query = "CALL getMoviesInfo(?)";
+$movie_data_query = "CALL getMoviesInfo(?, ?)";
 
 $movie_data_stmt = mysqli_prepare($connection, $movie_data_query);
 
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 $count_stmt = mysqli_prepare($connection, $count_query);
 
-mysqli_stmt_bind_param($movieID_stmt, "iss", $offset, $genres, $search);
+mysqli_stmt_bind_param($movieID_stmt, "issi", $offset, $genres, $search, $order_by);
 mysqli_stmt_bind_param($count_stmt, "ss", $genres, $search);
 
 mysqli_stmt_execute($movieID_stmt);
@@ -46,7 +51,7 @@ mysqli_next_result($connection);
 
 $movieIDs = implode(",",$movies_data);
 
-mysqli_stmt_bind_param($movie_data_stmt, "s", $movieIDs);
+mysqli_stmt_bind_param($movie_data_stmt, "si", $movieIDs, $order_by);
 mysqli_stmt_execute($movie_data_stmt);
 $movie_data_result = (mysqli_stmt_get_result($movie_data_stmt));
 $movie_data = mysqli_fetch_all($movie_data_result, MYSQLI_ASSOC);

@@ -11,6 +11,9 @@ function DisplayMovies(props) {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
+    if (props.pageNo < 0) {
+      return;
+    }
     setDataLoaded(false);
     var params = {
       offset: (props.pageNo - 1) * 10,
@@ -20,6 +23,9 @@ function DisplayMovies(props) {
     }
     if (props.genres.length > 0) {
       params.genres = JSON.stringify(props.genres);
+    }
+    if (props.sortOption !== 0) {
+      params.sort = props.sortOption;
     }
     const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
     fetch(url, {

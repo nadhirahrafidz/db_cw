@@ -10,6 +10,7 @@ function Browse() {
   const [search, setSearch] = useState("");
   const [genres, setGenres] = useState([]);
   const [pageNo, setPageNo] = useState(-1);
+  const [sortOption, setSortOption] = useState(0);
   let location = useLocation();
 
   useEffect(() => {
@@ -46,10 +47,11 @@ function Browse() {
     );
   }
 
-  function handleSubmit(newSearch, newGenres) {
+  function handleSubmit(newSearch, newGenres, newSortOption) {
     setSearch(newSearch);
     setGenres(newGenres);
     setPageNo(1);
+    setSortOption(newSortOption);
 
     pushURL(newSearch, newGenres, 1);
   }
@@ -63,12 +65,17 @@ function Browse() {
     <div>
       <Title text="Movies database"></Title>
       <div className="Body">
-        <MovieSearchForm genres={genres} onSubmit={handleSubmit} />
+        <MovieSearchForm
+          genres={genres}
+          onSubmit={handleSubmit}
+          setSortOption={setSortOption}
+        />
         <DisplayMovies
           pageChange={pageChange}
           genres={genres}
           search={search}
           pageNo={pageNo}
+          sortOption={sortOption}
         />
       </div>
     </div>

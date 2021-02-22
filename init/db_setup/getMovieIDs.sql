@@ -4,51 +4,68 @@ DROP procedure IF EXISTS `getMoviesIDs`;
 DELIMITER $$
 USE `MovieLens`$$
 CREATE PROCEDURE `getMoviesIDs` (
-    IN no_of_results INT,
-    IN offset_required INT,
+    IN no_of_results VARCHAR(32),
+    IN offset_required VARCHAR(32),
     IN genres_chosen VARCHAR(1000),
-    IN search_value VARCHAR(255)
+    IN search_value VARCHAR(255),
+    IN order_by_parameter INT
     )
 
 BEGIN
+set @order_by = CASE order_by_parameter
+                      when 0 then "Movies.movie_id ASC"
+                      when 1 then "Movies.title ASC"
+                      when 2 then "Movies.title DESC"
+                      END;
+
+
 IF search_value = "" and genres_chosen = "" THEN
-    SELECT DISTINCT Movies.movie_id
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title
     FROM Movies
-    LIMIT no_of_results
-    OFFSET offset_required
+    ORDER BY ", @order_by, 
+    " LIMIT ",  no_of_results,
+    " OFFSET ", offset_required)
     ;
 
 ELSEIF search_value = "" THEN
 
-	SELECT DISTINCT Movies.movie_id
-    FROM Movies, Genres, Genre_Movie 
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title
+    FROM Movies, Genres, Genre_Movie
     WHERE Movies.movie_id = Genre_Movie.movie_id 
     AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre, genres_chosen)
-    LIMIT no_of_results
-    OFFSET offset_required
+    AND find_in_set(Genres.genre,'",genres_chosen,"')
+    ORDER BY ", @order_by, 
+    " LIMIT ",  no_of_results,
+    " OFFSET ", offset_required)
     ;
 
 ELSEIF genres_chosen = "" THEN
 
-	SELECT DISTINCT Movies.movie_id
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title
     FROM Movies
-    WHERE Movies.title LIKE search_value
-    LIMIT no_of_results
-    OFFSET offset_required
+    WHERE Movies.title LIKE '", search_value,  "'
+    ORDER BY ", @order_by, 
+    " LIMIT ",  no_of_results,
+    " OFFSET ", offset_required)
     ;
-    
+
 ELSE    
-    SELECT DISTINCT Movies.movie_id
-    FROM Movies, Genres, Genre_Movie 
+
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title
+    FROM Movies, Genres, Genre_Movie
     WHERE Movies.movie_id = Genre_Movie.movie_id 
     AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre, genres_chosen)
-    AND Movies.title LIKE search_value
-    LIMIT no_of_results
-    OFFSET offset_required
+    AND find_in_set(Genres.genre,'",genres_chosen,"')
+    AND Movies.title LIKE '", search_value, "'
+    ORDER BY ", @order_by, 
+    " LIMIT ",  no_of_results,
+    " OFFSET ", offset_required)
     ;
+
 END IF;
+
+PREPARE stmt FROM @SQLStatement;
+EXECUTE stmt;
 END$$
 
 DELIMITER ;

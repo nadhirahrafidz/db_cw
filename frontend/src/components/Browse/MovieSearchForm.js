@@ -4,12 +4,17 @@ import Badge from "react-bootstrap/Badge";
 import { useState, useEffect } from "react";
 import GenreSelector from "./GenreSelector";
 import { useLocation } from "react-router-dom";
+import SortByDropdown from "./SortByDropdown";
+
+const sortingOptions = ["Default", "Name (ascending)", "Name (descending)"];
 
 function MovieSearchForm(props) {
   const [search, setSearch] = useState("");
   const [labels, setLabels] = useState();
   const [genresSelected, setGenresSelected] = useState([]);
   const [moreFilters, setMoreFilters] = useState(false);
+  const [currentOption, setCurrentOption] = useState(0);
+
   let location = useLocation();
 
   function handleCheck(e) {
@@ -24,7 +29,7 @@ function MovieSearchForm(props) {
   function handleSubmit(e) {
     e.preventDefault();
     const genres = labels.filter((_, index) => genresSelected[index]);
-    props.onSubmit(search, genres);
+    props.onSubmit(search, genres, currentOption);
   }
 
   useEffect(() => {
@@ -80,14 +85,23 @@ function MovieSearchForm(props) {
               placeholder="Enter Search"
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Badge
-              pill
-              variant={moreFilters ? "danger" : "success"}
-              style={{ cursor: "pointer" }}
-              onClick={() => toggleMoreFilters(!moreFilters)}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                paddingTop: "5px",
+              }}
             >
-              {moreFilters ? "Less Filters -" : "More Filters +"}
-            </Badge>
+              <Badge
+                pill
+                variant={moreFilters ? "danger" : "success"}
+                style={{ cursor: "pointer" }}
+                onClick={() => toggleMoreFilters(!moreFilters)}
+              >
+                {moreFilters ? "Less Filters -" : "More Filters +"}
+              </Badge>
+            </div>
+
             <div style={moreFilters ? {} : { display: "None" }}>
               <GenreSelector
                 labels={labels}
@@ -96,7 +110,12 @@ function MovieSearchForm(props) {
               />
             </div>
           </Form.Group>
-          <div style={{ textAlign: "right" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <SortByDropdown
+              options={sortingOptions}
+              currentOption={currentOption}
+              setCurrentOption={setCurrentOption}
+            />
             <Button variant="primary" type="submit">
               Submit
             </Button>
