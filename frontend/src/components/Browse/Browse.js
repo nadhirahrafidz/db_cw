@@ -63,7 +63,7 @@ function Browse() {
 
   return (
     <div>
-      <Title text="Movies database"></Title>
+      <Title text="Browse Movies"></Title>
       <div className="Body">
         <MovieSearchForm
           genres={genres}

@@ -28,7 +28,7 @@ if (isset($_GET['sort'])) {
   $order_by = (int) $_GET['sort'];
 }
 
-$movieID_query = 'CALL getMoviesIDs(10, ?, ?, ?, ?)';
+$movieID_query = 'CALL getMovieIDs(10, ?, ?, ?, ?)';
 $count_query = 'CALL countMovieIDs(?, ?)';
 $movie_data_query = "CALL getMoviesInfo(?, ?)";
 

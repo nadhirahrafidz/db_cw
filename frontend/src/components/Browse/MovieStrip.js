@@ -17,6 +17,20 @@ function MovieStrip(props) {
     history.push(path);
   }
 
+  function ratings_stars(rating) {
+    var count = 1;
+    var rating_star = "";
+    while (count < 6) {
+      if (rating >= count) {
+        rating_star = rating_star + "★";
+      } else {
+        rating_star = rating_star + "☆";
+      }
+      count = count + 1;
+    }
+    return rating_star;
+  }
+
   return (
     <div className="moviestrip">
       <img
@@ -26,7 +40,7 @@ function MovieStrip(props) {
         onClick={() => routeToMovie(props.movie.movie_id)}
       />
 
-      <div className="details">
+      <div className="details" style={{ paddingLeft: "5px" }}>
         <h2
           // text-decoration: underline overline wavy blue;
           onClick={() => routeToMovie(props.movie.movie_id)}
@@ -34,7 +48,6 @@ function MovieStrip(props) {
             color: "blue",
             cursor: "pointer",
             textDecoration: "underline",
-            paddingLeft: "5px",
           }}
         >
           {props.movie.title}
@@ -65,7 +78,14 @@ function MovieStrip(props) {
           ))}
         </div>
         <br />
-        <div>{"Average Rating: " + props.movie.rating}</div>
+        <div>
+          {props.movie.rating +
+            " " +
+            ratings_stars(props.movie.rating) +
+            " (" +
+            props.movie.no_of_ratings +
+            " ratings)"}
+        </div>
       </div>
     </div>
   );

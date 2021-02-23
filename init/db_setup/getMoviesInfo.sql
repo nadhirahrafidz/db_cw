@@ -13,12 +13,14 @@ set @order_by = CASE order_by_paramater
                       when 0 then "Movies.movie_id ASC"
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
+                      when 3 then "rating DESC"
                       END;
 
 set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, Movies.movieURL,
   GROUP_CONCAT(DISTINCT Stars.star_name) AS stars, 
   GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
-  ROUND(AVG(Ratings.rating),1) AS rating
+  ROUND(AVG(Ratings.rating),1) AS rating,
+  COUNT(Ratings.rating) AS no_of_ratings
   FROM Movies, Stars, Star_Movie, Genres, Genre_Movie, Ratings
   WHERE find_in_set(Movies.movie_id, '", movieIDs, "' )
   AND Movies.movie_id = Star_Movie.movie_id

@@ -6,7 +6,12 @@ import GenreSelector from "./GenreSelector";
 import { useLocation } from "react-router-dom";
 import SortByDropdown from "./SortByDropdown";
 
-const sortingOptions = ["Default", "Name (ascending)", "Name (descending)"];
+const sortingOptions = [
+  "Default",
+  "Name (ascending)",
+  "Name (descending)",
+  "Rating",
+];
 
 function MovieSearchForm(props) {
   const [search, setSearch] = useState("");
