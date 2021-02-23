@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import MovieStrip from "./Browse/MovieStrip";
 
 function Movie() {
   const { id } = useParams();
@@ -29,39 +30,7 @@ function Movie() {
   }, []);
 
   if (dataLoaded) {
-    const genres = movie.genres.split(",");
-    const stars = movie.stars.split(",");
-    return (
-      <div className="moviestrip">
-        <img className="stripimage" src={movie.movieURL} />
-
-        <div className="details">
-          <h2>{movie.title}</h2>
-          <br />
-          <div>
-            {"Genres: "}
-            {genres.map((genre, index) => (
-              <p className="list" key={index}>
-                {genre.trim()}
-                {index === movie.genres.length - 1 ? "" : ", "}
-              </p>
-            ))}
-          </div>
-          <br />
-          <div>
-            {"Stars: "}
-            {stars.map((star, index) => (
-              <p className="list" key={index}>
-                {star}
-                {index === movie.stars.length - 1 ? "" : ", "}
-              </p>
-            ))}
-          </div>
-          <br />
-          <div>{"Average Rating: " + movie.rating}</div>
-        </div>
-      </div>
-    );
+    return <MovieStrip movie={movie} />;
   }
   return <div>{movieID}</div>;
 }

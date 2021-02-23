@@ -20,7 +20,7 @@ set @SQLstatement = CONCAT("SELECT
   DISTINCT Movies.movie_id, 
   Movies.title, 
   Movies.movieURL,
-  GROUP_CONCAT(DISTINCT Stars.star_name) AS stars,
+  GROUP_CONCAT(DISTINCT Stars.star_name SEPARATOR', ') AS stars,
   GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
   ROUND(AVG(Ratings.rating),1) AS rating,
   COUNT(Ratings.rating) AS no_of_ratings,

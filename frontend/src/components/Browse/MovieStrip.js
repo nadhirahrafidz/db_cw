@@ -3,28 +3,19 @@ import { useHistory } from "react-router-dom";
 import "./MovieStrip.css";
 
 function MovieStrip(props) {
-  const genres = props.movie.genres.split(",");
-  const stars = props.movie.stars.split(",");
+  const genres = !props.movie.stars ? [] : props.movie.genres.split(",");
+  const stars = !props.movie.stars ? "" : "Stars: " + props.movie.stars;
   const history = useHistory();
 
   function getTags(tags) {
     if (!tags) {
       return;
-    } else {
-      let displayTags =
-        props.movie.tags.length > 50
-          ? props.movie.tags.substring(0, 50) + "..."
-          : props.movie.tags;
-      return "Tags: " + displayTags;
     }
-    {
-      /* {"Tags: "} */
-    }
-    {
-      /* {props.movie.tags.length > 50
-          ? props.movie.tags.substring(0, 50) + "..."
-          : props.movie.tags} */
-    }
+    let displayTags =
+      props.movie.tags.length > 50
+        ? props.movie.tags.substring(0, 50) + "..."
+        : props.movie.tags;
+    return "Tags: " + displayTags;
   }
 
   function routeToMovie(movie_id) {
@@ -62,7 +53,6 @@ function MovieStrip(props) {
 
       <div className="details" style={{ paddingLeft: "5px" }}>
         <h2
-          // text-decoration: underline overline wavy blue;
           onClick={() => routeToMovie(props.movie.movie_id)}
           style={{
             color: "blue",
@@ -74,7 +64,7 @@ function MovieStrip(props) {
         </h2>
         <br />
         <div>
-          {"Genres: "}
+          {genres.length > 0 ? "Genres: " : ""}
           {genres.map((genre, index) => (
             <p
               className="list"
@@ -88,15 +78,7 @@ function MovieStrip(props) {
           ))}
         </div>
         <br />
-        <div>
-          {"Stars: "}
-          {stars.map((star, index) => (
-            <p className="list" key={index}>
-              {star}
-              {index === stars.length - 1 ? "" : ", "}
-            </p>
-          ))}
-        </div>
+        <div>{stars}</div>
         <br />
         <div>
           {props.movie.rating +
@@ -108,10 +90,6 @@ function MovieStrip(props) {
         </div>
         <br />
         {getTags(props.movie.tags)}
-        {/* {"Tags: "} */}
-        {/* {props.movie.tags.length > 50
-          ? props.movie.tags.substring(0, 50) + "..."
-          : props.movie.tags} */}
       </div>
     </div>
   );
