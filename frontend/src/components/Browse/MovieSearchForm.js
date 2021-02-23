@@ -122,7 +122,7 @@ function MovieSearchForm(props) {
               setCurrentOption={setCurrentOption}
             />
             <Button variant="primary" type="submit">
-              Submit
+              Search
             </Button>
           </div>
         </Form>
