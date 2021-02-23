@@ -16,18 +16,25 @@ set @order_by = CASE order_by_paramater
                       when 3 then "rating DESC"
                       END;
 
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, Movies.movieURL,
-  GROUP_CONCAT(DISTINCT Stars.star_name) AS stars, 
+set @SQLstatement = CONCAT("SELECT 
+  DISTINCT Movies.movie_id, 
+  Movies.title, 
+  Movies.movieURL,
+  GROUP_CONCAT(DISTINCT Stars.star_name) AS stars,
   GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
   ROUND(AVG(Ratings.rating),1) AS rating,
-  COUNT(Ratings.rating) AS no_of_ratings
-  FROM Movies, Stars, Star_Movie, Genres, Genre_Movie, Ratings
-  WHERE find_in_set(Movies.movie_id, '", movieIDs, "' )
-  AND Movies.movie_id = Star_Movie.movie_id
-  AND Star_Movie.star_id = Stars.star_id 
-  AND Movies.movie_id = Genre_Movie.movie_id
-  AND Genre_Movie.genre_id = Genres.genre_id
-  AND Ratings.movie_id = Movies.movie_id
+  COUNT(Ratings.rating) AS no_of_ratings,
+  GROUP_CONCAT(DISTINCT Tags.tag SEPARATOR', ') AS tags
+  FROM Movies
+  LEFT JOIN (Star_Movie LEFT JOIN Stars ON Star_Movie.star_id = Stars.star_id) ON
+  Star_Movie.movie_id = Movies.movie_id 
+  LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+  Genre_Movie.movie_id = Movies.movie_id
+  LEFT JOIN Ratings ON
+  Ratings.movie_id = Movies.movie_id 
+  LEFT JOIN Tags ON
+  Tags.movie_id = Movies.movie_id 
+  WHERE find_in_set(Movies.movie_id, '", movieIDs, "')
   GROUP BY Movies.movie_id
   ORDER BY ", @order_by);
 PREPARE stmt FROM @SQLStatement;

@@ -7,6 +7,26 @@ function MovieStrip(props) {
   const stars = props.movie.stars.split(",");
   const history = useHistory();
 
+  function getTags(tags) {
+    if (!tags) {
+      return;
+    } else {
+      let displayTags =
+        props.movie.tags.length > 50
+          ? props.movie.tags.substring(0, 50) + "..."
+          : props.movie.tags;
+      return "Tags: " + displayTags;
+    }
+    {
+      /* {"Tags: "} */
+    }
+    {
+      /* {props.movie.tags.length > 50
+          ? props.movie.tags.substring(0, 50) + "..."
+          : props.movie.tags} */
+    }
+  }
+
   function routeToMovie(movie_id) {
     let path = "/movie/" + movie_id;
     history.push(path);
@@ -86,6 +106,12 @@ function MovieStrip(props) {
             props.movie.no_of_ratings +
             " ratings)"}
         </div>
+        <br />
+        {getTags(props.movie.tags)}
+        {/* {"Tags: "} */}
+        {/* {props.movie.tags.length > 50
+          ? props.movie.tags.substring(0, 50) + "..."
+          : props.movie.tags} */}
       </div>
     </div>
   );

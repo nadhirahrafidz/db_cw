@@ -13,31 +13,39 @@ CREATE PROCEDURE `getMovieIDs` (
 
 BEGIN
 set @order_by = CASE order_by_parameter
-                      when 0 then "Movies.movie_id ASC"
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
                       when 3 then "rating DESC"
+                      ELSE "Movies.movie_id ASC"
                       END;
 
+set @select_params = CASE order_by_parameter
+                      when 3 then ", AVG(Ratings.rating) as rating "
+                      ELSE " "
+                      END;
+
+set @join_params = CASE order_by_parameter
+                      when 3 then "LEFT JOIN Ratings ON Ratings.movie_id = Movies.movie_id "
+                      ELSE " "
+                      END;
 
 IF search_value = "" and genres_chosen = "" THEN
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(Ratings.rating) as rating
-    FROM Movies, Ratings
-	WHERE Movies.movie_id = Ratings.movie_id
-	GROUP BY Movies.movie_id
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
+    "FROM Movies", 
+    @join_params,
+	"GROUP BY Movies.movie_id
     ORDER BY ", @order_by, 
     " LIMIT ",  no_of_results,
     " OFFSET ", offset_required)
     ;
 
 ELSEIF search_value = "" THEN
-
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(Ratings.rating) as rating
-    FROM Movies, Genres, Genre_Movie, Ratings
-    WHERE Movies.movie_id = Genre_Movie.movie_id 
-    AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre,'",genres_chosen,"')
-	AND Movies.movie_id = Ratings.movie_id
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
+    "FROM Movies", 
+    @join_params,
+    "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    Genre_Movie.movie_id = Movies.movie_id
+    WHERE find_in_set(Genres.genre,'",genres_chosen,"')
 	GROUP BY Movies.movie_id
     ORDER BY ", @order_by, 
     " LIMIT ",  no_of_results,
@@ -46,10 +54,10 @@ set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(R
 
 ELSEIF genres_chosen = "" THEN
 
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(Ratings.rating) as rating
-    FROM Movies, Ratings
-    WHERE Movies.title LIKE '", search_value,  "'
-	AND Movies.movie_id = Ratings.movie_id
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
+    "FROM Movies", 
+    @join_params,
+    "WHERE Movies.title LIKE '", search_value,  "'
 	GROUP BY Movies.movie_id
     ORDER BY ", @order_by, 
     " LIMIT ",  no_of_results,
@@ -58,13 +66,13 @@ set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(R
 
 ELSE    
 
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title, AVG(Ratings.rating) as rating
-    FROM Movies, Genres, Genre_Movie, Ratings
-    WHERE Movies.movie_id = Genre_Movie.movie_id 
-    AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre,'",genres_chosen,"')
+set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
+    "FROM Movies", 
+    @join_params,
+    "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    Genre_Movie.movie_id = Movies.movie_id
+    WHERE find_in_set(Genres.genre,'",genres_chosen,"')
     AND Movies.title LIKE '", search_value, "'
-	AND Movies.movie_id = Ratings.movie_id
 	GROUP BY Movies.movie_id
     ORDER BY ", @order_by, 
     " LIMIT ",  no_of_results,

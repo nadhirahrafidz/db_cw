@@ -17,10 +17,10 @@ IF search_value = "" and genres_chosen = "" THEN
 ELSEIF search_value = "" THEN
 
 	SELECT COUNT(DISTINCT Movies.movie_id)
-    FROM Movies, Genres, Genre_Movie 
-    WHERE Movies.movie_id = Genre_Movie.movie_id 
-    AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre, genres_chosen)
+    FROM Movies
+    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    Genre_Movie.movie_id = Movies.movie_id
+    WHERE find_in_set(Genres.genre, genres_chosen)
     ;
 
 ELSEIF genres_chosen = "" THEN
@@ -32,7 +32,9 @@ ELSEIF genres_chosen = "" THEN
     
 ELSE    
     SELECT COUNT(DISTINCT Movies.movie_id)
-    FROM Movies, Genres, Genre_Movie 
+    FROM Movies
+    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    Genre_Movie.movie_id = Movies.movie_id
     WHERE Movies.movie_id = Genre_Movie.movie_id 
     AND Genre_Movie.genre_id = Genres.genre_id 
     AND find_in_set(Genres.genre, genres_chosen)

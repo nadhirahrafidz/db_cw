@@ -41,7 +41,6 @@ function DisplayMovies(props) {
         setDataLoaded(true);
       })
       .catch((err) => {
-        console.log(url);
         console.log(err);
       });
   }, [props.genres, props.search, props.pageNo]);
