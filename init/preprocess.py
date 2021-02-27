@@ -4,22 +4,6 @@ import datetime
 from shutil import copyfile
 import pandas as pd
 
-# Write split tags + convert tags timestamp
-with open('init/mysql_data/ml-latest-small/tags.csv', 'r') as file1:
-    with open('init/mysql_data/final_data/tags.csv', 'w') as output:
-        writer = csv.writer(output)
-        reader = csv.reader(file1)
-        header = True
-        for row in reader:
-            if readingHeader:
-                readingHeader = False
-                continue
-            tags = row[2].split(" ")
-            newTimestamp = datetime.datetime.fromtimestamp(int(row[3]))
-            row[3] = newTimestamp.strftime('%Y-%m-%d %H:%M:%S')
-            for tag in tags:
-                writer.writerow(row[0] + "," row[1] + "," + tag + "," + row[3])
-
 # Extract unique genres
 uniqueGenres = []
 with open('init/mysql_data/ml-latest-small/movies.csv', 'r') as file1:
@@ -72,6 +56,21 @@ with open('init/mysql_data/ml-latest-small/movies.csv', 'r') as file1:
 # convert ratings timestamp
 with open('init/mysql_data/ml-latest-small/ratings.csv', 'r') as file1:
     with open('init/mysql_data/final_data/ratings.csv', 'w') as output:
+        writer = csv.writer(output)
+        reader = csv.reader(file1)
+        header = True
+        for row in reader:
+            if header:
+                writer.writerow(row)
+                header = False
+                continue
+            newTimestamp = datetime.datetime.fromtimestamp(int(row[3]))
+            row[3] = newTimestamp.strftime('%Y-%m-%d %H:%M:%S')
+            writer.writerow(row)
+
+# convert tags timestamp
+with open('init/mysql_data/ml-latest-small/tags.csv', 'r') as file1:
+    with open('init/mysql_data/final_data/tags.csv', 'w') as output:
         writer = csv.writer(output)
         reader = csv.reader(file1)
         header = True
