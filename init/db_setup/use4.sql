@@ -74,7 +74,7 @@ BEGIN
     SET pCountLikely = (SELECT COUNT(*) FROM likely_genre);
 
     -- Users least likely to enjoy movie based on giving other movies of genre_1 or genre_2 low rating below 3
-    DROP TEMPORARY TABLE IF EXISTS least_likely_genre;
+    DROP TEMPORARY TABLE IF EXISTS least_likely_genre; -- change where to CASE statements
     CREATE TEMPORARY TABLE least_likely_genre SELECT Ratings.user_id AS user
                                         FROM Ratings
                                         LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
