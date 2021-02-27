@@ -26,54 +26,87 @@ DROP procedure IF EXISTS `use4`;
 DELIMITER $$
 USE `MovieLens`$$
 CREATE PROCEDURE `use4` (
-    IN pMovieID VARCHAR(32),
+    IN pMovieID INT,
     OUT pCountMostLikely INT,
-    OUT pcountLikely INT,
-    OUT pPercUsuallyLow INT,
-    OUT pPercUsuallyHigh INT,
+    OUT genre_1 INT,
+    OUT genre_2 INT,
+    OUT pCountLikely INT,
+    OUT pCountLeastLikely INT,
+    OUT pCountUsuallyHigh INT,
+    OUT pCountUsuallyLow INT
     )
 
 BEGIN
+
+    -- Identifying categories by Ratings and Genre
+
     -- Segmentation by Genre and Ratings
     DROP TEMPORARY TABLE IF EXISTS top_genres;
-    CREATE TEMPORARY TABLE top_genres SELECT genres.genre_id AS genre_id, AVG(ratings.rating) AS avg_rating
-                                        FROM ratings
-                                        LEFT JOIN genre-movie genres 
-                                        ON ratings.movieId = genre-movie.movie_id AND ratings.movieId = pMovieID
-                                        GROUP BY genres.genre_id
+    CREATE TEMPORARY TABLE top_genres SELECT Genre_Movie.genre_id AS genre_id, AVG(Ratings.rating) AS avg_rating
+                                        FROM Ratings
+                                        LEFT JOIN Genre_Movie 
+                                        ON Ratings.movie_id = Genre_Movie.movie_id AND Ratings.movie_id = pMovieID
+                                        GROUP BY Genre_Movie.genre_id
                                         ORDER BY avg_rating DESC
-                                        LIMIT 2
+                                        LIMIT 2;
 
-    SET @genre_1 = (SELECT genre_id FROM top_genres WHERE ROWNUM = 1)
-    SET @genre_2 = (SELECT genre_id FROM top_genres WHERE ROWNUM = 2)
+    SET genre_1 = (SELECT SUM(genre_id) FROM top_genres LIMIT 0,1);
+    SET genre_2 = (SELECT SUM(genre_id) FROM top_genres LIMIT 1,1);
 
     -- User most likely to enjoy movie based on giving other movies of genre_1 or genre_2 a high rating "above 4"
     DROP TEMPORARY TABLE IF EXISTS most_likely_genre;
-    CREATE TEMPORARY TABLE most_likely_genre SELECT (DISTINCT ratings.userId) AS user,
-                                        FROM ratings
-                                        LEFT JOIN genre-movie genres ON ratings.movieId = genres.movie_id
-                                        WHERE (genres.genre_id = genre_1 OR genres.genre_id = genre_2) 
-                                            AND (ratings.rating >= 4)
+    CREATE TEMPORARY TABLE most_likely_genre SELECT Ratings.user_id AS user
+                                        FROM Ratings
+                                        LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
+                                        WHERE (Genre_Movie.genre_id = genre_1 OR Genre_Movie.genre_id = genre_2) 
+                                            AND (Ratings.rating >= 4);
 
-    SET pcountMostLikely = (SELECT COUNT(*) FROM most_likely_genre)
-    -- Segment: No. of users most likely to watch who previously gave low ratings
-
-    SET pPercUsuallyLow = SELECT user_id,
-                                 AVG(ratings.rating) AS avg_rating
-                                 FROM most_likely_genre
-                                 LEFT JOIN ratings ON most_likely_genre.user_id = ratings.userId
-                                 GROUP BY user_id
-                                 WHERE 
+    SET pcountMostLikely = (SELECT COUNT(*) FROM most_likely_genre);
 
     -- Users likely to enjoy movie based on giving other movies of genre_1 or genre_2 good rating "3"
     DROP TEMPORARY TABLE IF EXISTS likely_genre;
-    CREATE TEMPORARY TABLE likely_genre SELECT (DISTINCT ratings.userId) AS user
-                                        FROM ratings
-                                        LEFT JOIN genre-movie genres ON ratings.movieId = genre-movie.movie_id
-                                        WHERE (genres.genre_id = genre_1 OR genres.genre_id = genre_2) 
-                                            AND (ratings.rating >=3 AND ratings.rating < 4)
+    CREATE TEMPORARY TABLE likely_genre SELECT Ratings.user_id AS user
+                                        FROM Ratings
+                                        LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
+                                        WHERE (Genre_Movie.genre_id = genre_1 OR Genre_Movie.genre_id = genre_2) 
+                                            AND (Ratings.rating >=3 AND Ratings.rating < 4);
 
-    SET pcountLikely = (SELECT COUNT(*) FROM likely_genre)
+    SET pCountLikely = (SELECT COUNT(*) FROM likely_genre);
 
-    -- Segmentation by Tags and Ratings
-    
+    -- Users least likely to enjoy movie based on giving other movies of genre_1 or genre_2 low rating below 3
+    DROP TEMPORARY TABLE IF EXISTS least_likely_genre;
+    CREATE TEMPORARY TABLE least_likely_genre SELECT Ratings.user_id AS user
+                                        FROM Ratings
+                                        LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
+                                        WHERE (Genre_Movie.genre_id = genre_1 OR Genre_Movie.genre_id = genre_2) 
+                                            AND (Ratings.rating < 3);
+
+    SET pCountLeastLikely = (SELECT COUNT(*) FROM least_likely_genre);
+
+    -- Further Segmentation, least likely to like who usually rate movies high
+    DROP TEMPORARY TABLE IF EXISTS rated_low_usually_high;
+    CREATE TEMPORARY TABLE rated_low_usually_high SELECT Ratings.user_id AS user,
+                                                    AVG(Ratings.rating) AS usual_rating
+                                                    FROM Ratings
+                                                    JOIN least_likely_genre ON Ratings.user_id = least_likely_genre.user
+                                                    GROUP BY Ratings.user_id
+                                                    HAVING usual_rating >= 3;
+
+    SET pCountUsuallyHigh = (SELECT COUNT(*) FROM rated_low_usually_high);
+
+    DROP TEMPORARY TABLE IF EXISTS rated_high_usually_low;
+    CREATE TEMPORARY TABLE rated_high_usually_low SELECT Ratings.user_id AS user,
+                                                    AVG(Ratings.rating) AS usual_rating
+                                                    FROM Ratings
+                                                    JOIN most_likely_genre ON Ratings.user_id = most_likely_genre.user
+                                                    GROUP BY Ratings.user_id
+                                                    HAVING usual_rating < 3;
+
+    SET pCountUsuallyLow = (SELECT COUNT(*) FROM rated_high_usually_low);
+
+    -- Identifying categories by Tags, Python preprocessing
+
+    -- Identify most common tag
+END$$
+
+DELIMITER ;
