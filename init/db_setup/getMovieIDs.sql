@@ -31,7 +31,7 @@ set @join_params = CASE order_by_parameter
 
 IF search_value = "" and genres_chosen = "" THEN
 set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies", 
+    "FROM Movies ", 
     @join_params,
 	"GROUP BY Movies.movie_id
     ORDER BY ", @order_by, 
@@ -41,7 +41,7 @@ set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @sel
 
 ELSEIF search_value = "" THEN
 set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies", 
+    "FROM Movies ", 
     @join_params,
     "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
     Genre_Movie.movie_id = Movies.movie_id
@@ -55,7 +55,7 @@ set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @sel
 ELSEIF genres_chosen = "" THEN
 
 set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies", 
+    "FROM Movies ", 
     @join_params,
     "WHERE Movies.title LIKE '", search_value,  "'
 	GROUP BY Movies.movie_id
@@ -67,7 +67,7 @@ set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @sel
 ELSE    
 
 set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies", 
+    "FROM Movies ", 
     @join_params,
     "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
     Genre_Movie.movie_id = Movies.movie_id
