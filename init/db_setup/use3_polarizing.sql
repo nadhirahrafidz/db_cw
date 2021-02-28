@@ -1,9 +1,9 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use3_popular`;
+DROP procedure IF EXISTS `use3_polarizing`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use3_popular`(
+CREATE DEFINER=`root`@`%` PROCEDURE `use3_polarizing`(
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 
@@ -12,17 +12,13 @@ BEGIN
     DECLARE vGenre_id INT;
     DECLARE vStarting_date DATETIME; 
     DECLARE vCurr_date DATETIME; 
-    
-    # Popularity formula reference: https://www.quora.com/How-does-IMDB-compute-popularity
-    # C - mean vote across whole dataset
-    # m - minimum votes required to be listed in the Top 250
     DECLARE C INT;
     DECLARE m INT;
     
+    # Polarizing formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
     -- Get subset of movies
     IF  pGenre != "" THEN
         SET vGenre_id = (SELECT genre_id FROM Genres WHERE Genres.genre = pGenre);
-        
         DROP TEMPORARY TABLE IF EXISTS subset_movies;
         CREATE TEMPORARY TABLE subset_movies SELECT DISTINCT Genre_Movie.movie_id
                                                 FROM Genre_Movie
@@ -51,25 +47,25 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS movie_count;
     CREATE TEMPORARY TABLE movie_count SELECT movie_id, 
                                     COUNT(rating) AS rating_count,
-                                    AVG(rating) AS rating_avg
+                                    STD(rating) AS rating_std
                                     FROM subset_rating_info 
                                     GROUP BY movie_id;
     
-    SET C = (SELECT AVG(subset_rating_info.rating) FROM subset_rating_info );
+    SET C = (SELECT STD(subset_rating_info.rating) FROM subset_rating_info );
     SET m = (SELECT min(rating_count) FROM (SELECT * FROM movie_count LIMIT 250) AS top_250);
     
     SELECT Movies.title AS title, 
     movie_count.movie_id AS movie_id, 
-    ((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_avg) + ((m / (movie_count.rating_count + m)) * C) AS weighted_rating
+    ((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_std) + ((m / (movie_count.rating_count + m)) * C) AS weighted_rating_std
     FROM movie_count 
     INNER JOIN Movies
     ON movie_count.movie_id = Movies.movie_id
-    ORDER BY weighted_rating DESC 
+    ORDER BY weighted_rating_std DESC 
     LIMIT pLimit;
     
     DROP TEMPORARY TABLE IF EXISTS subset_rating_info;
-    DROP TEMPORARY TABLE IF EXISTS movie_count;
     DROP TEMPORARY TABLE IF EXISTS subset_movies;
+    DROP TEMPORARY TABLE IF EXISTS movie_count;
 END$$
 
 DELIMITER ;
