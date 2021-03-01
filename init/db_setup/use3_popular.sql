@@ -13,9 +13,9 @@ BEGIN
     DECLARE vStarting_date DATETIME; 
     DECLARE vCurr_date DATETIME; 
     
-    # Popularity formula reference: https://www.quora.com/How-does-IMDB-compute-popularity
-    # C - mean vote across whole dataset
-    # m - minimum votes required to be listed in the Top 250
+    -- Popularity formula reference: https://www.quora.com/How-does-IMDB-compute-popularity
+    -- C - mean vote across whole dataset
+    -- m - minimum votes required to be listed in the Top 250
     DECLARE C INT;
     DECLARE m INT;
     

@@ -15,7 +15,7 @@ BEGIN
     DECLARE C INT;
     DECLARE m INT;
     
-    # Polarizing formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
+    -- Polarizing formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
     -- Get subset of movies
     IF  pGenre != "" THEN
         SET vGenre_id = (SELECT genre_id FROM Genres WHERE Genres.genre = pGenre);
