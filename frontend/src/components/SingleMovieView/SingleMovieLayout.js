@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import "./MovieStrip.css";
 import Button from "react-bootstrap/Button";
+import "./SingleMovieLayout.css";
+import CardDeck from "react-bootstrap/CardDeck";
+import DataCard from "./DataCard";
 
-function MovieStrip(props) {
+function SingleMovieLayout(props) {
   const genres = !props.movie.stars ? [] : props.movie.genres.split(",");
   const stars = !props.movie.stars ? "" : "Stars: " + props.movie.stars;
   const history = useHistory();
@@ -47,6 +49,10 @@ function MovieStrip(props) {
     return rating_star;
   }
 
+  function genreStrings(){
+    
+  }
+
   function handleSubmit() {
     //make the api call here to use case 4
     console.log(props.movie.movie_id);
@@ -58,16 +64,15 @@ function MovieStrip(props) {
     fetch(url, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
-        
+        "Content-Type": "application/json"
       }
     })
-      .then(response => 
-        response.json()
-      )
+      .then(response => response.json())
       .then(data => {
         //set a local indicator variable to true
         //set a local variable to the state returned
+        //change the integers to strings
+        
         setData({
           genres_string: data[0].genres_string,
           tags_string: data[0].tags_string,
@@ -80,8 +85,8 @@ function MovieStrip(props) {
           pTagsLeastLikely: data[0].pTagsLeastLikely
         });
         setShow(true);
-        console.log(url)
-        console.log("data here:")
+        console.log(url);
+        console.log("data here:");
         console.log(data);
       })
       .catch(err => {
@@ -93,58 +98,77 @@ function MovieStrip(props) {
   let additionalDisplay;
   if (show) {
     additionalDisplay = (
-      <div>
-        <p>{data.genres_string}</p>
-        <p>{data.tags_string}</p>
-        <p>{data.pCountMostLikely}</p>
-        <p>{data.pCountLikely}</p>
-        <p>{data.pCountLeastLikely}</p>
-        <p>{data.pCountUsuallyHigh}</p>
-        <p>{data.pCountUsuallyLow}</p>
-        <p>{data.pTagsMostLikely}</p>
-        <p>{data.pTagsLeastLikely}</p>
+      <div className="decks">
+        <CardDeck className="deck">
+          <DataCard
+            title="Similar genres"
+            text="People who viewed this are also interested in the following genres"
+            data={data.genres_string}
+          ></DataCard>
+          <DataCard
+            title="pCountMostLikely"
+            text="Whatever the pcount most likey is has the value "
+            data={data.pCountMostLikely}
+          ></DataCard>
+          <DataCard
+            title="pCountLikely"
+            text="Whatever the pcount likey is has the value "
+            data={data.pCountLikely}
+          ></DataCard>
+        </CardDeck>
+
+        <CardDeck className="deck">
+          <DataCard
+            title="pCountLeastLikely"
+            text="Whatever the pCountLeastLikely is has the value "
+            data={data.pCountLeastLikely}
+          ></DataCard>
+          <DataCard
+            title="pCountUsuallyHigh"
+            text="Whatever the pCountUsuallyHigh is has the value "
+            data={data.pCountUsuallyHigh}
+          ></DataCard>
+          <DataCard
+            title="pCountUsuallyLow"
+            text="Whatever the pCountUsuallyLow is has the value "
+            data={data.pCountUsuallyLow}
+          ></DataCard>
+        </CardDeck>
+
+        <CardDeck className="deck">
+          <DataCard
+            title="pTagsMostLikely"
+            text="Whatever the pTagsMostLikely is has the value "
+            data={data.pTagsMostLikely}
+          ></DataCard>
+          <DataCard
+            title="pTagsLeastLikely"
+            text="Whatever the pTagsLeastLikely is has the value "
+            data={data.pTagsLeastLikely}
+          ></DataCard>
+          <DataCard
+            title="pTagsLeastLikely"
+            text="Whatever the pTagsLeastLikely is has the value "
+            data={data.pTagsLeastLikely}
+          ></DataCard>
+        </CardDeck>
       </div>
     );
   } else {
     additionalDisplay = <div></div>;
   }
 
-  function dummysubmit() {
-    setShow(true);
-    setData({
-      genres_string: "genres_string",
-      tags_string: "tags_string",
-      pCountMostLikely: "pCountMostLikely",
-      pCountLikely: "pCountLikely",
-      pCountLeastLikely: "pCountLeastLikely",
-      pCountUsuallyHigh: "pCountUsuallyHigh",
-      pCountUsuallyLow: "pCountUsuallyLow",
-      pTagsMostLikely: "pTagsMostLikely",
-      pTagsLeastLikely: "pTagsLeastLikely"
-    });
-  }
-
   return (
-    <div className="moviestrip">
-      <img
-        className="stripimage"
-        src={props.movie.movieURL}
-        style={{ cursor: "pointer" }}
-        onClick={() => routeToMovie(props.movie.movie_id)}
-      />
+    <div className="singlemovielayout">
+      <div className="movietitle">
+        <h2>{props.movie.title}</h2>
+      </div>
+      <div className="movieimagediv">
+        <img className="movieimage" src={props.movie.movieURL} />
+      </div>
 
-      <div className="details" style={{ paddingLeft: "5px" }}>
-        <h2
-          onClick={() => routeToMovie(props.movie.movie_id)}
-          style={{
-            color: "blue",
-            cursor: "pointer",
-            textDecoration: "underline"
-          }}
-        >
-          {props.movie.title}
-        </h2>
-        <br />
+      <div className="basicdetails">
+        <h3>Overview</h3>
         <div>
           {genres.length > 0 ? "Genres: " : ""}
           {genres.map((genre, index) => (
@@ -159,9 +183,8 @@ function MovieStrip(props) {
             </p>
           ))}
         </div>
-        <br />
+
         <div>{stars}</div>
-        <br />
         <div>
           {props.movie.rating +
             " " +
@@ -170,14 +193,26 @@ function MovieStrip(props) {
             props.movie.no_of_ratings +
             " ratings)"}
         </div>
-        <br />
         {getTags(props.movie.tags)}
 
-        <Button onClick={handleSubmit}>Audience Segmentation</Button>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <p>possible pie chart later</p>
+      </div>
+
+      <div className="extendeddetails">
+        <div className="audiencebutton">
+          <Button onClick={handleSubmit}>Audience Segmentation</Button>
+        </div>
+
         {additionalDisplay}
       </div>
     </div>
   );
 }
 
-export default MovieStrip;
+export default SingleMovieLayout;

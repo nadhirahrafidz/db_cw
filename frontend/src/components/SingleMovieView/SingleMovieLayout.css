@@ -1,0 +1,46 @@
+.movietitle {
+  text-align: center;
+  padding-block: 3%;
+}
+
+.movieimagediv > img {
+  display: block;
+  margin-left: 20%;
+  height: 100%;
+}
+
+.movieimagediv{
+    padding-block: 1%;
+    padding-left: 20%;
+    float: left;
+    height: 25rem;
+}
+
+.basicdetails{
+    float: right;
+    padding-right: 20%;
+    padding-block: 3%;
+}
+
+/* .extendeddetails{
+    
+    
+    padding-block: 4%;
+    padding-left: 2%;
+
+} */
+
+.audiencebutton{
+    text-align: center;
+    clear: both;
+    padding-block: 2%;
+}
+
+.decks{
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.deck{
+  padding-bottom: 3%;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import MovieStrip from "./Browse/MovieStrip";
+import SingleMovieLayout from "./SingleMovieView/SingleMovieLayout";
 
 function Movie() {
   const { id } = useParams();
@@ -30,7 +30,7 @@ function Movie() {
   }, []);
 
   if (dataLoaded) {
-    return <MovieStrip movie={movie} />;
+    return <SingleMovieLayout movie={movie} />;
   }
   return <div>{movieID}</div>;
 }
