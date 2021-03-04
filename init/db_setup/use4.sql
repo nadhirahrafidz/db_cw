@@ -80,7 +80,7 @@ BEGIN
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 4
-                                             ORDER BY AVG(Ratings.rating);
+                                             ORDER BY AVG(Ratings.rating) DESC;
 
     SET pCountMostLikely = (SELECT COUNT(*) FROM most_likely_genre);
 
@@ -92,7 +92,7 @@ BEGIN
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 3 AND AVG(Ratings.rating) < 4
-                                             ORDER BY AVG(Ratings.rating);
+                                             ORDER BY AVG(Ratings.rating) DESC;
 
     SET pCountLikely = (SELECT COUNT(*) FROM likely_genre);
 
@@ -108,27 +108,19 @@ BEGIN
 
     SET pCountLeastLikely = (SELECT COUNT(*) FROM least_likely_genre);
 
+    -- Change so its for specific user giving rating to the movie -> above average of 3.5, below 2.5 for this movie
     -- Further Segmentation, least likely to like who usually rate movies high
-    DROP TEMPORARY TABLE IF EXISTS rated_low_usually_high;
-    CREATE TEMPORARY TABLE rated_low_usually_high SELECT Ratings.user_id AS user,
-                                                    AVG(Ratings.rating) AS usual_rating
-                                                    FROM Ratings
-                                                    JOIN least_likely_genre ON Ratings.user_id = least_likely_genre.user
-                                                    GROUP BY Ratings.user_id
-                                                    HAVING AVG(Ratings.rating) >= 3;
+    DROP TEMPORARY TABLE IF EXISTS movie_rating_avg_ratings;
+    CREATE TEMPORARY TABLE movie_rating_avg_ratings SELECT CASE WHEN Ratings.movie_id = pMovieID AND Ratings.rating <= 2.5 THEN 'low'
+                                                              WHEN Ratings.movie_id = pMovieID AND Ratings.rating >= 3.5 THEN 'high'
+                                                              ELSE 'not watched' END AS movie_rating,
+                                                              AVG(Ratings.rating) AS avg_rating,
+                                                              Ratings.user_id AS user
+                                                              FROM Ratings
+                                                              GROUP BY user, movie_rating;
 
-    SET pCountUsuallyHigh = (SELECT COUNT(*) FROM rated_low_usually_high);
-
-    -- Further Segmentation, most likely to like who usually rate movies low
-    DROP TEMPORARY TABLE IF EXISTS rated_high_usually_low;
-    CREATE TEMPORARY TABLE rated_high_usually_low SELECT Ratings.user_id AS user,
-                                                    AVG(Ratings.rating) AS usual_rating
-                                                    FROM Ratings
-                                                    JOIN most_likely_genre ON Ratings.user_id = most_likely_genre.user
-                                                    GROUP BY Ratings.user_id
-                                                    HAVING AVG(Ratings.rating) < 3;
-
-    SET pCountUsuallyLow = (SELECT COUNT(*) FROM rated_high_usually_low);
+    SET pCountUsuallyHigh = (SELECT COUNT(*) FROM movie_rating_avg_ratings WHERE movie_rating = 'low');
+    SET pCountUsuallyLow = (SELECT COUNT(*) FROM movie_rating_avg_ratings WHERE movie_rating = 'high');
 
     -- Identifying categories by Tags
     DROP TEMPORARY TABLE IF EXISTS tag_occurences;
@@ -154,7 +146,7 @@ BEGIN
                                              WHERE FIND_IN_SET(Tags.tag, tags_string)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 3
-                                             ORDER BY AVG(Ratings.rating);
+                                             ORDER BY AVG(Ratings.rating) DESC;
 
     SET pTagsMostLikely = (SELECT COUNT(*) FROM most_likely_tags);
 
