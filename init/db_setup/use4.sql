@@ -72,7 +72,7 @@ BEGIN
 
     SET genres_string = (SELECT genres FROM concatenated_genres WHERE movie_id = pMovieID);
 
-    -- User most likely to enjoy movie based on giving other movies of same genres as pMovieID rating above 4
+    -- User most likely to enjoy movie based on given other movies of same genres as pMovieID rating above 4
     DROP TEMPORARY TABLE IF EXISTS most_likely_genre;
     CREATE TEMPORARY TABLE most_likely_genre SELECT Ratings.user_id AS user,
                                              AVG(Ratings.rating) AS genre_rating
@@ -84,7 +84,7 @@ BEGIN
 
     SET pCountMostLikely = (SELECT COUNT(*) FROM most_likely_genre);
 
-    -- Users likely to enjoy movie based on giving other movies of same genres as pMovieID between 3 and 4
+    -- Users likely to enjoy movie based on given other movies of same genres as pMovieID between 3 and 4
     DROP TEMPORARY TABLE IF EXISTS likely_genre;
     CREATE TEMPORARY TABLE likely_genre SELECT Ratings.user_id AS user,
                                              AVG(Ratings.rating) AS genre_rating
@@ -96,7 +96,7 @@ BEGIN
 
     SET pCountLikely = (SELECT COUNT(*) FROM likely_genre);
 
-    -- Users least likely to enjoy movie based on giving other movies of same genres as pMovieID rating below 3
+    -- Users least likely to enjoy movie based on given other movies of same genres as pMovieID rating below 3
     DROP TEMPORARY TABLE IF EXISTS least_likely_genre; -- change where to CASE statements
     CREATE TEMPORARY TABLE least_likely_genre SELECT Ratings.user_id AS user,
                                                 AVG(Ratings.rating) AS genre_rating
@@ -108,7 +108,7 @@ BEGIN
 
     SET pCountLeastLikely = (SELECT COUNT(*) FROM least_likely_genre);
 
-    -- Change so its for specific user giving rating to the movie -> above average of 3.5, below 2.5 for this movie
+    -- Change so its for specific user given rating to the movie -> above average of 3.5, below 2.5 for this movie
     -- Further Segmentation, least likely to like who usually rate movies high
     DROP TEMPORARY TABLE IF EXISTS movie_rating_avg_ratings;
     CREATE TEMPORARY TABLE movie_rating_avg_ratings SELECT CASE WHEN Ratings.movie_id = pMovieID AND Ratings.rating <= 2.5 THEN 'low'
@@ -138,7 +138,7 @@ BEGIN
 
     SET tags_string = (SELECT common_tags FROM movie_common_tags WHERE movie_id = pMovieID);
 
-    -- Users most likely to enjoy movie based on tags and giving movie with corresponding tags high ratings
+    -- Users most likely to enjoy movie based on tags and given movie with corresponding tags high ratings
     DROP TEMPORARY TABLE IF EXISTS most_likely_tags;
     CREATE TEMPORARY TABLE most_likely_tags SELECT Ratings.user_id AS user,
                                              AVG(Ratings.rating) AS tag_rating
@@ -150,7 +150,7 @@ BEGIN
 
     SET pTagsMostLikely = (SELECT COUNT(*) FROM most_likely_tags);
 
-    -- Users least likely to enjoy movie based on tags and giving movie with corresponding tags low ratings
+    -- Users least likely to enjoy movie based on tags and given movie with corresponding tags low ratings
     DROP TEMPORARY TABLE IF EXISTS least_likely_tags;
     CREATE TEMPORARY TABLE least_likely_tags SELECT Ratings.user_id AS user,
                                              AVG(Ratings.rating) AS tag_rating

@@ -7,53 +7,88 @@ DROP procedure IF EXISTS `use5`;
 
 DELIMITER $$
 USE `MovieLens`$$
-
 CREATE PROCEDURE `use5` (
     -- No explicit inputs and outputs for now, will produce temporary tables
+    IN pPanelSize INT,
+    IN pReleaseSize INT
     )
+
 BEGIN
+    -- Due to scalability can't just order by random and then limit, need a fast way to do it increase DB increases substantially
+    -- http://jan.kneschke.de/projects/mysql/order-by-rand/
+
+    -- to limit the no. of tags
+    DROP TEMPORARY TABLE IF EXISTS tag_occurences;
+    CREATE TEMPORARY TABLE tag_occurences SELECT movie_id, tag, COUNT(tag) AS tag_occurence
+                                       FROM Tags
+                                       GROUP BY movie_id, tag
+                                       ORDER BY movie_id ASC, tag_occurence DESC;
+    DROP TEMPORARY TABLE IF EXISTS movie_common_tags;
+    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(DISTINCT tag) AS common_tags, COUNT(DISTINCT tag) AS tag_count
+                                                FROM tag_occurences
+                                                GROUP BY movie_id
+                                                LIMIT 10;
+
     -- Sample of 10 soon to be released movies
     DROP TEMPORARY TABLE IF EXISTS sample_movies;
-    CREATE TEMPORARY TABLE sample_movies SELECT TOP 10 PERCENT movie_id, title, director, runtime
-                                        FROM Movies
-                                        WHERE movie_id IN (SELECT TOP 10 PERCENT movie_id FROM Movies ORDER BY newid());
-                                        -- newid() gets a random movie_id each time, inner select to improve performance
-                                        -- https://stackoverflow.com/questions/848872/select-n-random-rows-from-sql-server-table
+    CREATE TEMPORARY TABLE sample_movies SELECT t1.movie_id, t1.title, t1.director, t1.runtime 
+                                         FROM Movies AS t1 
+                                         JOIN (SELECT movie_id FROM Movies ORDER BY RAND() LIMIT pReleaseSize) AS t2 ON t1.movie_id = t2.movie_id;
 
     -- do this separately because excessive joins and random generation may be very slow, but just the samples with tag, genre and star info added
-    DROP TEMPOROARY TABLE IS EXISTS release_soon;
-    CREATE TEMPORARY TABLE release_soon SELECT Movies.movie_id, Movies.title, Movies.director, Movies.runtime,
-                                               GROUP_CONCAT(Genre_Movie.genre_id), 
-                                               GROUP_CONCAT(Star_Movie.star_id),
-                                               GROUP_CONCAT(Tags.movie_id)
-                                               FROM sample_movies
-                                               LEFT JOIN Genre.Movie ON Genre_Movie.movie_id = sample_movies.movie_id
-                                               LEFT JOIN Star_Movie ON Star_Movie.movie_id = Genre_Movie.movie_id
-                                               LEFT JOIN Tags ON Tags.movie_id = Star_Movie.movie_id
-                                               GROUP BY Movies.movie_id
-                                               ORDER BY Movies.movie_id;
+    DROP TEMPORARY TABLE IF EXISTS release_soon;
+    CREATE TEMPORARY TABLE release_soon SELECT sample_movies.movie_id, sample_movies.title, sample_movies.director, sample_movies.runtime,
+                                               movie_common_tags.common_tags AS tag_string,
+                                               movie_common_tags.tag_count AS tag_count,
+                                               GROUP_CONCAT(Genre_Movie.genre_id) AS genre_string,
+                                               COUNT(Genre_Movie.genre_id) AS genre_count,
+                                               GROUP_CONCAT(Star_Movie.star_id) AS star_string,
+                                               COUNT(Star_Movie.star_id) AS star_count
+                                        FROM sample_movies
+                                        LEFT JOIN Genre_Movie ON Genre_Movie.movie_id = sample_movies.movie_id
+                                        LEFT JOIN Star_Movie ON Star_Movie.movie_id = Genre_Movie.movie_id
+                                        LEFT JOIN movie_common_tags ON movie_common_tags.movie_id = Star_Movie.movie_id
+                                        GROUP BY sample_movies.movie_id, sample_movies.title, sample_movies.director, sample_movies.runtime, 
+                                                 movie_common_tags.common_tags, movie_common_tags.tag_count
+                                        ORDER BY sample_movies.movie_id;
 
     -- Sample of 100 users for preview panel
-    DROP TEMPORARY TABLE IF EXISTS sample_users;
-    CREATE TEMPORARY TABLE sample_users SELECT TOP 100 PERCENT user_id 
-                                        FROM Users 
-                                        WHERE user_id IN (SELECT TOP 100 PERCENT user_id FROM Users ORDER BY newid());
-
-    -- Preview Panel of 100 users, joined with rating, tag, genre and star info.
     DROP TEMPORARY TABLE IF EXISTS preview_panel;
-    CREATE TEMPORARY TABLE preview_panel SELECT sample_users.user_id,
-                                                Ratings.rating,
-                                                Genre_Movie.movie_id, 
-                                                GROUP_CONCAT(Genre_Movie.genre_id),
-                                                GROUP_CONCAT(Tags.tag),
-                                                GROUP_CONCAT(Star_Movie.star_id)
-                                                FROM sample_users
-                                                LEFT JOIN Ratings ON Ratings.user_id = sample_users.user_id
-                                                LEFT JOIN Genre_Movie ON Genre_Movie.movie_id = Ratings.movie_id
-                                                LEFT JOIN Tags ON Tags.movie_id = Genre_Movie.movie_id
-                                                LEFT JOIN Star_Movie ON Star_Movie.movie_id = Tags.movie_id
-                                                GROUP BY sample_users.user_id, Genre_Movie.movie_id
-                                                ORDER BY movie_id;
+    CREATE TEMPORARY TABLE preview_panel SELECT t1.user_id
+                                        FROM Users AS t1
+                                        JOIN (SELECT user_id FROM Users ORDER BY RAND() LIMIT pPanelSize) AS t2 ON t1.user_id = t2.user_id;
+
+    -- Average rating based on genre
+    -- Average rating based on director
+    -- Average rating based on tags
+    -- Average rating based on stars
+
+    -- Now predict the rating of each soon to be released movie
+
+    /*
+    movie_id | title | director | runtime | common_tags | tag_count |   genre_string     | genre_count |     star_string    | star_count
+       4       thor     bobby      60      ear, pop         2         action, thriller        2           theodore, alvin       2
+
+    sample rating for genre-> number of users that provide rating
+    sample rating for director -> number of users that provide rating
+    sample rating for runtime -> number of users that provide rating
+    sample rating for common_tags -> no. of users that provide rating
+    sample rating for star -> no. of userst that provide rating
+
+    e.g.
+    100 Users in panel
+    50 rate action + horror -> average 2 [2 categories]
+    10 rate bobby movies -> average 5 [1 category]
+    60 rate tagged -> average 1 [10 categories (max tags)]
+    5 rate stars -> average 3.5 [3 stars (max stars)]
+
+    So scale:
+
+    Total[rating*(no. of categories/10)*(no. of users/100)]/5 -> predicted rating
+
+    (2*(2/10)*(50/100)) + (5*(1/10)*(10/100)) + (1*(10/10)*(60/100)) + (3.5*(3/10)*(5/100)) / 5
+    
+    */
                             
 END$$
 
