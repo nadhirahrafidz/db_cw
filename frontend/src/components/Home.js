@@ -12,7 +12,7 @@ class Home extends React.Component {
   render() {
     return (
       <div>
-        <Title text="Home"></Title>
+        <Title text="Home changed"></Title>
         <div className="Body">
           <div className="introduction">
             <Carousel>
