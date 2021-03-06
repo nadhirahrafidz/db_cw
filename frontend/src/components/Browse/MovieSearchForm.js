@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import GenreSelector from "./GenreSelector";
 import { useLocation } from "react-router-dom";
 import SortByDropdown from "./SortByDropdown";
+import "./MovieSearchForm.css";
 
 const sortingOptions = [
   "Default",
@@ -84,7 +85,7 @@ function MovieSearchForm(props) {
     return (
       <div className="search">
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formBasicSearch">
+          <Form.Group>
             <Form.Label>Search for a movie</Form.Label>
             <Form.Control
               placeholder="Enter Search"
@@ -95,6 +96,7 @@ function MovieSearchForm(props) {
                 display: "flex",
                 justifyContent: "flex-end",
                 paddingTop: "5px",
+                width: "100%",
               }}
             >
               <Badge

@@ -1,5 +1,5 @@
 import Pagination from "react-bootstrap/Pagination";
-
+import "./MoviePagination.css";
 function MoviePagination(props) {
   function newPaginationItem(pageNumber) {
     return (
@@ -25,7 +25,7 @@ function MoviePagination(props) {
     />,
   ];
 
-  let lastPage = Math.ceil(props.noOfResults / 10);
+  let lastPage = Math.ceil(props.noOfResults / 12);
   var firstPage;
   if (props.pageNo < 4) {
     firstPage = 1;
@@ -34,7 +34,6 @@ function MoviePagination(props) {
   } else {
     firstPage = props.pageNo - 2;
   }
-  // let firstPage = props.pageNo < 4 ? 1 : props.pageNo - 2;
 
   for (let number = firstPage; number <= lastPage; number++) {
     if (number - firstPage > 10 && number !== lastPage) {

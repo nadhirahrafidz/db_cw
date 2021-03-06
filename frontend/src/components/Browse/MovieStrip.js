@@ -1,26 +1,25 @@
-import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Col from "react-bootstrap/Col";
 import "./MovieStrip.css";
-import Button from "react-bootstrap/Button";
 
 function MovieStrip(props) {
   const genres = !props.movie.stars ? [] : props.movie.genres.split(",");
-  const stars = !props.movie.stars ? "" : "Stars: " + props.movie.stars;
+  const stars = !props.movie.stars ? (
+    <div />
+  ) : (
+    <div>{"Stars: " + props.movie.stars}</div>
+  );
   const history = useHistory();
-  const [show, setShow] = useState(false);
-  const [data, setData] = useState(null);
 
-  console.log(props);
-
-  function getTags(tags) {
-    if (!tags) {
+  function getTags() {
+    if (!props.movie.tags) {
       return;
     }
     let displayTags =
       props.movie.tags.length > 50
         ? props.movie.tags.substring(0, 50) + "..."
         : props.movie.tags;
-    return "Tags: " + displayTags;
+    return <div>{"Tags: " + displayTags}</div>;
   }
 
   function routeToMovie(movie_id) {
@@ -47,136 +46,56 @@ function MovieStrip(props) {
     return rating_star;
   }
 
-  function handleSubmit() {
-    //make the api call here to use case 4
-    console.log(props.movie.movie_id);
-
-    //fetch the actual data
-    const url =
-      "http://localhost/getAudienceSegmentation.php?" +
-      new URLSearchParams({ movie_id: props.movie.movie_id });
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        
-      }
-    })
-      .then(response => 
-        response.json()
-      )
-      .then(data => {
-        //set a local indicator variable to true
-        //set a local variable to the state returned
-        setData({
-          genres_string: data[0].genres_string,
-          tags_string: data[0].tags_string,
-          pCountMostLikely: data[0].pCountMostLikely,
-          pCountLikely: data[0].pCountLikely,
-          pCountLeastLikely: data[0].pCountLeastLikely,
-          pCountUsuallyHigh: data[0].pCountUsuallyHigh,
-          pCountUsuallyLow: data[0].pCountUsuallyLow,
-          pTagsMostLikely: data[0].pTagsMostLikely,
-          pTagsLeastLikely: data[0].pTagsLeastLikely
-        });
-        setShow(true);
-        console.log(url)
-        console.log("data here:")
-        console.log(data);
-      })
-      .catch(err => {
-        console.log(url);
-        console.log(err);
-      });
-  }
-
-  let additionalDisplay;
-  if (show) {
-    additionalDisplay = (
-      <div>
-        <p>{data.genres_string}</p>
-        <p>{data.tags_string}</p>
-        <p>{data.pCountMostLikely}</p>
-        <p>{data.pCountLikely}</p>
-        <p>{data.pCountLeastLikely}</p>
-        <p>{data.pCountUsuallyHigh}</p>
-        <p>{data.pCountUsuallyLow}</p>
-        <p>{data.pTagsMostLikely}</p>
-        <p>{data.pTagsLeastLikely}</p>
+  function getRatingsInfo() {
+    return (
+      <div className="rating">
+        <div className="rating-box">{props.movie.rating}</div>
       </div>
     );
-  } else {
-    additionalDisplay = <div></div>;
   }
 
-  function dummysubmit() {
-    setShow(true);
-    setData({
-      genres_string: "genres_string",
-      tags_string: "tags_string",
-      pCountMostLikely: "pCountMostLikely",
-      pCountLikely: "pCountLikely",
-      pCountLeastLikely: "pCountLeastLikely",
-      pCountUsuallyHigh: "pCountUsuallyHigh",
-      pCountUsuallyLow: "pCountUsuallyLow",
-      pTagsMostLikely: "pTagsMostLikely",
-      pTagsLeastLikely: "pTagsLeastLikely"
-    });
+  function getGenres() {
+    return (
+      <p className="genres">
+        {genres.map((genre, index) => (
+          <span
+            className="genre-list-item"
+            key={index}
+            onClick={() => routeToGenre(genre)}
+          >
+            {genre.trim()}
+            {index === genres.length - 1 ? "" : ","}&nbsp;
+          </span>
+        ))}
+      </p>
+    );
   }
 
   return (
-    <div className="moviestrip">
-      <img
-        className="stripimage"
-        src={props.movie.movieURL}
-        style={{ cursor: "pointer" }}
-        onClick={() => routeToMovie(props.movie.movie_id)}
-      />
-
-      <div className="details" style={{ paddingLeft: "5px" }}>
-        <h2
+    <Col xs={12} sm={6} md={6} lg={4} xl={3}>
+      <div className="movie-image-div">
+        <img
+          className="movie-image"
+          src={props.movie.movieURL}
           onClick={() => routeToMovie(props.movie.movie_id)}
-          style={{
-            color: "blue",
-            cursor: "pointer",
-            textDecoration: "underline"
-          }}
+        />
+        <div style={{ position: "absolute", top: "0", width: "100%" }}>
+          {getRatingsInfo()}
+        </div>
+      </div>
+
+      <div className="movie-info">
+        <p
+          className="movie-title"
+          onClick={() => routeToMovie(props.movie.movie_id)}
         >
           {props.movie.title}
-        </h2>
-        <br />
-        <div>
-          {genres.length > 0 ? "Genres: " : ""}
-          {genres.map((genre, index) => (
-            <p
-              className="list"
-              key={index}
-              onClick={() => routeToGenre(genre)}
-              style={{ cursor: "pointer", color: "blue" }}
-            >
-              {genre.trim()}
-              {index === genres.length - 1 ? "" : ", "}
-            </p>
-          ))}
-        </div>
-        <br />
-        <div>{stars}</div>
-        <br />
-        <div>
-          {props.movie.rating +
-            " " +
-            ratings_stars(props.movie.rating) +
-            " (" +
-            props.movie.no_of_ratings +
-            " ratings)"}
-        </div>
-        <br />
-        {getTags(props.movie.tags)}
-
-        <Button onClick={handleSubmit}>Audience Segmentation</Button>
-        {additionalDisplay}
+        </p>
+        {getGenres()}
+        {/* {stars} */}
+        {/* {getTags()} */}
       </div>
-    </div>
+    </Col>
   );
 }
 

@@ -1,9 +1,54 @@
-.moviestrip{
-    display: flex;
-    flex-direction: row;
-    padding-bottom: 5rem;
+.movie-title {
+  color: #a6aaac;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-.list{
-    display: inline
+.genre-list-item {
+  cursor: pointer;
+  color: #5c7485;
+}
+
+.movie-info {
+  text-align: center;
+  padding-left: 5px;
+  max-height: 100%;
+}
+
+.genres {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.movie-image {
+  margin-top: 10px;
+  cursor: pointer;
+  max-height: 100%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.rating {
+  display: flex;
+  width: 100%;
+  color: white;
+  justify-content: center;
+}
+
+.rating-box {
+  width: fit-content;
+  justify-self: center;
+  background-color: rgb(224, 177, 56);
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+}
+
+.movie-image-div {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

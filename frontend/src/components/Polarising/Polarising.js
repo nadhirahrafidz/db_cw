@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import Title from "../Title";
 import CardDeck from "react-bootstrap/CardDeck";
 import AllMovies from "../../Data/AllMovies";
-import MovieColumn from "./MovieColumn"
+import MovieColumn from "./MovieColumn";
 
 class Polarising extends React.Component {
   constructor(props) {
@@ -11,7 +10,7 @@ class Polarising extends React.Component {
     const polarising = this.getData();
     this.state = {
       selected: false,
-      movies: polarising["movies"]
+      movies: polarising["movies"],
     };
   }
 
@@ -22,10 +21,9 @@ class Polarising extends React.Component {
   render() {
     return (
       <div>
-        <Title text="Future predictions"></Title>
         <div className="Body">
           <CardDeck>
-            {this.state.movies.map(movie => (
+            {this.state.movies.map((movie) => (
               <MovieColumn name={movie.name} image={movie.image}></MovieColumn>
             ))}
           </CardDeck>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import Title from "../Title";
 import "./Browse.css";
-import MovieSearchForm from "./MovieSearchForm";
-import DisplayMovies from "./DisplayMovies";
+import MovieSearchForm from "../Components/Browse/MovieSearchForm";
+import DisplayMovies from "../Components/Browse/DisplayMovies";
 import { useLocation } from "react-router-dom";
+import CustomNavbar from "../navigation/CustomNavbar";
 
 function Browse() {
   const [search, setSearch] = useState("");
@@ -62,9 +62,10 @@ function Browse() {
   }
 
   return (
-    <div>
-      <Title text="Browse Movies"></Title>
-      <div className="Body">
+    <div className="body">
+      <CustomNavbar />
+      <h1 className="header">Browse Movies</h1>
+      <div className="browse-movies">
         <MovieSearchForm
           genres={genres}
           onSubmit={handleSubmit}

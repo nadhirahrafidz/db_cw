@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import Spinner from "react-bootstrap/Spinner";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 import MovieStrip from "./MovieStrip";
-import "./Browse.css";
-import MoviePagination from "./MoviePagination";
+import "../../pages/Browse.css";
+import MoviePagination from "../../navigation/MoviePagination";
 
 function DisplayMovies(props) {
   const [noOfResults, setNoOfResults] = useState(-1);
@@ -16,7 +18,7 @@ function DisplayMovies(props) {
     }
     setDataLoaded(false);
     var params = {
-      offset: (props.pageNo - 1) * 10,
+      offset: (props.pageNo - 1) * 12,
     };
     if (props.search !== "") {
       params.search = props.search;
@@ -47,7 +49,7 @@ function DisplayMovies(props) {
 
   var invalidPageNo = true;
   if (dataLoaded && props.pageNo > 0) {
-    const lastPage = Math.ceil(noOfResults / 10);
+    const lastPage = Math.ceil(noOfResults / 12);
     if (props.pageNo <= lastPage) {
       invalidPageNo = false;
     }
@@ -60,11 +62,13 @@ function DisplayMovies(props) {
   if (!invalidPageNo) {
     return (
       <>
-        <div className="movies">
-          {movies.map((movie, index) => {
-            return <MovieStrip key={index} movie={movie}></MovieStrip>;
-          })}
-        </div>
+        <Container>
+          <Row>
+            {movies.map((movie, index) => {
+              return <MovieStrip key={index} movie={movie}></MovieStrip>;
+            })}
+          </Row>
+        </Container>
         <div className="pagination">
           <MoviePagination
             pageChange={props.pageChange}
@@ -77,7 +81,7 @@ function DisplayMovies(props) {
   } else {
     return (
       <div style={{ textAlign: "center" }}>
-        <Spinner animation="border" />
+        <Spinner variant="primary" animation="border" />
       </div>
     );
   }

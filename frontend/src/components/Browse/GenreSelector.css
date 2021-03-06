@@ -1,0 +1,6 @@
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  color: rgb(156, 156, 156);
+}
