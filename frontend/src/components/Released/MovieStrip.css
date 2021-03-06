@@ -1,9 +1,0 @@
-.moviestrip{
-    display: flex;
-    flex-direction: row;
-    padding-bottom: 5rem;
-}
-
-.list{
-    display: inline
-}

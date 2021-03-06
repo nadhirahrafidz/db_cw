@@ -5,7 +5,7 @@ function SortByDropdown(props) {
   return (
     <DropdownButton
       title={"Sort by: " + props.options[props.currentOption]}
-      variant="outline-primary"
+      variant="primary"
     >
       {props.options.map((option, index) => (
         <Dropdown.Item

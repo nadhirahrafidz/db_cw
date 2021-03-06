@@ -1,0 +1,14 @@
+.page-item.active .page-link {
+  border-bottom: 1px;
+  border-style: solid;
+  border-top: 0;
+  color: white !important;
+  background-color: #222b31 !important;
+  border-color: black !important;
+}
+
+.page-link {
+  color: #a6aaac !important;
+  background-color: black !important;
+  border-color: #191c1f !important;
+}

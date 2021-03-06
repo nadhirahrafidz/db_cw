@@ -9,13 +9,13 @@ $dbname = "MovieLens";
 $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
-$movieID_query = 'SELECT genre FROM Genres ORDER BY genre ASC';
+$genre_query = 'SELECT genre FROM Genres ORDER BY genre ASC';
 
-$movieID_stmt = mysqli_prepare($connection, $movieID_query);
-mysqli_stmt_execute($movieID_stmt);
+$genre_stmt = mysqli_prepare($connection, $genre_query);
+mysqli_stmt_execute($genre_stmt);
 
-$movieID_result = (mysqli_stmt_get_result($movieID_stmt));
-echo json_encode(mysqli_fetch_all($movieID_result, MYSQLI_NUM));
+$genre_result = mysqli_stmt_get_result($genre_stmt);
+echo json_encode(mysqli_fetch_all($genre_result, MYSQLI_NUM));
 
 mysqli_close($connection);
 ?>
