@@ -65,7 +65,7 @@ BEGIN
 
     -- Get Movie and it's genre as string e.g. Toy Story | (1,2,3)
     DROP TEMPORARY TABLE IF EXISTS concatenated_genres;
-    CREATE TEMPORARY TABLE concatenated_genres SELECT Genre_Movie.movie_id As movie_id, GROUP_CONCAT(Genre_Movie.genre_id) AS genres
+    CREATE TEMPORARY TABLE concatenated_genres SELECT Genre_Movie.movie_id As movie_id, GROUP_CONCAT(DISTINCT Genre_Movie.genre_id) AS genres
                                                FROM Genre_Movie
                                                WHERE Genre_Movie.movie_id = pMovieID -- stop qury having to unecessary group all movies and their genres
                                                GROUP BY movie_id;
@@ -129,12 +129,11 @@ BEGIN
                                        GROUP BY movie_id, tag
                                        ORDER BY movie_id ASC, tag_occurence DESC;
 
-    -- Get top 3 tags for specific movie
+    -- Get top 3 tags for specific movie, use subquery
     DROP TEMPORARY TABLE IF EXISTS movie_common_tags;
-    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(DISTINCT tag) AS common_tags
+    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(SELECT tag_occurences.tag FROM tag_occurences LIMIT 3) AS common_tags
                                                 FROM tag_occurences
-                                                GROUP BY movie_id
-                                                LIMIT 3;
+                                                GROUP BY movie_id;
 
     SET tags_string = (SELECT common_tags FROM movie_common_tags WHERE movie_id = pMovieID);
 
