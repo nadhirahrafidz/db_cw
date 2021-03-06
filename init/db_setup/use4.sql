@@ -131,7 +131,7 @@ BEGIN
 
     -- Get top 3 tags for specific movie, use subquery
     DROP TEMPORARY TABLE IF EXISTS movie_common_tags;
-    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(SELECT tag_occurences.tag FROM tag_occurences LIMIT 3) AS common_tags
+    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(tag_occurences.tag) AS common_tags
                                                 FROM tag_occurences
                                                 GROUP BY movie_id;
 

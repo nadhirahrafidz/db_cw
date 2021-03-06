@@ -58,8 +58,10 @@ BEGIN
                                        GROUP BY movie_id, tag
                                        ORDER BY movie_id ASC, tag_occurence DESC;
 
+
+    -- fix bug
     DROP TEMPORARY TABLE IF EXISTS movie_common_tags;
-    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(SELECT tag FROM tag_occurences LIMIT 10) AS common_tags, COUNT(tag) AS tag_count
+    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(tag) AS common_tags, COUNT(tag) AS tag_count
                                                 FROM tag_occurences
                                                 GROUP BY movie_id
                                                 ORDER BY movie_id;
