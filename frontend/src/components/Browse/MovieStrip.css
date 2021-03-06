@@ -1,5 +1,6 @@
 .movie-title {
   color: #a6aaac;
+  padding-top: 2%;
   font-size: 1.1rem;
   cursor: pointer;
   text-decoration: underline;

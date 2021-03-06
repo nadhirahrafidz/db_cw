@@ -23,7 +23,6 @@ set @SQLstatement = CONCAT("SELECT
   GROUP_CONCAT(DISTINCT Stars.star_name SEPARATOR', ') AS stars,
   GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
   ROUND(AVG(Ratings.rating),1) AS rating,
-  COUNT(Ratings.rating) AS no_of_ratings,
   GROUP_CONCAT(DISTINCT Tags.tag SEPARATOR', ') AS tags
   FROM Movies
   LEFT JOIN (Star_Movie LEFT JOIN Stars ON Star_Movie.star_id = Stars.star_id) ON

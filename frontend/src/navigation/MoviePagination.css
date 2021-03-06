@@ -12,3 +12,7 @@
   background-color: black !important;
   border-color: #191c1f !important;
 }
+
+.pagination {
+  justify-content: center;
+}
