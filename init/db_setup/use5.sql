@@ -10,7 +10,12 @@ USE `MovieLens`$$
 CREATE PROCEDURE `use5` (
     -- No explicit inputs and outputs for now, will produce temporary tables
     IN pPanelSize INT,
-    IN pReleaseSize INT
+    IN pReleaseSize INT,
+    OUT pGenreAvgRating INT,
+    OUT pDirectorAvgRating INT,
+    OUT pRuntimeAvgRating INT,
+    OUT pTagsAvgRating INT,
+    OUT pStarAvgRating INT
     )
 
 BEGIN
@@ -58,22 +63,21 @@ BEGIN
                                         FROM Users AS t1
                                         JOIN (SELECT user_id FROM Users ORDER BY RAND() LIMIT pPanelSize) AS t2 ON t1.user_id = t2.user_id;
 
-    -- Average rating based on genre
-    -- Average rating based on director
-    -- Average rating based on tags
-    -- Average rating based on stars
+    /*
+    OUT pGenreAvgRating INT,
+    OUT pDirectorAvgRating INT,
+    OUT pRuntimeAvgRating INT,
+    OUT pTagsAvgRating INT,
+    OUT pStarAvgRating INT
+    release_soon -> table of movies
+    preview_panel -> table of users
+    */
 
     -- Now predict the rating of each soon to be released movie
 
     /*
     movie_id | title | director | runtime | common_tags | tag_count |   genre_string     | genre_count |     star_string    | star_count
        4       thor     bobby      60      ear, pop         2         action, thriller        2           theodore, alvin       2
-
-    sample rating for genre-> number of users that provide rating
-    sample rating for director -> number of users that provide rating
-    sample rating for runtime -> number of users that provide rating
-    sample rating for common_tags -> no. of users that provide rating
-    sample rating for star -> no. of userst that provide rating
 
     e.g.
     100 Users in panel
@@ -89,6 +93,7 @@ BEGIN
     (2*(2/10)*(50/100)) + (5*(1/10)*(10/100)) + (1*(10/10)*(60/100)) + (3.5*(3/10)*(5/100)) / 5
     
     */
+    
                             
 END$$
 
