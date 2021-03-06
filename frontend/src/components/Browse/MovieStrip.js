@@ -45,7 +45,7 @@ function MovieStrip(props) {
     }
     return rating_star;
   }
-
+  console.log(props.movie);
   function getRatingsInfo() {
     return (
       <div className="rating">

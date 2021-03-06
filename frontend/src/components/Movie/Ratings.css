@@ -1,0 +1,32 @@
+.ratings-breakdown {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.rating-row {
+  padding: 2px;
+  color: grey;
+}
+
+.rating-label {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: right;
+}
+
+.progress {
+  background-color: black !important;
+  height: 100%;
+  width: 100%;
+  align-self: center;
+}
+
+.rating-summary {
+  color: grey;
+  text-align: center;
+}
+
+.actual-rating {
+  color: white;
+  text-align: center;
+}

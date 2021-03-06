@@ -28,16 +28,17 @@ USE `MovieLens`$$
 CREATE PROCEDURE `use2` (
     IN pMovieID INT, 
     OUT pratings_count INT, 
-    OUT paverage_score INT)
+    OUT paverage_score FLOAT)
 BEGIN
     SET pratings_count = (SELECT COUNT(rating) FROM Ratings WHERE Ratings.movie_id = pMovieID);
     SET paverage_score = (SELECT AVG(rating) FROM Ratings WHERE Ratings.movie_id = pMovieID);
 
     DROP TEMPORARY TABLE IF EXISTS rating_breakdown;
-    CREATE TEMPORARY TABLE rating_breakdown SELECT ROUND(rating,0) as rating_idx, COUNT(ROUND(rating, 0)) AS rating_count 
+    CREATE TEMPORARY TABLE rating_breakdown SELECT CEILING(rating) as rating_idx, COUNT(CEILING(rating)) AS rating_count 
                                     FROM Ratings 
-                                    WHERE Ratings.movie_id = 1 
-                                    GROUP BY ROUND(rating, 0);
+                                    WHERE Ratings.movie_id = pMovieID
+                                    GROUP BY rating_idx
+                                    ORDER BY rating_idx;
 END$$
 
 DELIMITER ;

@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import CustomNavbar from "../navigation/CustomNavbar";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Ratings from "../Components/Movie/Ratings";
 import "./Movie.css";
 
 function Movie() {
@@ -54,6 +55,13 @@ function Movie() {
             <Col sm={7} md={6}>
               <p className="movie-movie-title">{movie.title}</p>
             </Col>
+          </Row>
+          <Row style={{ width: "100%", paddingTop: "20px" }}>
+            <Col xs={3}></Col>
+            <Col xs={6}>
+              <Ratings movieID={movieID} />
+            </Col>
+            <Col xs={3}></Col>
           </Row>
         </Container>
       </div>
