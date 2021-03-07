@@ -9,7 +9,6 @@ $dbname = "MovieLens";
 $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
-
 $movie_id;
 if (isset($_GET['movie_id'])) {
   $movie_id = $_GET['movie_id'];
@@ -17,8 +16,6 @@ if (isset($_GET['movie_id'])) {
   die('Error: No movie_id specified');
 }
 
-
-// part 2 for the different ratings
 $procedure_query = "CALL use2(?, @p1, @p2)";
 $procedure_stmt = mysqli_prepare($connection, $procedure_query);
 mysqli_stmt_bind_param($procedure_stmt, "i", $movie_id);

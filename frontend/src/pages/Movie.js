@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Ratings from "../Components/Movie/Ratings";
 import "./Movie.css";
-import Fade from "./Fade.js";
+import Fade from "../Components/Movie/Fade.js";
 
 function Movie() {
   const { id } = useParams();
@@ -49,7 +49,7 @@ function Movie() {
             ></div>
           </div>
           <Container className="content" fluid>
-            <Row style={{ width: "100%" }}>
+            <Row>
               <Col sm={1} md={2} lg={3} />
               <Col sm={4} md={4} lg={3}>
                 <img className="movie-movie-image" src={movie.movieURL} />
@@ -58,20 +58,17 @@ function Movie() {
                 <p className="movie-movie-title">{movie.title}</p>
               </Col>
             </Row>
+            <Row>
+              <Col>placeholder</Col>
+            </Row>
           </Container>
         </div>
         <div className="ratings-menu">
           <Fade>
-            <div
-              style={{
-                display: "flex",
-                alignContent: "center",
-                height: "100%",
-              }}
-            >
+            <div className="rating-container">
               <Row style={{ width: "100%", paddingTop: "20px" }}>
                 <Col xs={2}></Col>
-                <Col xs={8}>
+                <Col xs={9}>
                   <Ratings movieID={movieID} />
                 </Col>
                 <Col xs={2}></Col>

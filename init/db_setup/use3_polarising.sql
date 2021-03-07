@@ -1,13 +1,14 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use3_polarizing`;
+DROP procedure IF EXISTS `use3_polarising`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use3_polarizing`(
+CREATE DEFINER=`root`@`%` PROCEDURE `use3_polarising`(
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 
-    IN pGenre VARCHAR(100))
+    IN pGenre VARCHAR(100),
+    OUT pCount INT)
 BEGIN
     DECLARE vGenre_id INT;
     DECLARE vStarting_date DATETIME; 
@@ -15,7 +16,7 @@ BEGIN
     DECLARE C INT;
     DECLARE m INT;
     
-    -- Polarizing formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
+    -- Polarising formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
     -- Get subset of movies
     IF  pGenre != "" THEN
         SET vGenre_id = (SELECT genre_id FROM Genres WHERE Genres.genre = pGenre);
@@ -54,14 +55,24 @@ BEGIN
     SET C = (SELECT STD(subset_rating_info.rating) FROM subset_rating_info );
     SET m = (SELECT min(rating_count) FROM (SELECT * FROM movie_count LIMIT 250) AS top_250);
     
-    SELECT Movies.title AS title, 
-    movie_count.movie_id AS movie_id, 
-    ((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_std) + ((m / (movie_count.rating_count + m)) * C) AS weighted_rating_std
+    SET pCount = (SELECT COUNT(DISTINCT movie_id) FROM movie_count);
+    
+    SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+    SELECT DISTINCT movie_count.movie_id AS movie_id,
+    Movies.title AS title,
+    Movies.movieURL AS movieURL,
+    GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
+    ROUND(((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_std) + ((m / (movie_count.rating_count + m)) * C),1) AS rating
     FROM movie_count 
     INNER JOIN Movies
     ON movie_count.movie_id = Movies.movie_id
-    ORDER BY weighted_rating_std DESC 
-    LIMIT pLimit;
+    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    Genre_Movie.movie_id = movie_count.movie_id
+    GROUP BY movie_count.movie_id
+    ORDER BY rating DESC, title ASC
+    LIMIT pLimit
+    OFFSET pOffset;
     
     DROP TEMPORARY TABLE IF EXISTS subset_rating_info;
     DROP TEMPORARY TABLE IF EXISTS subset_movies;

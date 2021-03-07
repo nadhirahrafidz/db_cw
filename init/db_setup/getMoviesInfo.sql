@@ -10,10 +10,10 @@ CREATE PROCEDURE `getMoviesInfo` (
 
 BEGIN
 set @order_by = CASE order_by_paramater
-                      when 0 then "Movies.movie_id ASC"
-                      when 1 then "Movies.title ASC"
-                      when 2 then "Movies.title DESC"
-                      when 3 then "rating DESC"
+                      when 0 then ""
+                      when 1 then "ORDER BY Movies.title ASC"
+                      when 2 then "ORDER BY Movies.title DESC"
+                      when 3 then "ORDER BY rating DESC"
                       END;
 
 set @SQLstatement = CONCAT("SELECT 
@@ -35,7 +35,7 @@ set @SQLstatement = CONCAT("SELECT
   Tags.movie_id = Movies.movie_id 
   WHERE find_in_set(Movies.movie_id, '", movieIDs, "')
   GROUP BY Movies.movie_id
-  ORDER BY ", @order_by);
+  ", @order_by);
 PREPARE stmt FROM @SQLStatement;
 EXECUTE stmt;
 END$$

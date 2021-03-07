@@ -45,14 +45,6 @@ function MovieStrip(props) {
     }
     return rating_star;
   }
-  console.log(props.movie);
-  function getRatingsInfo() {
-    return (
-      <div className="rating">
-        <div className="rating-box">{props.movie.rating}</div>
-      </div>
-    );
-  }
 
   function getGenres() {
     return (
@@ -79,8 +71,8 @@ function MovieStrip(props) {
           src={props.movie.movieURL}
           onClick={() => routeToMovie(props.movie.movie_id)}
         />
-        <div style={{ position: "absolute", top: "0", width: "100%" }}>
-          {getRatingsInfo()}
+        <div className="rating">
+          <div className="rating-box">{props.movie.rating}</div>
         </div>
       </div>
 
@@ -92,8 +84,6 @@ function MovieStrip(props) {
           {props.movie.title}
         </p>
         {getGenres()}
-        {/* {stars} */}
-        {/* {getTags()} */}
       </div>
     </Col>
   );

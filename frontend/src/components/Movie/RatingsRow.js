@@ -15,6 +15,7 @@ function RatingsRow(props) {
       <Col xs={1} className="rating-label">
         <span>{Math.round(props.value)}%</span>
       </Col>
+      <Col xs={1}></Col>
     </Row>
   );
 }

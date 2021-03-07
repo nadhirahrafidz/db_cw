@@ -21,6 +21,12 @@ function CustomNavbar() {
           <LinkContainer className="nav-link-text" to="/browse">
             <NavItem>View movies</NavItem>
           </LinkContainer>
+          <LinkContainer className="nav-link-text" to="/popular">
+            <NavItem>Popular</NavItem>
+          </LinkContainer>
+          <LinkContainer className="nav-link-text" to="/polarising">
+            <NavItem>Polarising</NavItem>
+          </LinkContainer>
         </Nav>
         <Form inline action={window.location.origin + "/browse"}>
           <FormControl type="text" placeholder="Search Movie" name="search" />
