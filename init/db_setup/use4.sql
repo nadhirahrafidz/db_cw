@@ -61,6 +61,7 @@ CREATE PROCEDURE `use4` (
     )
 
 BEGIN
+    SET SESSION group_concat_max_len = 1000000;
     -- Identifying categories by Ratings and Genre
 
     -- Get Movie and it's genre as string e.g. Toy Story | (1,2,3)
@@ -131,9 +132,10 @@ BEGIN
 
     -- Get top 3 tags for specific movie, use subquery
     DROP TEMPORARY TABLE IF EXISTS movie_common_tags;
-    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, GROUP_CONCAT(tag_occurences.tag) AS common_tags
-                                                FROM tag_occurences
-                                                GROUP BY movie_id;
+    CREATE TEMPORARY TABLE movie_common_tags SELECT movie_id, 
+                                             SUBSTRING_INDEX(GROUP_CONCAT(DISTINCT tag SEPARATOR ','), ',', 3) AS common_tags
+                                            FROM tag_occurences
+                                            GROUP BY movie_id;
 
     SET tags_string = (SELECT common_tags FROM movie_common_tags WHERE movie_id = pMovieID);
 
