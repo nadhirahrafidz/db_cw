@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import MovieStrip from "./MovieStrip";
-import "../../pages/Browse.css";
-import MoviePagination from "../../navigation/MoviePagination";
+import MovieStrip from "../MovieGrid/MovieStrip";
+import "../../pages/Page.css";
+import MoviePagination from "../Navigation/MoviePagination";
 
 function DisplayMovies(props) {
   const [noOfResults, setNoOfResults] = useState(-1);

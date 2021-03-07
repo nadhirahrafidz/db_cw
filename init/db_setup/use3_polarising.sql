@@ -15,7 +15,8 @@ BEGIN
     DECLARE vCurr_date DATETIME; 
     DECLARE C INT;
     DECLARE m INT;
-    
+    DECLARE overall_average_rating_count FLOAT;
+
     -- Polarising formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
     -- Get subset of movies
     IF  pGenre != "" THEN
@@ -54,25 +55,32 @@ BEGIN
     
     SET C = (SELECT STD(subset_rating_info.rating) FROM subset_rating_info );
     SET m = (SELECT min(rating_count) FROM (SELECT * FROM movie_count LIMIT 250) AS top_250);
+    SET overall_average_rating_count = (SELECT AVG(rating_count) FROM movie_count);
     
-    SET pCount = (SELECT COUNT(DISTINCT movie_id) FROM movie_count);
     
     SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
-    SELECT DISTINCT movie_count.movie_id AS movie_id,
-    Movies.title AS title,
-    Movies.movieURL AS movieURL,
-    GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
-    ROUND(((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_std) + ((m / (movie_count.rating_count + m)) * C),1) AS rating
-    FROM movie_count 
-    INNER JOIN Movies
-    ON movie_count.movie_id = Movies.movie_id
-    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-    Genre_Movie.movie_id = movie_count.movie_id
-    GROUP BY movie_count.movie_id
-    ORDER BY rating DESC, title ASC
+    DROP TEMPORARY TABLE IF EXISTS result;
+    CREATE TEMPORARY TABLE result SELECT DISTINCT movie_count.movie_id AS movie_id,
+                                    Movies.title AS title,
+                                    Movies.movieURL AS movieURL,
+                                    GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
+                                    ROUND(((movie_count.rating_count/ (movie_count.rating_count + m)) * movie_count.rating_std) + ((m / (movie_count.rating_count + m)) * C),1) AS rating
+                                    FROM movie_count 
+                                    INNER JOIN Movies
+                                    ON movie_count.movie_id = Movies.movie_id
+                                    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+                                    Genre_Movie.movie_id = movie_count.movie_id
+                                    WHERE movie_count.rating_count > overall_average_rating_count
+                                    GROUP BY movie_count.movie_id
+                                    ORDER BY rating DESC, title ASC;
+
+    SET pCount = (SELECT COUNT(*) FROM result);
+
+    SELECT * FROM result
     LIMIT pLimit
     OFFSET pOffset;
+
     
     DROP TEMPORARY TABLE IF EXISTS subset_rating_info;
     DROP TEMPORARY TABLE IF EXISTS subset_movies;

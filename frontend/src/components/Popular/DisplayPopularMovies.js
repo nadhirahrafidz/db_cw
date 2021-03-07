@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import MovieStrip from "../Browse/MovieStrip";
-import "../../pages/Browse.css";
+import MovieStrip from "../MovieGrid/MovieStrip";
+import "../../pages/Page.css";
 import MoviePagination from "../../navigation/MoviePagination";
+import "./DisplayPopularMovies.css";
 
 function DisplayPopularMovies(props) {
   const [noOfResults, setNoOfResults] = useState(-1);

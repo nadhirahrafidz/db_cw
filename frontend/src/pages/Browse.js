@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import "./Browse.css";
+import "./Page.css";
 import MovieSearchForm from "../Components/Browse/MovieSearchForm";
 import DisplayMovies from "../Components/Browse/DisplayMovies.js";
 import { useLocation } from "react-router-dom";
-import CustomNavbar from "../navigation/CustomNavbar";
+import CustomNavbar from "../Components/Navigation/CustomNavbar";
 
 function Browse() {
   const [search, setSearch] = useState("");

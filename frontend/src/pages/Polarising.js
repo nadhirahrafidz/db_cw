@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import "./Browse.css";
+import "./Page.css";
 import DisplayPopularMovies from "../Components/Popular/DisplayPopularMovies";
 import { useLocation } from "react-router-dom";
 import CustomNavbar from "../navigation/CustomNavbar";
@@ -8,7 +8,7 @@ import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
-const timescaleOptions = [7, 30, 365, 0];
+const timescaleOptions = [30, 365, 0];
 
 function Polarising() {
   const [genre, setGenre] = useState("");
