@@ -128,12 +128,12 @@ BEGIN
                                         LEFT JOIN users_all_ratings AS uar ON uar.director = release_soon.director
                                         GROUP BY release_soon.movie_id, release_soon.director;
 
-    -- based on runtime, asCOUNTption ratings based on the length of the movie (runtime - 30 <= movie_runtime <= runtime + 30)
+    -- based on runtime, asCOUNTption ratings based on the length of the movie (runtime - 10 <= movie_runtime <= runtime + 10)
     DROP TEMPORARY TABLE IF EXISTS tb_runtime_avg;
     CREATE TEMPORARY TABLE tb_runtime_avg SELECT release_soon.movie_id, release_soon.runtime, 
                                             AVG(uar.rating) AS runtime_avg_rating
                                         FROM release_soon
-                                        LEFT JOIN users_all_ratings AS uar ON uar.runtime >= (release_soon.runtime - 30) AND uar.runtime <= (release_soon.runtime + 30)
+                                        LEFT JOIN users_all_ratings AS uar ON uar.runtime >= (release_soon.runtime - 10) AND uar.runtime <= (release_soon.runtime + 10)
                                         GROUP BY release_soon.movie_id, release_soon.runtime;
 
     -- based on tags

@@ -19,7 +19,7 @@ services:
       - ./init/mysql_data:/init/data
     command: --secure-file-priv="init/data"
     ports:
-      - 3406:3306
+      - 3306:3306
     depends_on:
       - pre-processing
 
