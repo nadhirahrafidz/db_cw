@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-  # pre-processing:
-  #   image: nadhirahrafidz98/team_11:preprocess
-  #   volumes:
-  #     - ./init/mysql_data/ml-latest-small:/init/mysql_data/ml-latest-small
-  #     - ./init/mysql_data/personality-isf2018:/init/mysql_data/personality-isf2018
-  #     - ./init/mysql_data/scraped_data:/init/mysql_data/scraped_data
-  #     - ./init/mysql_data/final_data:/init/mysql_data/final_data
+  pre-processing:
+    image: nadhirahrafidz98/team_11:preprocess
+    volumes:
+      - ./init/mysql_data/ml-latest-small:/init/mysql_data/ml-latest-small
+      - ./init/mysql_data/personality-isf2018:/init/mysql_data/personality-isf2018
+      - ./init/mysql_data/scraped_data:/init/mysql_data/scraped_data
+      - ./init/mysql_data/final_data:/init/mysql_data/final_data
 
   mySQLcontainer:
     image: mysql:8.0
@@ -20,8 +20,8 @@ services:
     command: --secure-file-priv="init/data"
     ports:
       - 3306:3306
-    # depends_on:
-    #   - pre-processing
+    depends_on:
+      - pre-processing
 
   websvr_container:
     image: nadhirahrafidz98/team_11:websvr
@@ -46,23 +46,23 @@ services:
     ports:
       - 8080:80
 
-  # frontend:
-  #   image: nadhirahrafidz98/team_11:frontend
-  #   deploy:
-  #     replicas: 1
-  #   volumes:
-  #     - "./frontend:/frontend"
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
+  frontend:
+    image: nadhirahrafidz98/team_11:frontend
+    deploy:
+      replicas: 1
+    volumes:
+      - "./frontend:/frontend"
+    ports:
+      - 3000:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
-  # visualizer:
-  #   image: dockersamples/visualizer
-  #   deploy:
-  #     placement:
-  #       constraints: [node.role == manager]
-  #   ports:
-  #     - 8081:8080
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  visualizer:
+    image: dockersamples/visualizer
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - 8081:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
