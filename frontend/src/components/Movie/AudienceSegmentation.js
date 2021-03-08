@@ -61,21 +61,31 @@ function AudienceSegmentation(props) {
             </div>
           </Fade>
           <Fade>
-            <Col xs={9}>
+            <Col xs={8}>
               <h1>
                 <span className="key-info">{data[type + "WouldLike"]}</span>{" "}
                 users that have <span className="key-info">not</span> yet rated
                 this movie are
-                <span className="very-likely">
-                  <span className="bold"> very </span>likely to enjoy
-                </span>{" "}
-                this movie
+                <span className="likely"> likely to enjoy</span> this movie
               </h1>
               <p className="emoji">&#128513;</p>
             </Col>
           </Fade>
           <Fade>
-            <Col xs={9}>
+            <Col xs={8}>
+              <h1>
+                <span className="key-info">
+                  {data[type + "WouldDislikeDidLike"]}
+                </span>{" "}
+                users that <span className="key-info">usually don't enjoy</span>{" "}
+                similar movies <span className="likely">did enjoy </span>
+                this movie
+              </h1>
+              <p className="emoji">&#129321;</p>
+            </Col>
+          </Fade>
+          <Fade>
+            <Col xs={8}>
               <h1>
                 <span className="key-info">{data[type + "WouldDislike"]}</span>{" "}
                 users that have <span className="key-info">not</span> yet rated
@@ -87,7 +97,7 @@ function AudienceSegmentation(props) {
             </Col>
           </Fade>
           <Fade>
-            <Col xs={9}>
+            <Col xs={8}>
               <h1>
                 <span className="key-info">
                   {data[type + "WouldLikeDidDislike"]}
@@ -97,19 +107,6 @@ function AudienceSegmentation(props) {
                 this movie
               </h1>
               <p className="emoji">&#128546;</p>
-            </Col>
-          </Fade>
-          <Fade>
-            <Col xs={9}>
-              <h1>
-                <span className="key-info">
-                  {data[type + "WouldDislikeDidLike"]}
-                </span>{" "}
-                users that <span className="key-info">usually don't enjoy</span>{" "}
-                similar movies <span className="very-likely">did enjoy </span>
-                this movie
-              </h1>
-              <p className="emoji">&#129321;</p>
             </Col>
           </Fade>
         </Row>

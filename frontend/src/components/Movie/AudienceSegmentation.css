@@ -12,23 +12,12 @@ h1 {
   text-align: center;
 }
 
-.very-likely {
+.likely {
   color: rgb(1, 172, 1);
 }
 
-.likely {
-  color: rgb(1, 136, 1);
-}
-
 .unlikely {
-  color: rgb(136, 1, 1);
-}
-
-.bad {
-  color: rgb(182, 1, 1);
-}
-.bold {
-  font-weight: bold;
+  color: rgb(172, 1, 1);
 }
 
 .ratings-menu2 {

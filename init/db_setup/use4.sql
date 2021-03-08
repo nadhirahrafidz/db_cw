@@ -96,12 +96,13 @@ BEGIN
                                                     
                                                                     
     DROP TEMPORARY TABLE IF EXISTS tag_occurences;
-    CREATE TEMPORARY TABLE tag_occurences SELECT innertable.movie_id, innertable.tag
-                                    FROM (SELECT movie_id, tag, COUNT(tag) AS tag_count
+    CREATE TEMPORARY TABLE tag_occurences SELECT innertable.tag
+                                    FROM (SELECT tag, COUNT(tag) AS tag_count
                                             FROM Tags
-                                            GROUP BY movie_id, tag
+                                            GROUP BY tag
                                             ORDER BY COUNT(tag) DESC)innertable
-                                    WHERE movie_id = pMovieID
+                                    LEFT JOIN Tags ON Tags.tag = innertable.tag
+                                    WHERE Tags.movie_id = pMovieID
                                     GROUP BY movie_id, tag
                                     LIMIT 3;
 
