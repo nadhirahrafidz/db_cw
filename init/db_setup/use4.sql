@@ -68,15 +68,18 @@ BEGIN
                         FROM Genre_Movie 
                         WHERE Genre_Movie.movie_id = pMovieID);
 
+    DROP TEMPORARY TABLE IF EXISTS users_already_rated;
+    CREATE TEMPORARY TABLE users_already_rated Select Ratings.user_id 
+                                                FROM Ratings 
+                                                WHERE Ratings.movie_id = pMovieID;
+
     -- User most likely to enjoy movie based on given other movies of same genres as pMovieID rating above 4
     DROP TEMPORARY TABLE IF EXISTS most_likely_genre;
     CREATE TEMPORARY TABLE most_likely_genre SELECT Ratings.user_id AS user,
                                              AVG(Ratings.rating) AS genre_rating
                                              FROM Ratings LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
-                                             AND Ratings.user_id NOT IN (Select Ratings.user_id 
-                                                                        FROM Ratings 
-                                                                        WHERE Ratings.movie_id = pMovieID)
+                                             AND Ratings.user_id NOT IN (SELECT * FROM users_already_rated)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 4
                                              ORDER BY AVG(Ratings.rating) DESC;
@@ -89,9 +92,7 @@ BEGIN
                                              AVG(Ratings.rating) AS genre_rating
                                              FROM Ratings LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
-                                             AND Ratings.user_id NOT IN (Select Ratings.user_id 
-                                                                        FROM Ratings 
-                                                                        WHERE Ratings.movie_id = pMovieID)
+                                             AND Ratings.user_id NOT IN (SELECT * FROM users_already_rated)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 3 AND AVG(Ratings.rating) < 4
                                              ORDER BY AVG(Ratings.rating) DESC;
