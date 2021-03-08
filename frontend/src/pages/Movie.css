@@ -36,25 +36,9 @@
   background-size: cover;
 }
 
-.fade-in-section {
-  opacity: 0;
-  transform: translateY(20vh);
-  visibility: hidden;
-  transition: opacity 2s ease-out, transform 2s ease-out;
-  will-change: opacity, visibility;
-}
-.fade-in-section.is-visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.ratings-menu {
-  height: 100%;
-  min-height: 75vh;
-}
-
-.rating-container {
-  height: 100%;
+.show-more {
   display: flex;
-  align-content: center;
+  justify-content: center;
+  padding-bottom: 15%;
+  padding-top: 3%;
 }

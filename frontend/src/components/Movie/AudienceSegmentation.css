@@ -1,0 +1,45 @@
+.key-info {
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  color: grey;
+}
+
+.emoji {
+  font-size: 10rem;
+  text-align: center;
+}
+
+.very-likely {
+  color: rgb(1, 172, 1);
+}
+
+.likely {
+  color: rgb(1, 136, 1);
+}
+
+.unlikely {
+  color: rgb(136, 1, 1);
+}
+
+.bad {
+  color: rgb(182, 1, 1);
+}
+.bold {
+  font-weight: bold;
+}
+
+.ratings-menu2 {
+  padding-top: 1px;
+  padding-bottom: 15vh;
+  width: 100%;
+  display: flex;
+  align-content: center;
+}
+
+.rating-container2 {
+  height: 100%;
+  width: 100%;
+}

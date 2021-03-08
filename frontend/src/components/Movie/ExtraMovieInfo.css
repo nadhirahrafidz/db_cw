@@ -1,0 +1,14 @@
+.info-label {
+  text-align: right;
+}
+
+.key-info {
+  color: white;
+  text-align: left;
+}
+
+.extra-movie-info-container {
+  padding-top: 10%;
+  color: grey;
+  justify-content: center;
+}

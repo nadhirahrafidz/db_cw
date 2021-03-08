@@ -63,15 +63,10 @@ CREATE PROCEDURE `use4` (
 BEGIN
     SET SESSION group_concat_max_len = 1000000;
     -- Identifying categories by Ratings and Genre
-
-    -- Get Movie and it's genre as string e.g. Toy Story | (1,2,3)
-    DROP TEMPORARY TABLE IF EXISTS concatenated_genres;
-    CREATE TEMPORARY TABLE concatenated_genres SELECT Genre_Movie.movie_id As movie_id, GROUP_CONCAT(DISTINCT Genre_Movie.genre_id) AS genres
-                                               FROM Genre_Movie
-                                               WHERE Genre_Movie.movie_id = pMovieID -- stop qury having to unecessary group all movies and their genres
-                                               GROUP BY movie_id;
-
-    SET genres_string = (SELECT genres FROM concatenated_genres WHERE movie_id = pMovieID);
+    
+    SET genres_string = (SELECT GROUP_CONCAT(DISTINCT Genre_Movie.genre_id) AS genres 
+                        FROM Genre_Movie 
+                        WHERE Genre_Movie.movie_id = pMovieID);
 
     -- User most likely to enjoy movie based on given other movies of same genres as pMovieID rating above 4
     DROP TEMPORARY TABLE IF EXISTS most_likely_genre;
@@ -79,6 +74,9 @@ BEGIN
                                              AVG(Ratings.rating) AS genre_rating
                                              FROM Ratings LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
+                                             AND Ratings.user_id NOT IN (Select Ratings.user_id 
+                                                                        FROM Ratings 
+                                                                        WHERE Ratings.movie_id = pMovieID)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 4
                                              ORDER BY AVG(Ratings.rating) DESC;
@@ -91,6 +89,9 @@ BEGIN
                                              AVG(Ratings.rating) AS genre_rating
                                              FROM Ratings LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
                                              WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
+                                             AND Ratings.user_id NOT IN (Select Ratings.user_id 
+                                                                        FROM Ratings 
+                                                                        WHERE Ratings.movie_id = pMovieID)
                                              GROUP BY Ratings.user_id
                                              HAVING AVG(Ratings.rating) >= 3 AND AVG(Ratings.rating) < 4
                                              ORDER BY AVG(Ratings.rating) DESC;
@@ -103,6 +104,9 @@ BEGIN
                                                 AVG(Ratings.rating) AS genre_rating
                                                 FROM Ratings LEFT JOIN Genre_Movie ON Ratings.movie_id = Genre_Movie.movie_id
                                                 WHERE FIND_IN_SET(Genre_Movie.genre_id, genres_string)
+                                                AND Ratings.user_id NOT IN (Select Ratings.user_id 
+                                                                        FROM Ratings 
+                                                                        WHERE Ratings.movie_id = pMovieID)
                                                 GROUP BY Ratings.user_id
                                                 HAVING AVG(Ratings.rating) < 3
                                                 ORDER BY AVG(Ratings.rating);

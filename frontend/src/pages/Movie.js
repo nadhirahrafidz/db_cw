@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Row from "react-bootstrap/Row";
-import CustomNavbar from "../navigation/CustomNavbar";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import CustomNavbar from "../navigation/CustomNavbar";
 import Container from "react-bootstrap/Container";
-import Ratings from "../Components/Movie/Ratings";
 import "./Movie.css";
-import Fade from "../Components/Movie/Fade.js";
+import ExtraMovieInfo from "../Components/Movie/ExtraMovieInfo";
+import RatingsBreakdown from "../Components/Movie/RatingsBreakdown";
+import Fade from "../Components/Movie/Fade";
+import AudienceSegmentation from "../Components/Movie/AudienceSegmentation";
 
 function Movie() {
   const { id } = useParams();
   const [movieID, _] = useState(id);
   const [movie, setMovie] = useState();
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     const url =
@@ -58,24 +62,24 @@ function Movie() {
                 <p className="movie-movie-title">{movie.title}</p>
               </Col>
             </Row>
-            <Row>
-              <Col>placeholder</Col>
-            </Row>
+            <Fade>
+              <ExtraMovieInfo movie={movie} />
+            </Fade>
           </Container>
         </div>
-        <div className="ratings-menu">
+        <RatingsBreakdown movieID={movieID} />
+        <div
+          className="show-more"
+          style={{ display: showMore ? "none" : "flex" }}
+        >
           <Fade>
-            <div className="rating-container">
-              <Row style={{ width: "100%", paddingTop: "20px" }}>
-                <Col xs={2}></Col>
-                <Col xs={9}>
-                  <Ratings movieID={movieID} />
-                </Col>
-                <Col xs={2}></Col>
-              </Row>
-            </div>
+            <Button onClick={() => setShowMore(true)}>
+              Show Audience Segmentation
+            </Button>
           </Fade>
         </div>
+
+        <AudienceSegmentation show={showMore} movieID={movieID} />
       </div>
     );
   }

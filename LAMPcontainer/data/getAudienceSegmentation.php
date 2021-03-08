@@ -35,33 +35,22 @@ mysqli_stmt_execute($stmt);
 $result = (mysqli_stmt_get_result($stmt));
 $value = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-// part 2 for the different ratings
-// $movie_query = "CALL use2(?, @p1, @p2)";
-// $movie_stmt = mysqli_prepare($connection, $movie_query);
-// mysqli_stmt_bind_param($movie_stmt, "s", $movie_id);
-// mysqli_stmt_execute($movie_stmt);
+echo json_encode($value);
 
-// $movie_result = (mysqli_stmt_get_result($movie_stmt));
-
-// $query = "SELECT @p1 as genres_string, @p2 as tags_string, @p3 as pCountMostLikely, @p4 as pCountLikely, @p5 as pCountLeastLikely, @p6 as pCountUsuallyHigh, @p7 as pCountUsuallyLow, @p8 as pTagsMostLikely, @p9 as pTagsLeastLikely";
-// $stmt = mysqli_prepare($connection, $query);
-
-// mysqli_stmt_execute($stmt);
-// $result = (mysqli_stmt_get_result($stmt));
-// $secondvalue = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-//part 3 converting the genres to names
-$genre_string = $value[0]["genres_string"];
-$genre_string_split = explode(",", $genre_string);
+// //part 3 converting the genres to names
+// $genre_string = $value[0]["genres_string"];
+// $genre_string_split = explode(",", $genre_string);
 
 
-$movieID_query = 'SELECT genre, genre_id FROM Genres WHERE genre_id >= ' . $genre_string_split[0] . ' AND genre_id <= ' . end($genre_string_split);
+// $movieID_query = 'SELECT genre, genre_id FROM Genres WHERE genre_id >= ' . $genre_string_split[0] . ' AND genre_id <= ' . end($genre_string_split);
 
-$movieID_stmt = mysqli_prepare($connection, $movieID_query);
-mysqli_stmt_execute($movieID_stmt);
+// $movieID_stmt = mysqli_prepare($connection, $movieID_query);
+// mysqli_stmt_execute($movieID_stmt);
 
-$resultinter = (mysqli_stmt_get_result($movieID_stmt));
-$result2 = mysqli_fetch_all($resultinter, MYSQLI_NUM);
+// $resultinter = (mysqli_stmt_get_result($movieID_stmt));
+// $result2 = mysqli_fetch_all($resultinter, MYSQLI_NUM);
+
+
 
 
 
@@ -69,8 +58,8 @@ $result2 = mysqli_fetch_all($resultinter, MYSQLI_NUM);
 
 
 // return statement
-$value['genres'] = $result2;
-echo json_encode($value);
+// $value['genres'] = $result2;
+// echo json_encode($value);
 
 // echo json_encode(mysqli_fetch_all($result, MYSQLI_ASSOC));
 
