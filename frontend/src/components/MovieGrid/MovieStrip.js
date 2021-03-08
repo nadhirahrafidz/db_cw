@@ -4,23 +4,7 @@ import "./MovieStrip.css";
 
 function MovieStrip(props) {
   const genres = !props.movie.stars ? [] : props.movie.genres.split(",");
-  const stars = !props.movie.stars ? (
-    <div />
-  ) : (
-    <div>{"Stars: " + props.movie.stars}</div>
-  );
   const history = useHistory();
-
-  function getTags() {
-    if (!props.movie.tags) {
-      return;
-    }
-    let displayTags =
-      props.movie.tags.length > 50
-        ? props.movie.tags.substring(0, 50) + "..."
-        : props.movie.tags;
-    return <div>{"Tags: " + displayTags}</div>;
-  }
 
   function routeToMovie(movie_id) {
     let path = "/movie/" + movie_id;
@@ -32,30 +16,18 @@ function MovieStrip(props) {
     history.push(path);
   }
 
-  function ratings_stars(rating) {
-    var count = 1;
-    var rating_star = "";
-    while (count < 6) {
-      if (rating >= count) {
-        rating_star = rating_star + "★";
-      } else {
-        rating_star = rating_star + "☆";
-      }
-      count = count + 1;
-    }
-    return rating_star;
-  }
-
   function getGenres() {
     return (
       <p className="genres">
         {genres.map((genre, index) => (
-          <span
-            className="genre-list-item"
-            key={index}
-            onClick={() => routeToGenre(genre)}
-          >
-            {genre.trim()}
+          <span>
+            <span
+              className="genre-list-item"
+              key={index}
+              onClick={() => routeToGenre(genre)}
+            >
+              {genre.trim()}
+            </span>
             {index === genres.length - 1 ? "" : ","}&nbsp;
           </span>
         ))}

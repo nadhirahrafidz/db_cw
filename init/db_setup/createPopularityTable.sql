@@ -1,0 +1,76 @@
+USE `MovieLens`;
+DROP procedure IF EXISTS `createPopularityTable`;
+
+DELIMITER $$
+
+USE `MovieLens`$$
+CREATE PROCEDURE `createPopularityTable`(
+	IN pTimescale INT
+)
+BEGIN
+    DECLARE vStarting_date DATETIME;
+    DECLARE vCurr_date DATETIME;
+    
+    DECLARE C INT;
+    DECLARE m INT;
+    DECLARE overall_average_rating FLOAT;
+    DECLARE overall_average_rating_count FLOAT;
+    DECLARE new_table_name VARCHAR(100);
+    
+    -- Select time period
+    IF pTimescale = 0 THEN 
+        SET vStarting_date = (SELECT MIN(rating_timestamp) FROM Ratings); 
+    ELSE
+        SET vCurr_date = (SELECT MAX(rating_timestamp) FROM Ratings); 
+        SET vStarting_date = (SELECT DATE_SUB(vCurr_date, INTERVAL pTimescale DAY));
+    END IF; 
+    
+    -- Popularity ranking
+    DROP TEMPORARY TABLE IF EXISTS subset_rating_info;
+    CREATE TEMPORARY TABLE subset_rating_info SELECT Ratings.movie_id as movie_id,
+                                    Ratings.rating as rating
+                                    FROM Ratings 
+                                    WHERE Ratings.rating_timestamp >= vStarting_date;
+          
+    DROP TEMPORARY TABLE IF EXISTS movie_count;
+    CREATE TEMPORARY TABLE movie_count SELECT movie_id, 
+                                    COUNT(rating) AS rating_count,
+                                    AVG(rating) AS rating_avg
+                                    FROM subset_rating_info 
+                                    GROUP BY movie_id
+                                    ORDER BY rating_count DESC;
+    
+    SET C = (SELECT AVG(subset_rating_info.rating) FROM subset_rating_info);
+    SET m = (SELECT min(rating_count) FROM (SELECT * FROM movie_count LIMIT 250) AS top_250);
+    SET overall_average_rating = (SELECT AVG(rating_avg) FROM movie_count);
+    SET overall_average_rating_count = (SELECT AVG(rating_count) FROM movie_count);
+    
+    SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+	SET new_table_name = CONCAT("Popular", pTimescale);
+    
+    SET @droptable = CONCAT("DROP TABLE IF EXISTS ", new_table_name, ";");
+    PREPARE stmt FROM @droptable;
+	EXECUTE stmt;
+	DEALLOCATE PREPARE stmt;
+    
+    SET @createtable = CONCAT(
+					" CREATE TABLE ", new_table_name, 
+					" SELECT DISTINCT movie_count.movie_id AS movie_id,
+					ROUND(((movie_count.rating_count/ (movie_count.rating_count + ",m,")) * movie_count.rating_avg) + ((",m," / (movie_count.rating_count + ",m,")) * ",C,"),1) AS rating
+					FROM movie_count
+					INNER JOIN Movies
+					ON movie_count.movie_id = Movies.movie_id
+					WHERE movie_count.rating_avg > ",overall_average_rating,"
+					AND movie_count.rating_count > ",overall_average_rating_count,"
+					GROUP BY movie_count.movie_id
+					ORDER BY rating DESC, title ASC;");
+    PREPARE stmt FROM @createtable;
+	EXECUTE stmt;
+	DEALLOCATE PREPARE stmt;
+
+    DROP TEMPORARY TABLE IF EXISTS subset_rating_info;
+    DROP TEMPORARY TABLE IF EXISTS movie_count;
+END $$
+
+DELIMITER ;
