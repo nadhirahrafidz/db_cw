@@ -39,11 +39,13 @@ function DisplayPopularMovies(props) {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(url);
         setNoOfResults(data.total);
         setMovies(data.movies);
         setDataLoaded(true);
       })
       .catch((err) => {
+        console.log(url);
         console.log(err);
       });
   }, [props.pageNo, props.popularityTimescale]);
