@@ -37,7 +37,7 @@ jobs:
         id: docker_build_frontend
         uses: docker/build-push-action@v2
         with:
-          context: ../../frontend
+          context: ./frontend
           file: ./Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:frontend
@@ -46,7 +46,7 @@ jobs:
         id: docker_build_websvr
         uses: docker/build-push-action@v2
         with:
-          context: ../../LAMPcontainer
+          context: ./LAMPcontainer
           file: ./Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:websvr
@@ -55,7 +55,7 @@ jobs:
         id: docker_build_preprocessing
         uses: docker/build-push-action@v2
         with:
-          context: ../../
+          context: ./
           file: ./Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:preprocess
