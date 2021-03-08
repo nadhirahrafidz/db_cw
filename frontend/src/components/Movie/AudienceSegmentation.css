@@ -43,3 +43,10 @@ h1 {
   height: 100%;
   width: 100%;
 }
+
+.switch-segmentation-type-button {
+  padding-bottom: 5%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}

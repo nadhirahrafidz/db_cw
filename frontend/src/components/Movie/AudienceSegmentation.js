@@ -1,6 +1,7 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Fade from "./Fade";
+import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import "./AudienceSegmentation.css";
@@ -8,6 +9,7 @@ import "./AudienceSegmentation.css";
 function AudienceSegmentation(props) {
   const [data, setData] = useState();
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [type, setType] = useState("g");
 
   useEffect(() => {
     if (!props.show) {
@@ -24,7 +26,6 @@ function AudienceSegmentation(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data[0]);
         setData(data[0]);
         setDataLoaded(true);
       })
@@ -48,15 +49,23 @@ function AudienceSegmentation(props) {
         </div>
       );
     }
+    const buttonText = type === "g" ? "Switch to Tags" : "Switch to Genres";
     return (
       <div className="ratings-menu2">
         <Row className="rating-container2">
           <Fade>
+            <div className="switch-segmentation-type-button">
+              <Button onClick={() => setType(type === "g" ? "t" : "g")}>
+                {buttonText}
+              </Button>
+            </div>
+          </Fade>
+          <Fade>
             <Col xs={9}>
               <h1>
-                <span className="key-info">{data.pCountMostLikely}</span> users
-                that have <span className="key-info">not</span> yet rated this
-                movie are
+                <span className="key-info">{data[type + "WouldLike"]}</span>{" "}
+                users that have <span className="key-info">not</span> yet rated
+                this movie are
                 <span className="very-likely">
                   <span className="bold"> very </span>likely to enjoy
                 </span>{" "}
@@ -68,33 +77,24 @@ function AudienceSegmentation(props) {
           <Fade>
             <Col xs={9}>
               <h1>
-                <span className="key-info">{data.pCountLikely}</span> other
+                <span className="key-info">{data[type + "WouldDislike"]}</span>{" "}
                 users that have <span className="key-info">not</span> yet rated
-                this movie are <span className="likely">likely to enjoy </span>
+                this movie are{" "}
+                <span className="unlikely">unlikely to enjoy </span>
                 this movie
               </h1>
-              <p className="emoji">&#128522;</p>
-            </Col>
-          </Fade>
-          <Fade>
-            <Col xs={9}>
-              <h1>
-                <span className="key-info">{data.pCountLeastLikely}</span> users
-                that have <span className="key-info">not</span> yet rated this
-                movie are <span className="unlikely">unlikely to enjoy </span>
-                this movie
-              </h1>
-
               <p className="emoji">&#128542;</p>
             </Col>
           </Fade>
           <Fade>
             <Col xs={9}>
               <h1>
-                <span className="key-info">{data.pCountUsuallyHigh}</span> users
-                that <span className="key-info">usually enjoy</span> similar
-                movies did <span className="unlikely">not enjoy</span> this
-                movie
+                <span className="key-info">
+                  {data[type + "WouldLikeDidDislike"]}
+                </span>{" "}
+                users that <span className="key-info">usually enjoy</span>{" "}
+                similar movies did <span className="unlikely">not enjoy</span>{" "}
+                this movie
               </h1>
               <p className="emoji">&#128546;</p>
             </Col>
@@ -102,8 +102,10 @@ function AudienceSegmentation(props) {
           <Fade>
             <Col xs={9}>
               <h1>
-                <span className="key-info">{data.pCountUsuallyLow}</span> users
-                that <span className="key-info">usually don't enjoy</span>{" "}
+                <span className="key-info">
+                  {data[type + "WouldDislikeDidLike"]}
+                </span>{" "}
+                users that <span className="key-info">usually don't enjoy</span>{" "}
                 similar movies <span className="very-likely">did enjoy </span>
                 this movie
               </h1>
