@@ -38,7 +38,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./frontend
-          file: ./Dockerfile
+          file: ./frontend/Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:frontend
       
@@ -47,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./LAMPcontainer
-          file: ./Dockerfile
+          file: ./LAMPcontainer/Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:websvr
 
