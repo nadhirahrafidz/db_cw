@@ -5,7 +5,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import MovieStrip from "../MovieGrid/MovieStrip";
 import "../../pages/Page.css";
-import MoviePagination from "../../navigation/MoviePagination";
+import MoviePagination from "../Navigation/MoviePagination";
 import "./DisplayPopularMovies.css";
 
 function DisplayPopularMovies(props) {

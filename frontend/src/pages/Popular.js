@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./Page.css";
 import DisplayPopularMovies from "../Components/Popular/DisplayPopularMovies";
 import { useLocation } from "react-router-dom";
-import CustomNavbar from "../navigation/CustomNavbar";
+import CustomNavbar from "../Components/Navigation/CustomNavbar";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
