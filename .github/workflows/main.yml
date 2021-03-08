@@ -50,15 +50,6 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: nadhirahrafidz98/team_11:websvr
-      
-      - name: Build and push preprocessing
-        id: docker_build_preprocessing
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          push: true
-          tags: nadhirahrafidz98/team_11:preprocess
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
