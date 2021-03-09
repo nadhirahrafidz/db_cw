@@ -121,14 +121,11 @@ BEGIN
     SET gPercWouldDislikeDidLike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldDislikeDidLike IS NULL, 0, gWouldDislikeDidLike)) / gCountUsersRated ) * 100));
                                                                     
     DROP TEMPORARY TABLE IF EXISTS tag_occurences;
-    CREATE TEMPORARY TABLE tag_occurences SELECT innertable.tag
-                                    FROM (SELECT tag, COUNT(tag) AS tag_count
-                                            FROM Tags
-                                            GROUP BY tag
-                                            ORDER BY COUNT(tag) DESC)innertable
-                                    LEFT JOIN Tags ON Tags.tag = innertable.tag
+    CREATE TEMPORARY TABLE tag_occurences SELECT Common_Tags.tag
+                                    FROM Common_Tags
+                                    LEFT JOIN Tags ON Tags.tag = Common_Tags.tag
                                     WHERE Tags.movie_id = pMovieID
-                                    GROUP BY movie_id, tag
+                                    GROUP BY movie_id, Common_Tags.tag
                                     LIMIT 3;
 
     SET tags_string = (SELECT GROUP_CONCAT(DISTINCT tag SEPARATOR ',') FROM tag_occurences);

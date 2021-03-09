@@ -9,6 +9,7 @@ import "./AudienceSegmentation.css";
 function AudienceSegmentation(props) {
   const [data, setData] = useState();
   const [dataLoaded, setDataLoaded] = useState(false);
+  // g means genre, t means tags
   const [type, setType] = useState("g");
 
   useEffect(() => {
@@ -51,14 +52,25 @@ function AudienceSegmentation(props) {
     }
     const buttonText = type === "g" ? "Switch to Tags" : "Switch to Genres";
     return (
-      <div className="ratings-menu2">
-        <Row className="rating-container2">
+      <div className="audience-segmentation">
+        <Row className="audience-segmentation-container">
           <Fade>
             <div className="switch-segmentation-type-button">
               <Button onClick={() => setType(type === "g" ? "t" : "g")}>
                 {buttonText}
               </Button>
             </div>
+          </Fade>
+          <Fade>
+            <Col xs={8} style={{ paddingBottom: "3%" }}>
+              <h1>
+                Based on this movie's
+                <span className="key-info">
+                  {type === "g" ? " Genres" : " Tags"}
+                </span>
+                :
+              </h1>
+            </Col>
           </Fade>
           <Fade>
             <Col xs={8}>
@@ -77,7 +89,8 @@ function AudienceSegmentation(props) {
                 <span className="key-info">
                   {data[type + "WouldDislikeDidLike"]}
                 </span>{" "}
-                users that <span className="key-info">usually don't enjoy</span>{" "}
+                users that
+                <span className="key-info"> usually don't enjoy </span>
                 similar movies <span className="likely">did enjoy </span>
                 this movie
               </h1>

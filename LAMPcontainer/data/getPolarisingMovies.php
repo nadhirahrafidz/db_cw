@@ -13,9 +13,9 @@ $connection = mysqli_connect($host, $user, $password,$dbname)
 $timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
 $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 $limit = 12;
-$genre = isset($_GET['genre']) ? $_GET['genre'] : "";
+$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
 
-$movieID_query = 'CALL use3_polarising(?, ?, ?, ?, @pCount)';
+$movieID_query = 'CALL use3(2, ?, ?, ?, ?, @pCount)';
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 mysqli_stmt_bind_param($movieID_stmt, "iiis", $timescale, $offset, $limit, $genre);
 mysqli_stmt_execute($movieID_stmt);

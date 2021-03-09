@@ -22,6 +22,9 @@ function DisplayPopularMovies(props) {
       offset: (props.pageNo - 1) * 12,
       timescale: props.popularityTimescale,
     };
+    if (props.genre !== "") {
+      params.genre = props.genre;
+    }
     var url;
     if (props.type === "popular") {
       url =
@@ -31,6 +34,7 @@ function DisplayPopularMovies(props) {
         "http://localhost/getPolarisingMovies.php?" +
         new URLSearchParams(params);
     }
+    console.log(url);
     fetch(url, {
       method: "GET",
       headers: {
@@ -44,9 +48,10 @@ function DisplayPopularMovies(props) {
         setDataLoaded(true);
       })
       .catch((err) => {
+        console.log(url);
         console.log(err);
       });
-  }, [props.pageNo, props.popularityTimescale]);
+  }, [props.pageNo, props.popularityTimescale, props.genre]);
 
   var invalidPageNo = true;
   if (dataLoaded && props.pageNo > 0) {

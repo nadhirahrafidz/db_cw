@@ -5,6 +5,7 @@ import NavItem from "react-bootstrap/esm/NavItem";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import "./CustomNavbar.css";
 
 function CustomNavbar() {
   return (

@@ -12,6 +12,7 @@ const sortingOptions = [
   "Name (ascending)",
   "Name (descending)",
   "Rating",
+  "Recently Added",
 ];
 
 function MovieSearchForm(props) {
