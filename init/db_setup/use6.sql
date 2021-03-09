@@ -32,14 +32,21 @@ DROP procedure IF EXISTS `use6`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE PROCEDURE `use6` (IN pmovie_id INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `use6`(IN pmovie_id INT)
 BEGIN
--- Result Vars
+    -- Result Vars
     DECLARE res_op FLOAT;
     DECLARE res_ag FLOAT;
     DECLARE res_es FLOAT;
     DECLARE res_ex FLOAT;
     DECLARE res_con FLOAT;
+    
+    -- Whole table averages 
+    DECLARE ave_op FLOAT;
+    DECLARE ave_ag FLOAT;
+    DECLARE ave_es FLOAT;
+    DECLARE ave_ex FLOAT;
+    DECLARE ave_con FLOAT;
     
     -- J score and weight vars 
     DECLARE done INTEGER DEFAULT 0;
@@ -54,6 +61,12 @@ BEGIN
             FROM Tags 
             INNER JOIN tags_tbr ON LOWER(Tags.tag) = LOWER(tags_tbr.tag)
             WHERE movie_id != pmovie_id;
+    
+    SET ave_op = (SELECT AVG(openness) FROM Personality); 
+    SET ave_ag = (SELECT AVG(agreeableness) FROM Personality); 
+    SET ave_es = (SELECT AVG(emotional_stability) FROM Personality); 
+    SET ave_ex = (SELECT AVG(extraversion) FROM Personality); 
+    SET ave_con = (SELECT AVG(conscientiousness) FROM Personality); 
     
     DROP TABLE IF EXISTS J_score;
     CREATE TABLE J_score(similar_movie_id INT,
@@ -283,7 +296,11 @@ BEGIN
     INNER JOIN movie_weighted_score
     ON con_prob.movie_id = movie_weighted_score.movie_id) AS aux);
     
-    SELECT res_op AS openness, res_ag As agree, res_con AS con, res_ex AS extraver, res_es AS emotional_stab;
+    SELECT (res_op - ave_op) AS openness, 
+    (res_ag - ave_ag) As agree, 
+    (res_con - ave_con) AS con, 
+    (res_ex - ave_ex) AS extraver, 
+    (res_es - ave_es) AS emotional_stab;
     
     DROP TABLE IF EXISTS J_score;
 END$$
