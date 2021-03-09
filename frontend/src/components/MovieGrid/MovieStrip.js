@@ -20,10 +20,9 @@ function MovieStrip(props) {
     return (
       <p className="genres">
         {genres.map((genre, index) => (
-          <span>
+          <span key={index}>
             <span
               className="genre-list-item"
-              key={index}
               onClick={() => routeToGenre(genre)}
             >
               {genre.trim()}

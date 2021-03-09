@@ -1,19 +1,25 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use3_popular`;
+DROP procedure IF EXISTS `use3`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use3_popular`(
+CREATE DEFINER=`root`@`%` PROCEDURE `use3`(
+	IN requestType INT,
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 
     IN pGenre VARCHAR(100),
     OUT pCount INT)
 BEGIN
-
-	SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+    set @tableType = CASE requestType
+                      when 1 then "Popular"
+                      when 2 then "Polarising"
+                      ELSE "Popular"
+                      END;
     
-	set @tablename = CONCAT("Popular",pTimescale);
+	SET @tablename = CONCAT(@tableType, pTimescale);
+    
+    SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
     DROP TEMPORARY TABLE IF EXISTS result;
     SET @createtable = CONCAT(
