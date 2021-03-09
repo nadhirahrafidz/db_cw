@@ -21,6 +21,11 @@ BEGIN
     
     SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
+    set @where_clause = CASE pGenre
+                      when "" then ""
+                      ELSE CONCAT(" WHERE Genres.genre = '",pGenre, "'")
+                      END;
+
     DROP TEMPORARY TABLE IF EXISTS result;
     SET @createtable = CONCAT(
 					"CREATE TEMPORARY TABLE result 
@@ -33,8 +38,9 @@ BEGIN
 						LEFT JOIN Movies
 						ON ",@tablename,".movie_id = Movies.movie_id
 						LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-						Genre_Movie.movie_id = ",@tablename,".movie_id
-						GROUP BY ",@tablename,".movie_id
+						Genre_Movie.movie_id = ",@tablename,".movie_id",
+                        @where_clause,
+						" GROUP BY ",@tablename,".movie_id
 						ORDER BY rating DESC, title ASC;");
 
     PREPARE stmt FROM @createtable;

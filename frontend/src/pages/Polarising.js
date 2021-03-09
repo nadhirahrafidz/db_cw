@@ -7,6 +7,7 @@ import CustomNavbar from "../Components/Navigation/CustomNavbar";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import GenreSelector from "../Components/Popular/GenreSelector";
 
 const timescaleOptions = [30, 365, 0];
 
@@ -14,27 +15,48 @@ function Polarising() {
   const [genre, setGenre] = useState("");
   const [pageNo, setPageNo] = useState(-1);
   const [timescale, setTimescale] = useState(30);
+  const [labels, setLabels] = useState();
   let location = useLocation();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const pathPageNo =
       urlParams.get("page") === null ? 1 : urlParams.get("page");
-    const pathGenres =
-      urlParams.get("genre") === null ? [] : urlParams.get("genre").split(",");
-    if (pageNo != pathPageNo || genre != pathGenres) {
+    // const pathGenres =
+    //   urlParams.get("genre") === null ? "" : urlParams.get("genre");
+    if (
+      pageNo != pathPageNo
+      // || genre != pathGenres
+    ) {
       setPageNo(pathPageNo);
-      setGenre(pathGenres);
+      // setGenre(pathGenres);
     }
   }, [location]);
+
+  useEffect(() => {
+    const url = "http://localhost/getAllGenres.php?";
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setLabels(data.map((data) => data[0].trim()));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   function pushURL(newGenres, newPageNo) {
     var params = {
       page: newPageNo,
     };
-    if (newGenres.length > 0) {
-      params.genres = newGenres.join();
-    }
+    // if (newGenres.length > 0) {
+    //   params.genres = newGenres.join();
+    // }
     window.history.pushState(
       "pageNumber",
       "Title",
@@ -67,11 +89,16 @@ function Polarising() {
           ))}
         </Col>
       </Row>
+      <Row style={{ justifyContent: "center" }}>
+        <Col xs={8}>
+          <GenreSelector labels={labels} setGenre={setGenre} />
+        </Col>
+      </Row>
       <div className="browse-movies">
         <DisplayPopularMovies
           type="polarising"
           pageChange={pageChange}
-          genres={genre}
+          genre={genre}
           popularityTimescale={timescale}
           pageNo={pageNo}
         />

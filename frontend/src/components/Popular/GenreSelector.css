@@ -1,0 +1,13 @@
+.genre-button {
+  padding-right: 1%;
+  padding-bottom: 2%;
+}
+
+.genre-button-group {
+  display: flex;
+  justify-content: center;
+}
+
+.clear-genre-button {
+  padding-left: 5%;
+}

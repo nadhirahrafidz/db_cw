@@ -3,7 +3,7 @@ import Col from "react-bootstrap/Col";
 import "./MovieStrip.css";
 
 function MovieStrip(props) {
-  const genres = !props.movie.stars ? [] : props.movie.genres.split(",");
+  const genres = !props.movie.genres ? [] : props.movie.genres.split(",");
   const history = useHistory();
 
   function routeToMovie(movie_id) {

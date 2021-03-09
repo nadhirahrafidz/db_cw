@@ -62,6 +62,17 @@ function AudienceSegmentation(props) {
             </div>
           </Fade>
           <Fade>
+            <Col xs={8} style={{ paddingBottom: "3%" }}>
+              <h1>
+                Based on this movie's
+                <span className="key-info">
+                  {type === "g" ? " Genres" : " Tags"}
+                </span>
+                :
+              </h1>
+            </Col>
+          </Fade>
+          <Fade>
             <Col xs={8}>
               <h1>
                 <span className="key-info">{data[type + "WouldLike"]}</span>{" "}
