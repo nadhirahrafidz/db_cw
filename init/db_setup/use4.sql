@@ -18,8 +18,8 @@ CREATE PROCEDURE `use4` (
 BEGIN
     DECLARE genres_string VARCHAR(255);
     DECLARE tags_string VARCHAR(255);
-    DECLARE gCountUsersRated INT;
-    DECLARE tCountUsersRated INT;
+    DECLARE gCountUsersRatedSimilar INT;
+    DECLARE tCountUsersRatedSimilar INT;
     DECLARE gWouldLike INT;
     DECLARE gWouldLikeDidLike INT;
     DECLARE gWouldLikeDidDislike INT;
@@ -33,18 +33,10 @@ BEGIN
     DECLARE tWouldDislikeDidDislike INT;
     DECLARE tWouldDislikeDidLike INT;
 
-    DECLARE gPercWouldlike INT;
-    DECLARE gPercWouldLikeDidLike INT;
-    DECLARE gPercWouldLikeDidDislike INT;
-    DECLARE gPercWouldDislike INT;
-    DECLARE gPercWouldDislikeDidDislike INT;
-    DECLARE gPercWouldDislikeDidLike INT;
-    DECLARE tPercWouldLike INT;
-    DECLARE tPercWouldLikeDidLike INT;
-    DECLARE tPercWouldLikeDidDislike INT;
-    DECLARE tPercWouldDislike INT;
-    DECLARE tPercWouldDislikeDidDislike INT;
-    DECLARE tPercWouldDislikeDidLike INT;
+    DECLARE gHaveRated INT;
+    DECLARE tHaveRated INT;
+    DECLARE gHaveNotRated INT;
+    DECLARE tHaveNotRated INT;
 
     SET SESSION group_concat_max_len = 1000000;
     -- Identifying categories by Ratings and Genre
@@ -71,7 +63,7 @@ BEGIN
                                                     GROUP BY Ratings.user_id
                                                     ORDER BY AVG(Ratings.rating) DESC;
 
-    SET gCountUsersRated = (SELECT COUNT(*) FROM similar_genre_ratings);    
+    SET gCountUsersRatedSimilar = (SELECT COUNT(*) FROM similar_genre_ratings);    
                                         
     DROP TEMPORARY TABLE IF EXISTS like_genre_users;
     CREATE TEMPORARY TABLE like_genre_users SELECT user_id, genre_rating FROM similar_genre_ratings
@@ -91,11 +83,12 @@ BEGIN
                                                     WHERE users_already_rated.rating < 2.5));
 
     
-    SET gPercWouldlike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldLike IS NULL, 0,gWouldLike))  / gCountUsersRated ) * 100));
+    SET gHaveRated = (SELECT COUNT(user_id) 
+                        FROM similar_genre_ratings 
+                        WHERE user_id IN (SELECT users_already_rated.user_id 
+                                            FROM users_already_rated ));    
 
-    SET gPercWouldLikeDidLike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldLikeDidLike IS NULL, 0, gWouldLikeDidLike)) / gCountUsersRated) * 100));
-                                        
-    SET gPercWouldLikeDidDislike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldLikeDidDislike IS NULL, 0, gWouldLikeDidDislike)) / gCountUsersRated) * 100));
+    SET gHaveNotRated = (gCountUsersRatedSimilar - gHaveRated);
 
     DROP TEMPORARY TABLE IF EXISTS dislike_genre_users;
     CREATE TEMPORARY TABLE dislike_genre_users SELECT user_id, genre_rating FROM similar_genre_ratings
@@ -113,12 +106,6 @@ BEGIN
                                 WHERE user_id IN (SELECT users_already_rated.user_id 
                                                     FROM users_already_rated 
                                                     WHERE users_already_rated.rating >= 3));
-
-    SET gPercWouldDislike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldDislike IS NULL, 0, gWouldDislike)) / gCountUsersRated ) * 100));
-
-    SET gPercWouldDislikeDidDislike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldDislikeDidDislike IS NULL, 0, gWouldDislikeDidDislike))  / gCountUsersRated ) * 100));
-                                        
-    SET gPercWouldDislikeDidLike = (IF (gCountUsersRated = 0 OR gCountUsersRated IS NULL, 0, ((IF(gWouldDislikeDidLike IS NULL, 0, gWouldDislikeDidLike)) / gCountUsersRated ) * 100));
                                                                     
     DROP TEMPORARY TABLE IF EXISTS tag_occurences;
     CREATE TEMPORARY TABLE tag_occurences SELECT Common_Tags.tag
@@ -129,7 +116,6 @@ BEGIN
                                     LIMIT 3;
 
     SET tags_string = (SELECT GROUP_CONCAT(DISTINCT tag SEPARATOR ',') FROM tag_occurences);
-
                                                 
     DROP TEMPORARY TABLE IF EXISTS similar_tag_ratings;
     CREATE TEMPORARY TABLE similar_tag_ratings SELECT Ratings.user_id AS user_id,
@@ -140,8 +126,15 @@ BEGIN
                                                     GROUP BY Ratings.user_id
                                                     ORDER BY AVG(Ratings.rating) DESC;
 
-    SET tCountUsersRated = (SELECT COUNT(*) FROM similar_tag_ratings);    
+    SET tCountUsersRatedSimilar = (SELECT COUNT(*) FROM similar_tag_ratings);    
+
+    SET tHaveRated = (SELECT COUNT(user_id) 
+                        FROM similar_tag_ratings 
+                        WHERE user_id IN (SELECT users_already_rated.user_id 
+                                            FROM users_already_rated));
                                         
+    SET tHaveNotRated = (tCountUsersRatedSimilar - tHaveRated);
+
     DROP TEMPORARY TABLE IF EXISTS like_tag_users;
     CREATE TEMPORARY TABLE like_tag_users SELECT user_id, tag_rating FROM similar_tag_ratings
                                         WHERE tag_rating >= 3;
@@ -158,13 +151,6 @@ BEGIN
                                 WHERE user_id IN (SELECT users_already_rated.user_id 
                                                     FROM users_already_rated 
                                                     WHERE users_already_rated.rating < 2.5));
-
-    SET tPercWouldlike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldLike IS NULL, 0, tWouldLike)) / tCountUsersRated ) * 100));
-
-    SET tPercWouldLikeDidLike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldLikeDidLike IS NULL, 0, tWouldLikeDidLike)) / tCountUsersRated) * 100));
-                                        
-    SET tPercWouldLikeDidDislike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldLikeDidDislike IS NULL, 0, tWouldLikeDidDislike)) / tCountUsersRated) * 100));
-                                        
 
     DROP TEMPORARY TABLE IF EXISTS dislike_tag_users;
     CREATE TEMPORARY TABLE dislike_tag_users SELECT user_id, tag_rating FROM similar_tag_ratings
@@ -183,17 +169,10 @@ BEGIN
                                                     FROM users_already_rated 
                                                     WHERE users_already_rated.rating >= 3));
 
-    SET tPercWouldDislike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldDislike IS NULL, 0,tWouldDislike)) / tCountUsersRated ) * 100));
-
-    SET tPercWouldDislikeDidDislike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldDislikeDidDislike IS NULL, 0, tWouldDislikeDidDislike)) / tCountUsersRated ) * 100));
-                                        
-    SET tPercWouldDislikeDidLike = (IF (tCountUsersRated = 0 OR tCountUsersRated IS NULL, 0, ((IF(tWouldDislikeDidLike IS NULL, 0, tWouldDislikeDidLike)) / tCountUsersRated ) * 100));
                                                   
     SELECT gWouldLike, gWouldLikeDidLike, gWouldLikeDidDislike, gWouldDislike, gWouldDislikeDidDislike, 
     gWouldDislikeDidLike, tWouldLike, tWouldLikeDidLike, tWouldLikeDidDislike, tWouldDislike, tWouldDislikeDidDislike 
-    , tWouldDislikeDidLike, gCountUsersRated, tCountUsersRated, gPercWouldLike, gPercWouldLikeDidLike, gPercWouldLikeDidDislike, 
-    gPercWouldDislike, gPercWouldDislikeDidDislike, gPercWouldDislikeDidLike, tPercWouldLike, tPercWouldLikeDidLike, tPercWouldDislike,
-    tPercWouldDislikeDidDislike, tPercWouldDislikeDidLike;
+    , tWouldDislikeDidLike, gCountUsersRatedSimilar, tCountUsersRatedSimilar, gHaveRated, gHaveNotRated, tHaveRated, tHaveNotRated;
 
 END$$
 

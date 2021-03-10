@@ -34,7 +34,6 @@ function DisplayPopularMovies(props) {
         "http://localhost/getPolarisingMovies.php?" +
         new URLSearchParams(params);
     }
-    console.log(url);
     fetch(url, {
       method: "GET",
       headers: {
