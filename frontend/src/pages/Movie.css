@@ -7,6 +7,7 @@
 
 .content {
   margin-top: 50vh;
+  color: grey;
   min-width: 100%;
 }
 
@@ -16,7 +17,6 @@
 }
 
 .movie-movie-title {
-  color: #a6aaac;
   height: 100%;
   font-size: 35px;
   margin-bottom: 0;
@@ -36,19 +36,9 @@
   background-size: cover;
 }
 
-.fade-in-section {
-  opacity: 0;
-  transform: translateY(20vh);
-  visibility: hidden;
-  transition: opacity 2s ease-out, transform 2s ease-out;
-  will-change: opacity, visibility;
-}
-.fade-in-section.is-visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.ratings-menu {
-  height: 100%;
-  min-height: 50vh;
+.show-more {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 15%;
+  padding-top: 3%;
 }

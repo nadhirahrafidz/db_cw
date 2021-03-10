@@ -10,16 +10,19 @@ CREATE PROCEDURE `getMoviesInfo` (
 
 BEGIN
 set @order_by = CASE order_by_paramater
-                      when 0 then "Movies.movie_id ASC"
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
                       when 3 then "rating DESC"
+                      WHEN 4 then "Movies.movie_id DESC"
+                      ELSE "Movies.movie_id ASC"
                       END;
 
 set @SQLstatement = CONCAT("SELECT 
   DISTINCT Movies.movie_id, 
   Movies.title, 
   Movies.movieURL,
+  Movies.director,
+  Movies.runtime,
   GROUP_CONCAT(DISTINCT Stars.star_name SEPARATOR', ') AS stars,
   GROUP_CONCAT(DISTINCT Genres.genre) AS genres,
   ROUND(AVG(Ratings.rating),1) AS rating,

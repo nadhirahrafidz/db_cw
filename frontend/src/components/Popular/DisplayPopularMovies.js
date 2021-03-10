@@ -6,8 +6,9 @@ import Row from "react-bootstrap/Row";
 import MovieStrip from "../MovieGrid/MovieStrip";
 import "../../pages/Page.css";
 import MoviePagination from "../Navigation/MoviePagination";
+import "./DisplayPopularMovies.css";
 
-function DisplayMovies(props) {
+function DisplayPopularMovies(props) {
   const [noOfResults, setNoOfResults] = useState(-1);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -19,17 +20,21 @@ function DisplayMovies(props) {
     setDataLoaded(false);
     var params = {
       offset: (props.pageNo - 1) * 12,
+      timescale: props.popularityTimescale,
     };
-    if (props.search !== "") {
-      params.search = props.search;
+    if (props.genre !== "") {
+      params.genre = props.genre;
     }
-    if (props.genres.length > 0) {
-      params.genres = JSON.stringify(props.genres);
+    var url;
+    if (props.type === "popular") {
+      url =
+        "http://localhost/getPopularMovies.php?" + new URLSearchParams(params);
+    } else if (props.type === "polarising") {
+      url =
+        "http://localhost/getPolarisingMovies.php?" +
+        new URLSearchParams(params);
     }
-    if (props.sortOption !== 0) {
-      params.sort = props.sortOption;
-    }
-    const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
+    console.log(url);
     fetch(url, {
       method: "GET",
       headers: {
@@ -43,9 +48,10 @@ function DisplayMovies(props) {
         setDataLoaded(true);
       })
       .catch((err) => {
+        console.log(url);
         console.log(err);
       });
-  }, [props.genres, props.search, props.pageNo]);
+  }, [props.pageNo, props.popularityTimescale, props.genre]);
 
   var invalidPageNo = true;
   if (dataLoaded && props.pageNo > 0) {
@@ -87,4 +93,4 @@ function DisplayMovies(props) {
   }
 }
 
-export default DisplayMovies;
+export default DisplayPopularMovies;

@@ -42,7 +42,6 @@ function Rating(props) {
   }, []);
 
   if (data) {
-    console.log(data.summary.average);
     return (
       <Container className="ratings-breakdown">
         <Row className="rating-summary">

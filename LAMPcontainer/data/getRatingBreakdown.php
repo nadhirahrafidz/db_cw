@@ -9,7 +9,6 @@ $dbname = "MovieLens";
 $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
-
 $movie_id;
 if (isset($_GET['movie_id'])) {
   $movie_id = $_GET['movie_id'];

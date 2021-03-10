@@ -16,6 +16,7 @@ set @order_by = CASE order_by_parameter
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
                       when 3 then "rating DESC"
+                      WHEN 4 then "Movies.movie_id DESC"
                       ELSE "Movies.movie_id ASC"
                       END;
 

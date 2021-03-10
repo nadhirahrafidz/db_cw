@@ -5,6 +5,7 @@ import NavItem from "react-bootstrap/esm/NavItem";
 import FormControl from "react-bootstrap/FormControl";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import "./CustomNavbar.css";
 
 function CustomNavbar() {
   return (
@@ -20,6 +21,12 @@ function CustomNavbar() {
           </LinkContainer>
           <LinkContainer className="nav-link-text" to="/browse">
             <NavItem>View movies</NavItem>
+          </LinkContainer>
+          <LinkContainer className="nav-link-text" to="/popular">
+            <NavItem>Popular</NavItem>
+          </LinkContainer>
+          <LinkContainer className="nav-link-text" to="/polarising">
+            <NavItem>Polarising</NavItem>
           </LinkContainer>
         </Nav>
         <Form inline action={window.location.origin + "/browse"}>
