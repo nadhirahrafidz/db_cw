@@ -38,6 +38,7 @@ h1 {
   width: 100%;
   display: flex;
   align-content: center;
+  flex-direction: column;
 }
 
 .audience-segmentation-container {
@@ -50,4 +51,25 @@ h1 {
   display: flex;
   justify-content: center;
   flex-direction: column;
+}
+
+.table {
+  width: fit-content !important;
+}
+
+.table-container {
+  overflow: auto;
+  max-height: 30vh;
+  width: fit-content;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: #343a40;
+}
+
+.user-data-link {
+  color: blue;
+  cursor: pointer;
 }

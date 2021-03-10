@@ -11,7 +11,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `use3`(
     IN pGenre VARCHAR(100),
     OUT pCount INT)
 BEGIN
-    set @tableType = CASE requestType
+    SET @tableType = CASE requestType
                       when 1 then "Popular"
                       when 2 then "Polarising"
                       ELSE "Popular"

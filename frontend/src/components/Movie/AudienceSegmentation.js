@@ -1,17 +1,20 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Table from "react-bootstrap/Table";
 import Container from "react-bootstrap/Container";
 import Fade from "./Fade";
 import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import "./AudienceSegmentation.css";
+import UserTable from "./UserTable";
 
 function AudienceSegmentation(props) {
   const [data, setData] = useState();
   const [dataLoaded, setDataLoaded] = useState(false);
   // g means genre, t means tags
   const [type, setType] = useState("g");
+  const [tableData, setTableData] = useState();
 
   useEffect(() => {
     if (!props.show) {
@@ -28,7 +31,7 @@ function AudienceSegmentation(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setData(data[0]);
+        setData(data);
         setDataLoaded(true);
       })
       .catch((err) => {
@@ -58,11 +61,11 @@ function AudienceSegmentation(props) {
         </div>
       );
     }
-    console.log(data);
+    const dataOverview = data.overview;
     const buttonText = type === "g" ? "Switch to Tags" : "Switch to Genres";
     return (
       <div className="audience-segmentation">
-        <Row className="audience-segmentation-container">
+        <Container className="audience-segmentation-container">
           <Fade>
             <div className="switch-segmentation-type-button">
               <Button onClick={() => setType(type === "g" ? "t" : "g")}>
@@ -77,9 +80,15 @@ function AudienceSegmentation(props) {
                 <h1>
                   There are{" "}
                   <span className="key-info">
-                    {data[type + "CountUsersRatedSimilar"]}
+                    {dataOverview[type + "CountUsersRatedSimilar"]}
                   </span>{" "}
-                  users in total that can be segmented based on this movie's
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["similar_genre_ratings"])}
+                  >
+                    {"users "}
+                  </span>
+                  in total that can be segmented based on this movie's
                   <span className="key-info">
                     {type === "g" ? " Genres" : " Tags"}
                   </span>
@@ -90,18 +99,32 @@ function AudienceSegmentation(props) {
               <Col xs={4} className="audience-sub-heading">
                 <h1>
                   <span className="key-info">
-                    {data[type + "HaveNotRated"]}
+                    {dataOverview[type + "HaveNotRated"]}
                   </span>{" "}
-                  users have <span className="key-info"> not </span> yet rated
-                  this movie.
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["users_not_rated"])}
+                  >
+                    {"users "}
+                  </span>
+                  have <span className="key-info"> not </span> yet rated this
+                  movie.
                 </h1>
               </Col>
               <Col xs={1} />
               <Col xs={4} className="audience-sub-heading">
                 <h1>
-                  <span className="key-info">{data[type + "HaveRated"]}</span>{" "}
-                  users have <span className="key-info"> already </span> rated
-                  this movie.
+                  <span className="key-info">
+                    {dataOverview[type + "HaveRated"]}
+                  </span>{" "}
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["users_already_rated"])}
+                  >
+                    {"users "}
+                  </span>
+                  have <span className="key-info"> already </span> rated this
+                  movie.
                 </h1>
               </Col>
             </Row>
@@ -113,12 +136,21 @@ function AudienceSegmentation(props) {
                   <h1>
                     <span className="key-info">
                       {percentage(
-                        data[type + "WouldLike"],
-                        data[type + "HaveNotRated"]
+                        dataOverview[type + "WouldLike"],
+                        dataOverview[type + "HaveNotRated"]
                       )}
                     </span>
-                    of users that have <span className="key-info">not</span> yet
-                    rated this movie are
+                    of{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldLikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that have <span className="key-info">not</span> yet rated
+                    this movie are
                     <span className="likely"> likely to enjoy</span> this movie
                   </h1>
                 </Col>
@@ -127,11 +159,19 @@ function AudienceSegmentation(props) {
                   <h1>
                     <span className="key-info">
                       {percentage(
-                        data[type + "WouldDislikeDidLike"],
-                        data[type + "HaveRated"]
+                        dataOverview[type + "WouldDislikeDidLike"],
+                        dataOverview[type + "HaveRated"]
                       )}
                     </span>{" "}
-                    users that
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldDislikeDidLikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that
                     <span className="key-info"> usually don't enjoy </span>
                     similar movies <span className="likely">did enjoy </span>
                     this movie
@@ -156,12 +196,20 @@ function AudienceSegmentation(props) {
                   <h1>
                     <span className="key-info">
                       {percentage(
-                        data[type + "WouldDislike"],
-                        data[type + "HaveNotRated"]
+                        dataOverview[type + "WouldDislike"],
+                        dataOverview[type + "HaveNotRated"]
                       )}
                     </span>{" "}
-                    users that have <span className="key-info">not</span> yet
-                    rated this movie are{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldDislikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that have <span className="key-info">not</span> yet rated
+                    this movie are{" "}
                     <span className="unlikely">unlikely to enjoy </span>
                     this movie
                   </h1>
@@ -171,13 +219,21 @@ function AudienceSegmentation(props) {
                   <h1>
                     <span className="key-info">
                       {percentage(
-                        data[type + "WouldDislikeDidDislike"],
-                        data[type + "HaveRated"]
+                        dataOverview[type + "WouldLikeDidDislike"],
+                        dataOverview[type + "HaveRated"]
                       )}
                     </span>{" "}
-                    users that <span className="key-info">usually enjoy</span>{" "}
-                    similar movies did{" "}
-                    <span className="unlikely">not enjoy</span> this movie
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldLikeDidDislikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that <span className="key-info">usually enjoy</span> similar
+                    movies did <span className="unlikely">not enjoy</span> this
+                    movie
                   </h1>
                 </Col>
               </Row>
@@ -192,7 +248,16 @@ function AudienceSegmentation(props) {
               </Row>
             </Container>
           </Fade>
-        </Row>
+        </Container>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "5%",
+          }}
+        >
+          <UserTable data={tableData} />
+        </div>
       </div>
     );
   } else {
