@@ -21,37 +21,41 @@ BEGIN
     
     SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
-    set @where_clause = CASE pGenre
+    set @genre_clause = CASE pGenre
                       when "" then ""
-                      ELSE CONCAT(" WHERE Genres.genre = '",pGenre, "'")
+                      ELSE CONCAT(" LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+						Genre_Movie.movie_id = ",@tablename,".movie_id
+                      WHERE Genres.genre = '",pGenre, "' ")
                       END;
 
     DROP TEMPORARY TABLE IF EXISTS result;
     SET @createtable = CONCAT(
 					"CREATE TEMPORARY TABLE result 
 						SELECT DISTINCT ",@tablename,".movie_id AS movie_id,
-						",@tablename,".rating AS rating,
-						Movies.title AS title,
-						Movies.movieURL AS movieURL,
-						GROUP_CONCAT(DISTINCT Genres.genre) AS genres
-						FROM ",@tablename,"
-						LEFT JOIN Movies
-						ON ",@tablename,".movie_id = Movies.movie_id
-						LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-						Genre_Movie.movie_id = ",@tablename,".movie_id",
-                        @where_clause,
-						" GROUP BY ",@tablename,".movie_id
-						ORDER BY rating DESC, title ASC;");
-
-    PREPARE stmt FROM @createtable;
-		EXECUTE stmt;
-		DEALLOCATE PREPARE stmt;
+						",@tablename,".rating AS rating
+						FROM ",@tablename,
+                        @genre_clause,
+						" ORDER BY rating DESC;");
+	PREPARE stmt FROM @createtable;
+	EXECUTE stmt;
+	DEALLOCATE PREPARE stmt;
 
     SET pCount = (SELECT COUNT(*) FROM result);
-
-    SELECT * FROM result
-    LIMIT pLimit
-    OFFSET pOffset;
+    
+	SELECT result.movie_id as movie_id, 
+	result.rating as rating,
+	Movies.title AS title,
+	Movies.movieURL AS movieURL,
+ 	GROUP_CONCAT(DISTINCT Genres.genre) AS genres
+	FROM result
+	LEFT JOIN Movies
+	ON result.movie_id = Movies.movie_id
+ 	LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+ 	Genre_Movie.movie_id = result.movie_id
+	GROUP BY result.movie_id
+	ORDER BY result.rating DESC, Movies.title ASC
+	LIMIT pLimit
+	OFFSET pOffset;
 END$$
 
 DELIMITER ;

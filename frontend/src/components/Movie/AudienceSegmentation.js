@@ -50,6 +50,7 @@ function AudienceSegmentation(props) {
         </div>
       );
     }
+    console.log(data);
     const buttonText = type === "g" ? "Switch to Tags" : "Switch to Genres";
     return (
       <div className="audience-segmentation">
@@ -64,11 +65,15 @@ function AudienceSegmentation(props) {
           <Fade>
             <Col xs={8} style={{ paddingBottom: "3%" }}>
               <h1>
-                Based on this movie's
+                There are{" "}
+                <span className="key-info">
+                  {data[type + "CountUsersRated"]}
+                </span>{" "}
+                users that can be segmented based on this movie's
                 <span className="key-info">
                   {type === "g" ? " Genres" : " Tags"}
                 </span>
-                :
+                .
               </h1>
             </Col>
           </Fade>
