@@ -19,18 +19,18 @@ services:
       - ./init/mysql_data:/init/data
     command: --secure-file-priv="init/data"
     ports:
-      - 3406:3306
+      - 3306:3306
     depends_on:
       - pre-processing
 
   websvr_container:
     image: nadhirahrafidz98/team_11:websvr
     deploy:
-      replicas: 1
+      replicas: 2
     volumes:
       - ./LAMPcontainer/data:/var/www/html
     ports:
-      - 80:80
+      - 80
     links:
       - mySQLcontainer
     depends_on:
@@ -49,11 +49,11 @@ services:
   frontend:
     image: nadhirahrafidz98/team_11:frontend
     deploy:
-      replicas: 1
+      replicas: 2
     volumes:
       - "./frontend:/frontend"
     ports:
-      - 3000:3000
+      - 3000
     environment:
       - CHOKIDAR_USEPOLLING=true
 
@@ -66,3 +66,22 @@ services:
       - 8081:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+# Load balancing
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - frontend
+  #   ports:
+  #     - "4040:4040"
+  #     - "4000:4000"
+
+# Networks
+# networks:
+#   team11:
+#     driver: bridge
+#     name: team11
+
+
