@@ -18,7 +18,8 @@ if (isset($_GET['movie_id'])) {
   die('Error: No movie_id specified');
 }
 
-$query = "CALL use4(?)";
+// $query = "CALL use4(?)";
+$query = "/*qc=on*//*qc_ttl=20*/" . "CALL use4(?)";
 $stmt = mysqli_prepare($connection, $query);
 mysqli_stmt_bind_param($stmt, "i", $movie_id);
 mysqli_stmt_execute($stmt);

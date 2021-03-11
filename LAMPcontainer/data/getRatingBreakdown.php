@@ -18,8 +18,8 @@ if (isset($_GET['movie_id'])) {
 
 
 // part 2 for the different ratings
-// $procedure_query = "/*qc=on*//*qc_ttl=86400*/" . "CALL use2(?, @p1, @p2)";
-$procedure_query = "CALL use2(?, @p1, @p2)";
+$procedure_query = "/*qc=on*//*qc_ttl=86400*/" . "CALL use2(?, @p1, @p2)";
+//$procedure_query = "CALL use2(?, @p1, @p2)";
 $procedure_stmt = mysqli_prepare($connection, $procedure_query);
 mysqli_stmt_bind_param($procedure_stmt, "i", $movie_id);
 mysqli_stmt_execute($procedure_stmt);
