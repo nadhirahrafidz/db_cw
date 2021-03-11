@@ -16,11 +16,8 @@ function CustomNavbar() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <LinkContainer className="nav-link-text" to="/">
-            <NavItem>Home</NavItem>
-          </LinkContainer>
           <LinkContainer className="nav-link-text" to="/browse">
-            <NavItem>View movies</NavItem>
+            <NavItem>View Movies</NavItem>
           </LinkContainer>
           <LinkContainer className="nav-link-text" to="/popular">
             <NavItem>Popular</NavItem>

@@ -35,6 +35,10 @@ function MoviePagination(props) {
     firstPage = props.pageNo - 2;
   }
 
+  if (firstPage < 1) {
+    firstPage = 1;
+  }
+
   for (let number = firstPage; number <= lastPage; number++) {
     if (number - firstPage > 10 && number !== lastPage) {
       items.push(<Pagination.Ellipsis key={0} />);

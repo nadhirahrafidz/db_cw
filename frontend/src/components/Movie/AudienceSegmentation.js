@@ -1,16 +1,20 @@
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Table from "react-bootstrap/Table";
+import Container from "react-bootstrap/Container";
 import Fade from "./Fade";
 import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import "./AudienceSegmentation.css";
+import UserTable from "./UserTable";
 
 function AudienceSegmentation(props) {
   const [data, setData] = useState();
   const [dataLoaded, setDataLoaded] = useState(false);
   // g means genre, t means tags
   const [type, setType] = useState("g");
+  const [tableData, setTableData] = useState();
 
   useEffect(() => {
     if (!props.show) {
@@ -27,7 +31,7 @@ function AudienceSegmentation(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setData(data[0]);
+        setData(data);
         setDataLoaded(true);
       })
       .catch((err) => {
@@ -35,6 +39,13 @@ function AudienceSegmentation(props) {
         console.log(err);
       });
   }, [props.show]);
+
+  function percentage(number1, number2) {
+    if (number2 === 0) {
+      return "0% ";
+    }
+    return Math.round((number1 / number2) * 1000) / 10 + "% ";
+  }
 
   if (props.show) {
     if (!dataLoaded) {
@@ -50,10 +61,11 @@ function AudienceSegmentation(props) {
         </div>
       );
     }
+    const dataOverview = data.overview;
     const buttonText = type === "g" ? "Switch to Tags" : "Switch to Genres";
     return (
       <div className="audience-segmentation">
-        <Row className="audience-segmentation-container">
+        <Container className="audience-segmentation-container">
           <Fade>
             <div className="switch-segmentation-type-button">
               <Button onClick={() => setType(type === "g" ? "t" : "g")}>
@@ -62,67 +74,190 @@ function AudienceSegmentation(props) {
             </div>
           </Fade>
           <Fade>
-            <Col xs={8} style={{ paddingBottom: "3%" }}>
-              <h1>
-                Based on this movie's
-                <span className="key-info">
-                  {type === "g" ? " Genres" : " Tags"}
-                </span>
-                :
-              </h1>
-            </Col>
+            <Row style={{ justifyContent: "center" }}>
+              <Col xs={2} />
+              <Col xs={8} style={{ paddingBottom: "3%" }}>
+                <h1>
+                  There are{" "}
+                  <span className="key-info">
+                    {dataOverview[type + "CountUsersRatedSimilar"]}
+                  </span>{" "}
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["similar_genre_ratings"])}
+                  >
+                    {"users "}
+                  </span>
+                  in total that can be segmented based on this movie's
+                  <span className="key-info">
+                    {type === "g" ? " Genres" : " Tags"}
+                  </span>
+                  .
+                </h1>
+              </Col>
+              <Col xs={2} />
+              <Col xs={4} className="audience-sub-heading">
+                <h1>
+                  <span className="key-info">
+                    {dataOverview[type + "HaveNotRated"]}
+                  </span>{" "}
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["users_not_rated"])}
+                  >
+                    {"users "}
+                  </span>
+                  have <span className="key-info"> not </span> yet rated this
+                  movie.
+                </h1>
+              </Col>
+              <Col xs={1} />
+              <Col xs={4} className="audience-sub-heading">
+                <h1>
+                  <span className="key-info">
+                    {dataOverview[type + "HaveRated"]}
+                  </span>{" "}
+                  <span
+                    className="user-data-link"
+                    onClick={() => setTableData(data["users_already_rated"])}
+                  >
+                    {"users "}
+                  </span>
+                  have <span className="key-info"> already </span> rated this
+                  movie.
+                </h1>
+              </Col>
+            </Row>
           </Fade>
           <Fade>
-            <Col xs={8}>
-              <h1>
-                <span className="key-info">{data[type + "WouldLike"]}</span>{" "}
-                users that have <span className="key-info">not</span> yet rated
-                this movie are
-                <span className="likely"> likely to enjoy</span> this movie
-              </h1>
-              <p className="emoji">&#128513;</p>
-            </Col>
+            <Container style={{ margin: "none", minWidth: "100%" }}>
+              <Row style={{ justifyContent: "center" }}>
+                <Col xs={4}>
+                  <h1>
+                    <span className="key-info">
+                      {percentage(
+                        dataOverview[type + "WouldLike"],
+                        dataOverview[type + "HaveNotRated"]
+                      )}
+                    </span>
+                    of{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldLikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that have <span className="key-info">not</span> yet rated
+                    this movie are
+                    <span className="likely"> likely to enjoy</span> this movie
+                  </h1>
+                </Col>
+                <Col xs={1} className="vertical-separator" />
+                <Col xs={4}>
+                  <h1>
+                    <span className="key-info">
+                      {percentage(
+                        dataOverview[type + "WouldDislikeDidLike"],
+                        dataOverview[type + "HaveRated"]
+                      )}
+                    </span>{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldDislikeDidLikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that
+                    <span className="key-info"> usually don't enjoy </span>
+                    similar movies <span className="likely">did enjoy </span>
+                    this movie
+                  </h1>
+                </Col>
+              </Row>
+              <Row style={{ justifyContent: "center" }}>
+                <Col xs={4}>
+                  <p className="emoji">&#128513;</p>
+                </Col>
+                <Col xs={1} className="vertical-separator" />
+                <Col xs={4}>
+                  <p className="emoji">&#129321;</p>
+                </Col>
+              </Row>
+            </Container>
           </Fade>
           <Fade>
-            <Col xs={8}>
-              <h1>
-                <span className="key-info">
-                  {data[type + "WouldDislikeDidLike"]}
-                </span>{" "}
-                users that
-                <span className="key-info"> usually don't enjoy </span>
-                similar movies <span className="likely">did enjoy </span>
-                this movie
-              </h1>
-              <p className="emoji">&#129321;</p>
-            </Col>
+            <Container style={{ margin: "none", minWidth: "100%" }}>
+              <Row style={{ justifyContent: "center" }}>
+                <Col xs={4}>
+                  <h1>
+                    <span className="key-info">
+                      {percentage(
+                        dataOverview[type + "WouldDislike"],
+                        dataOverview[type + "HaveNotRated"]
+                      )}
+                    </span>{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldDislikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that have <span className="key-info">not</span> yet rated
+                    this movie are{" "}
+                    <span className="unlikely">unlikely to enjoy </span>
+                    this movie
+                  </h1>
+                </Col>
+                <Col xs={1} className="vertical-separator" />
+                <Col xs={4}>
+                  <h1>
+                    <span className="key-info">
+                      {percentage(
+                        dataOverview[type + "WouldLikeDidDislike"],
+                        dataOverview[type + "HaveRated"]
+                      )}
+                    </span>{" "}
+                    <span
+                      className="user-data-link"
+                      onClick={() =>
+                        setTableData(data[type + "WouldLikeDidDislikeTable"])
+                      }
+                    >
+                      {"users "}
+                    </span>
+                    that <span className="key-info">usually enjoy</span> similar
+                    movies did <span className="unlikely">not enjoy</span> this
+                    movie
+                  </h1>
+                </Col>
+              </Row>
+              <Row style={{ justifyContent: "center" }}>
+                <Col xs={4}>
+                  <p className="emoji">&#128542;</p>
+                </Col>
+                <Col xs={1} className="vertical-separator" />
+                <Col xs={4}>
+                  <p className="emoji">&#128546;</p>
+                </Col>
+              </Row>
+            </Container>
           </Fade>
-          <Fade>
-            <Col xs={8}>
-              <h1>
-                <span className="key-info">{data[type + "WouldDislike"]}</span>{" "}
-                users that have <span className="key-info">not</span> yet rated
-                this movie are{" "}
-                <span className="unlikely">unlikely to enjoy </span>
-                this movie
-              </h1>
-              <p className="emoji">&#128542;</p>
-            </Col>
-          </Fade>
-          <Fade>
-            <Col xs={8}>
-              <h1>
-                <span className="key-info">
-                  {data[type + "WouldLikeDidDislike"]}
-                </span>{" "}
-                users that <span className="key-info">usually enjoy</span>{" "}
-                similar movies did <span className="unlikely">not enjoy</span>{" "}
-                this movie
-              </h1>
-              <p className="emoji">&#128546;</p>
-            </Col>
-          </Fade>
-        </Row>
+        </Container>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "5%",
+          }}
+        >
+          <UserTable data={tableData} />
+        </div>
       </div>
     );
   } else {

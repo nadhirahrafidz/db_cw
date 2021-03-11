@@ -12,12 +12,24 @@ h1 {
   text-align: center;
 }
 
+.vertical-separator {
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.2)
+    )
+    no-repeat center/2px 100%;
+}
+
+.audience-sub-heading {
+  border-bottom: rgba(255, 255, 255, 0.2) solid;
+  margin-bottom: 2%;
+}
 .likely {
-  color: rgb(1, 172, 1);
+  color: rgb(1, 230, 1);
 }
 
 .unlikely {
-  color: rgb(172, 1, 1);
+  color: rgb(230, 1, 1);
 }
 
 .audience-segmentation {
@@ -26,6 +38,7 @@ h1 {
   width: 100%;
   display: flex;
   align-content: center;
+  flex-direction: column;
 }
 
 .audience-segmentation-container {
@@ -38,4 +51,25 @@ h1 {
   display: flex;
   justify-content: center;
   flex-direction: column;
+}
+
+.table {
+  width: fit-content !important;
+}
+
+.table-container {
+  overflow: auto;
+  max-height: 30vh;
+  width: fit-content;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: #343a40;
+}
+
+.user-data-link {
+  color: blue;
+  cursor: pointer;
 }
