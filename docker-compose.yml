@@ -19,7 +19,9 @@ services:
       - ./init/mysql_data:/init/data
     command: --secure-file-priv="init/data"
     ports:
-      - 3406:3306
+      - 3306:3306
+    networks:
+      - team11net
     depends_on:
       - pre-processing
 
@@ -31,10 +33,13 @@ services:
       - ./LAMPcontainer/data:/var/www/html
     ports:
       - 80:80
+    networks:
+      - team11net
     links:
       - mySQLcontainer
     depends_on:
       - mySQLcontainer
+
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -45,6 +50,8 @@ services:
       - PMA_PORT=3306
     ports:
       - 8080:80
+    networks:
+      - team11net
 
   frontend:
     image: nadhirahrafidz98/team_11:frontend
@@ -54,6 +61,8 @@ services:
       - "./frontend:/frontend"
     ports:
       - 3000:3000
+    networks:
+      - team11net
     environment:
       - CHOKIDAR_USEPOLLING=true
 
@@ -66,3 +75,24 @@ services:
       - 8081:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  # Load balancing
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - websvr_container
+    links:
+      - frontend
+      - websvr_container
+    ports:
+      - 4000:4000
+      - 5000:5000
+    networks:
+      - team11net
+
+networks:
+  team11net:
+    name: team11net
