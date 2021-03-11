@@ -28,9 +28,13 @@ if (isset($_GET['sort'])) {
   $order_by = (int) $_GET['sort'];
 }
 
-$movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL getMovieIDs(12, ?, ?, ?, ?)';
-$count_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL countMovieIDs(?, ?)';
-$movie_data_query = "/*qc=on*//*qc_ttl=86400*/" . "CALL getMoviesInfo(?, ?)";
+// $movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL getMovieIDs(12, ?, ?, ?, ?)';
+// $count_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL countMovieIDs(?, ?)';
+// $movie_data_query = "/*qc=on*//*qc_ttl=86400*/" . "CALL getMoviesInfo(?, ?)";
+
+$movieID_query =  'CALL getMovieIDs(12, ?, ?, ?, ?)';
+$count_query =  'CALL countMovieIDs(?, ?)';
+$movie_data_query = "CALL getMoviesInfo(?, ?)";
 
 $movie_data_stmt = mysqli_prepare($connection, $movie_data_query);
 
