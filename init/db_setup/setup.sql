@@ -215,7 +215,7 @@ IGNORE 1 LINES;
 
 -- -- CREATING NEW USERS
 
--- CREATE USER 'admin'@'localhost' IDENTIFIED BY 'team11';
--- GRANT ALL ON MovieLens.* TO 'admin'@'localhost';
--- FLUSH PRIVILEGES;
+CREATE USER 'admin'@'%' IDENTIFIED BY 'team11';
+GRANT ALL ON MovieLens.* TO 'admin'@'%';
+FLUSH PRIVILEGES;
 

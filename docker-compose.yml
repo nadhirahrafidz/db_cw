@@ -35,7 +35,6 @@ services:
       - mySQLcontainer
     depends_on:
       - mySQLcontainer
-      # - redis
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
