@@ -19,7 +19,7 @@ services:
       - ./init/mysql_data:/init/data
     command: --secure-file-priv="init/data"
     ports:
-      - 3406:3306
+      - 3306:3306
     depends_on:
       - pre-processing
 
@@ -68,19 +68,20 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-#   composer:
-#     image: composer:1.9
-#     command: ["composer", "install"]
-#     run: ["composer", "require", "predis/predis"]
+  # composer:
+  #   image: composer:1.9
+  #   command: ["composer", "install"]
+  #   run: ["composer", "require", "predis/predis"]
 
-#   redis:
-#     image: redis:4.0
-#     container_name: app_redis
-#     ports:
-#       - "6382:6379"
-#     # networks:
-#     #   networks:
-#     #   - app-network
-# networks:
-#   app-network:
-#     driver: "bridge"
+  # redis:
+  #   image: redis:4.0
+  #   container_name: app_redis
+  #   ports:
+  #     - "6382:6379"
+  #   networks:
+  #     networks:
+  #     - app-network
+      
+networks:
+  app-network:
+    driver: "bridge"
