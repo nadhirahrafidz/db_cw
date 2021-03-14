@@ -13,14 +13,27 @@ function cache_get($key) {
   return isset($val) ? $val : false;
 }
 
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Headers: Content-Type");
+$host = "db_cw_mySQLcontainer_1"; 
+$user = "root"; 
+$password = "team11"; 
+$dbname = "MovieLens";
+
+//get parameters from request
+$timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
+$offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
+$limit = 12;
+$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
+
 $cache_ttl = 3600;
 
-$iscached = cache_get('iscached');
-if ($iscached === null){
+//idea is to include the parameters in the cache key
+$query_params_string =  $timescale . $offset . $genre;
+if (cache_get( "popular" . $query_params_string) === null){
   $cached = false;
 } else {
-  //make sure that the cache does not become stale
-  $lastupdated = cache_get("last_cached");
+  $lastupdated = cache_get("last_cached" . $query_params_string);
   if (gmmktime(true) - $lastupdated > $cache_ttl){
     $cached = false;
   } else {
@@ -30,18 +43,25 @@ if ($iscached === null){
 
 
 
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Headers: Content-Type");
-$host = "db_cw_mySQLcontainer_1"; 
-$user = "root"; 
-$password = "team11"; 
-$dbname = "MovieLens";
+// $iscached = cache_get('iscached');
+// if ($iscached === null){
+//   $cached = false;
+// } else {
+//   //make sure that the cache does not become stale
+//   $lastupdated = cache_get("last_cached");
+//   if (gmmktime(true) - $lastupdated > $cache_ttl){
+//     $cached = false;
+//   } else {
+//     $cached = true;
+//   }
+// }
+
 
 
 
 if ($cached == true){
   $starttime = microtime(true);
-  $value = cache_get('popular_movies');
+  $value = cache_get("popular" . $query_params_string);
   $endtime = microtime(true);
   $duration = $endtime - $starttime;
   //echo $duration;
@@ -52,10 +72,7 @@ if ($cached == true){
         or die('Error connecting to MySQL server.' . mysqli_error());
 
 
-$timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
-$offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
-$limit = 12;
-$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
+
 
 $movieID_query = 'CALL use3_popular(?, ?, ?, ?, @pCount)';
 //$movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL use3(1,?, ?, ?, ?, @pCount)';
@@ -87,9 +104,8 @@ $duration = $endtime - $starttime;
 //echo $duration;
 
 echo json_encode($all_data);
-cache_set('popular_movies', json_encode($all_data));
-cache_set("last_cached", gmmktime(true));
-cache_set('iscached', true);
+cache_set("popular" . $query_params_string, json_encode($all_data));
+cache_set("last_cached" . $query_params_string, gmmktime(true));
 
 mysqli_close($connection);
 

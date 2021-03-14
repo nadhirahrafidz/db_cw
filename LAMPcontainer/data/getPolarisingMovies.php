@@ -13,7 +13,16 @@ function cache_get($key) {
   return isset($val) ? $val : false;
 }
 
+header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Headers: Content-Type");
+$host = "db_cw_mySQLcontainer_1"; 
+$user = "root"; 
+$password = "team11"; 
+$dbname = "MovieLens"; 
+
+
 $cache_ttl = 3600;
+
 
 $iscached = cache_get('iscached');
 if ($iscached === null){
@@ -29,12 +38,7 @@ if ($iscached === null){
 }
 
 
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Headers: Content-Type");
-$host = "db_cw_mySQLcontainer_1"; 
-$user = "root"; 
-$password = "team11"; 
-$dbname = "MovieLens"; 
+$cached = false;
 
 if ($cached == true){
   $starttime = microtime(true);
