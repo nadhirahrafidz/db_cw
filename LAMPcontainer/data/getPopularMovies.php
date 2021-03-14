@@ -15,7 +15,7 @@ $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 $limit = 12;
 $genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
 
-$movieID_query = 'CALL use3(1,?, ?, ?, ?, @pCount)';
+$movieID_query = 'CALL use3_popular(?, ?, ?, ?, @pCount)';
 //$movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL use3(1,?, ?, ?, ?, @pCount)';
 
 $starttime = microtime(true);
