@@ -23,13 +23,19 @@ $dbname = "MovieLens";
 
 $cache_ttl = 3600;
 
+//get the parameters
+$timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
+$offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
+$limit = 12;
+$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
 
-$iscached = cache_get('iscached');
-if ($iscached === null){
+//idea is to include the parameters in the cache key
+$query_params_string =  $timescale . $offset . $genre;
+
+if (cache_get( "polarising" . $query_params_string) === null){
   $cached = false;
 } else {
-  //make sure that the cache does not become stale
-  $lastupdated = cache_get("last_cached");
+  $lastupdated = cache_get("last_cached_polarising" . $query_params_string);
   if (gmmktime(true) - $lastupdated > $cache_ttl){
     $cached = false;
   } else {
@@ -42,7 +48,7 @@ $cached = false;
 
 if ($cached == true){
   $starttime = microtime(true);
-  $value = cache_get('polarising_movies');
+  $value = cache_get("polarising" . $query_params_string);
   $endtime = microtime(true);
   $duration = $endtime - $starttime;
   //echo $duration;
@@ -52,10 +58,7 @@ if ($cached == true){
         or die('Error connecting to MySQL server.' . mysqli_error());
 
 
-$timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
-$offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
-$limit = 12;
-$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
+
 
 $movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL use3_polarising(?, ?, ?, ?, @pCount)';
 $starttime = microtime(true);
@@ -84,9 +87,8 @@ $duration = $endtime - $starttime;
 //echo $duration;
 
 echo json_encode($all_data);
-cache_set('polarising_movies', json_encode($all_data));
-cache_set("last_cached", gmmktime(true));
-cache_set('iscached', true);
+cache_set("polarising" . $query_params_string, json_encode($all_data));
+cache_set("last_cached_polarising" . $query_params_string, gmmktime(true));
 
 mysqli_close($connection);
 }
