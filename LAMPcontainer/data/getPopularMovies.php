@@ -89,6 +89,7 @@ $duration = $endtime - $starttime;
 echo json_encode($all_data);
 cache_set('popular_movies', json_encode($all_data));
 cache_set("last_cached", gmmktime(true));
+cache_set('iscached', true);
 
 mysqli_close($connection);
 

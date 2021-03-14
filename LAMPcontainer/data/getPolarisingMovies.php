@@ -13,7 +13,21 @@ function cache_get($key) {
   return isset($val) ? $val : false;
 }
 
-$cached = true;
+$cache_ttl = 3600;
+
+$iscached = cache_get('iscached');
+if ($iscached === null){
+  $cached = false;
+} else {
+  //make sure that the cache does not become stale
+  $lastupdated = cache_get("last_cached");
+  if (gmmktime(true) - $lastupdated > $cache_ttl){
+    $cached = false;
+  } else {
+    $cached = true;
+  }
+}
+
 
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -27,7 +41,7 @@ if ($cached == true){
   $value = cache_get('polarising_movies');
   $endtime = microtime(true);
   $duration = $endtime - $starttime;
-  echo $duration;
+  //echo $duration;
   echo $value;
 } else {
   $connection = mysqli_connect($host, $user, $password,$dbname)
@@ -67,6 +81,8 @@ $duration = $endtime - $starttime;
 
 echo json_encode($all_data);
 cache_set('polarising_movies', json_encode($all_data));
+cache_set("last_cached", gmmktime(true));
+cache_set('iscached', true);
 
 mysqli_close($connection);
 }
