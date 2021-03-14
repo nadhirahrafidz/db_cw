@@ -42,7 +42,7 @@ $all_data = array(
 
 $endtime = microtime(true);
 $duration = $endtime - $starttime;
-echo $duration;
+//echo $duration;
 
 echo json_encode($all_data);
 

@@ -15,7 +15,7 @@ $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 $limit = 12;
 $genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
 
-$movieID_query = 'CALL use3(2, ?, ?, ?, ?, @pCount)';
+$movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL use3_polarising(?, ?, ?, ?, @pCount)';
 $starttime = microtime(true);
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 mysqli_stmt_bind_param($movieID_stmt, "iiis", $timescale, $offset, $limit, $genre);
@@ -39,7 +39,7 @@ $all_data = array(
 
 $endtime = microtime(true);
 $duration = $endtime - $starttime;
-echo $duration;
+//echo $duration;
 
 echo json_encode($all_data);
 
