@@ -13,12 +13,19 @@ function cache_get($key) {
   return isset($val) ? $val : false;
 }
 
+$cache_ttl = 3600;
 
 $iscached = cache_get('iscached');
 if ($iscached === null){
   $cached = false;
 } else {
-  $cached = true;
+  //make sure that the cache does not become stale
+  $lastupdated = cache_get("last_cached");
+  if (gmmktime(true) - $lastupdated > $cache_ttl){
+    $cached = false;
+  } else {
+    $cached = true;
+  }
 }
 
 
@@ -30,7 +37,6 @@ $user = "root";
 $password = "team11"; 
 $dbname = "MovieLens";
 
-echo cache_get('hello');
 
 
 if ($cached == true){
@@ -41,7 +47,7 @@ if ($cached == true){
   //echo $duration;
   echo $value;
 } else {
-
+ //echo "not cached";
   $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
@@ -82,6 +88,7 @@ $duration = $endtime - $starttime;
 
 echo json_encode($all_data);
 cache_set('popular_movies', json_encode($all_data));
+cache_set("last_cached", gmmktime(true));
 
 mysqli_close($connection);
 
