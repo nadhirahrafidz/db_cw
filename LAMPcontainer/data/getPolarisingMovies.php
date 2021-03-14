@@ -16,6 +16,7 @@ $limit = 12;
 $genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
 
 $movieID_query = 'CALL use3(2, ?, ?, ?, ?, @pCount)';
+$starttime = microtime(true);
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 mysqli_stmt_bind_param($movieID_stmt, "iiis", $timescale, $offset, $limit, $genre);
 mysqli_stmt_execute($movieID_stmt);
@@ -35,6 +36,10 @@ $all_data = array(
   "total" => $count,
   "movies" => $movies_data
 );
+
+$endtime = microtime(true);
+$duration = $endtime - $starttime;
+echo $duration;
 
 echo json_encode($all_data);
 
