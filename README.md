@@ -1,7 +1,7 @@
 Team 11 Database Coursework repo
 
 ### Abstract
-MovieLens 
+MovieLens is a dataset consisting of 
 
 ### Launching Web App
 1. Clone this repo in your local directory
@@ -25,9 +25,6 @@ To check if the database has been set up and populated:
         username: root
         password: team11
 3. Database MovieLens should exist with 8 tables. 
-
-## SQL Code for Use Cases
-![](https://comp0169.s3.eu-west-2.amazonaws.com/useCaseFiles.png)
 
 ## Docker Containers
 Reference: https://www.youtube.com/watch?v=svlcIIp-S9w&ab_channel=TechOpenS.
