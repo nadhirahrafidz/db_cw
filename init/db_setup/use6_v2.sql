@@ -20,13 +20,10 @@ BEGIN
     DECLARE ave_con FLOAT;
     
     -- J score and weight vars 
-    DECLARE done INTEGER DEFAULT 0;
     DECLARE intersect_length INT; 
-    DECLARE union_length INT;
     DECLARE tags_tbr_len INT;
     DECLARE j FLOAT; 
     DECLARE j_sum FLOAT; 
-    DECLARE cmovie_id INT;
     DECLARE total_weights INT; 
     
     SET ave_op = (SELECT AVG(openness) FROM Personality); 
@@ -87,14 +84,6 @@ BEGIN
     CREATE TEMPORARY TABLE J_score 
     SELECT intersect.movie_id, intersect_len/tags_tbr_len AS j_score
     FROM intersect;
-    
-    SET j_sum = (SELECT SUM(j_score) FROM J_score); 
-    
-    -- Note: Movie weights should add to ~1
-    DROP TEMPORARY TABLE IF EXISTS weighted_J_score;
-    CREATE TEMPORARY TABLE weighted_J_score 
-    SELECT J_score.movie_id, j_score/j_sum AS weighted_j_score
-    FROM J_score; 
     
     -- Find relevant users
     DROP TEMPORARY TABLE IF EXISTS users_high_rate;
