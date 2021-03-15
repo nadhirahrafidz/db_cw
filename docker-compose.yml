@@ -30,7 +30,7 @@ services:
     volumes:
       - ./LAMPcontainer/data:/var/www/html
     ports:
-      - 80:80
+      - 80
     links:
       - mySQLcontainer
     depends_on:
@@ -46,16 +46,16 @@ services:
     ports:
       - 8080:80
 
-  # frontend:
-  #   image: nadhirahrafidz98/team_11:frontend
-  #   deploy:
-  #     replicas: 1
-  #   volumes:
-  #     - "./frontend:/frontend"
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
+  frontend:
+    image: nadhirahrafidz98/team_11:frontend
+    deploy:
+      replicas: 1
+    volumes:
+      - "./frontend:/frontend"
+    ports:
+      - 3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   visualizer:
     image: dockersamples/visualizer
@@ -66,21 +66,7 @@ services:
       - 8081:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-
-  # composer:
-  #   image: composer:1.9
-  #   command: ["composer", "install"]
-  #   run: ["composer", "require", "predis/predis"]
-
-  # redis:
-  #   image: redis:4.0
-  #   container_name: app_redis
-  #   ports:
-  #     - "6382:6379"
-  #   networks:
-  #     networks:
-  #     - app-network
       
-networks:
-  app-network:
-    driver: "bridge"
+# networks:
+#   team11:
+#     driver: "bridge"
