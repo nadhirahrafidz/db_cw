@@ -12,6 +12,10 @@ CREATE PROCEDURE `getMovieIDs` (
     )
 
 BEGIN
+SET @no_of_results = no_of_results;
+SET @offset_required = offset_required;
+SET @search_value = search_value; 
+
 set @order_by = CASE order_by_parameter
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
@@ -31,59 +35,69 @@ set @join_params = CASE order_by_parameter
                       END;
 
 IF search_value = "" and genres_chosen = "" THEN
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies ", 
-    @join_params,
-	"GROUP BY Movies.movie_id
-    ORDER BY ", @order_by, 
-    " LIMIT ",  no_of_results,
-    " OFFSET ", offset_required)
-    ;
+    BEGIN
+        SET @SQLstatement = "SELECT DISTINCT Movies.movie_id, Movies.title ?
+            FROM Movies 
+            ?
+            GROUP BY Movies.movie_id
+            ORDER BY ?
+            LIMIT ?
+            OFFSET ?";
 
-ELSEIF search_value = "" THEN
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies ", 
-    @join_params,
-    "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-    Genre_Movie.movie_id = Movies.movie_id
-    WHERE find_in_set(Genres.genre,'",genres_chosen,"')
-	GROUP BY Movies.movie_id
-    ORDER BY ", @order_by, 
-    " LIMIT ",  no_of_results,
-    " OFFSET ", offset_required)
-    ;
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt USING @select_params, @join_params, @order_by, @no_of_results, @offset_required;
+    END;
+    
+ELSEIF search_value = "" THEN 
+    BEGIN
+        SET @SQLstatement = "SELECT DISTINCT Movies.movie_id, Movies.title ?
+            FROM Movies 
+            ?
+            LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) 
+            ON Genre_Movie.movie_id = Movies.movie_id
+            WHERE find_in_set(Genres.genre, ?)
+            GROUP BY Movies.movie_id
+            ORDER BY ?
+            LIMIT ?
+            OFFSET ?";
+            
+            PREPARE stmt FROM @SQLStatement;
+            EXECUTE stmt USING @select_params, @join_params, @genres_chosen, @order_by, @no_of_results, @offset_required;
+    END;
 
 ELSEIF genres_chosen = "" THEN
+    BEGIN
+        set @SQLstatement = "SELECT DISTINCT Movies.movie_id, Movies.title ?
+            FROM Movies 
+            ?
+            WHERE Movies.title LIKE ?
+            GROUP BY Movies.movie_id
+            ORDER BY ? 
+            LIMIT ?
+            OFFSET ?";
 
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies ", 
-    @join_params,
-    "WHERE Movies.title LIKE '", search_value,  "'
-	GROUP BY Movies.movie_id
-    ORDER BY ", @order_by, 
-    " LIMIT ",  no_of_results,
-    " OFFSET ", offset_required)
-    ;
+            PREPARE stmt FROM @SQLStatement;
+            EXECUTE stmt USING @select_params, @join_params, @search_value, @order_by, @no_of_results, @offset_required;
+    END;
 
-ELSE    
+ELSE
+    BEGIN
+    SET @SQLstatement = "SELECT DISTINCT Movies.movie_id, Movies.title ?
+        FROM Movies 
+        ?
+        LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) 
+        ON Genre_Movie.movie_id = Movies.movie_id
+        WHERE find_in_set(Genres.genre, ?)
+        AND Movies.title LIKE ?
+        GROUP BY Movies.movie_id
+        ORDER BY ?
+        LIMIT ?
+        OFFSET ?";
 
-set @SQLstatement = CONCAT("SELECT DISTINCT Movies.movie_id, Movies.title", @select_params,
-    "FROM Movies ", 
-    @join_params,
-    "LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-    Genre_Movie.movie_id = Movies.movie_id
-    WHERE find_in_set(Genres.genre,'",genres_chosen,"')
-    AND Movies.title LIKE '", search_value, "'
-	GROUP BY Movies.movie_id
-    ORDER BY ", @order_by, 
-    " LIMIT ",  no_of_results,
-    " OFFSET ", offset_required)
-    ;
-
+        PREPARE stmt FROM @SQLStatement;
+        EXECUTE stmt USING @select_params, @join_params, @genres_chosen, @search_value, @order_by, @no_of_results, @offset_required;
+    END;
 END IF;
 
-PREPARE stmt FROM @SQLStatement;
-EXECUTE stmt;
 END$$
-
 DELIMITER ;

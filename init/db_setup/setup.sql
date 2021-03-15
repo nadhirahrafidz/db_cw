@@ -1,12 +1,3 @@
--- GRANT SELECT,UPDATE,INSERT,DELETE
---     ON MovieLens.*
---     TO 'example'@'localhost'
---     IDENTIFIED BY 'ucl';
-
--- CREATE DATABASE MovieLens
---   DEFAULT CHARACTER SET utf8
---   DEFAULT COLLATE utf8_general_ci;
-  
 USE MovieLens;
 
 CREATE TABLE Users (
@@ -216,6 +207,6 @@ IGNORE 1 LINES;
 -- -- CREATING NEW USERS
 
 CREATE USER 'admin'@'%' IDENTIFIED BY 'team11';
-GRANT ALL ON MovieLens.* TO 'admin'@'%';
+GRANT all PRIVILEGES ON MovieLens.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 

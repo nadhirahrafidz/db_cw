@@ -46,16 +46,16 @@ services:
     ports:
       - 8080:80
 
-  frontend:
-    image: nadhirahrafidz98/team_11:frontend
-    deploy:
-      replicas: 1
-    volumes:
-      - "./frontend:/frontend"
-    ports:
-      - 3000:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+  # frontend:
+  #   image: nadhirahrafidz98/team_11:frontend
+  #   deploy:
+  #     replicas: 1
+  #   volumes:
+  #     - "./frontend:/frontend"
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
 
   visualizer:
     image: dockersamples/visualizer

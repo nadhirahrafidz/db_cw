@@ -9,6 +9,7 @@ CREATE PROCEDURE `getMoviesInfo` (
     )
 
 BEGIN
+SET @movieIDs = movieIDs;
 set @order_by = CASE order_by_paramater
                       when 1 then "Movies.title ASC"
                       when 2 then "Movies.title DESC"
@@ -17,7 +18,7 @@ set @order_by = CASE order_by_paramater
                       ELSE "Movies.movie_id ASC"
                       END;
 
-set @SQLstatement = CONCAT("SELECT 
+set @SQLstatement = "SELECT 
   DISTINCT Movies.movie_id, 
   Movies.title, 
   Movies.movieURL,
@@ -36,11 +37,13 @@ set @SQLstatement = CONCAT("SELECT
   Ratings.movie_id = Movies.movie_id 
   LEFT JOIN Tags ON
   Tags.movie_id = Movies.movie_id 
-  WHERE find_in_set(Movies.movie_id, '", movieIDs, "')
+  WHERE find_in_set(Movies.movie_id, ?)
   GROUP BY Movies.movie_id
-  ORDER BY ", @order_by);
+  ORDER BY ?";
+  
+  
 PREPARE stmt FROM @SQLStatement;
-EXECUTE stmt;
+EXECUTE stmt USING @movieIDs, @order_by;
 END$$
 
 DELIMITER ;
