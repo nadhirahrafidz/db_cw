@@ -1,0 +1,12 @@
+.use5-form {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+.use5-submit-button {
+  margin-left: auto;
+  width: fit-content;
+  margin-top: 2%;
+}

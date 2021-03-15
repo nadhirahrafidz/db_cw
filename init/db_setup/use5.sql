@@ -1,9 +1,9 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use5_v4`;
+DROP procedure IF EXISTS `use5`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use5_v4`(
+CREATE DEFINER=`root`@`%` PROCEDURE `use5`(
                             IN psample_size INT, 
                             IN ptbrmovie_id INT)
 BEGIN   
@@ -32,12 +32,19 @@ BEGIN
     WHERE genre_id IN (SELECT DISTINCT(genre_id) FROM Genre_Movie WHERE movie_id = ptbrmovie_id) 
     AND movie_id != ptbrmovie_id; 
     
+        -- Tags of TBR movie
+    DROP TEMPORARY TABLE IF EXISTS tags_tbr;
+    CREATE TEMPORARY TABLE tags_tbr
+    SELECT DISTINCT Tag FROM Tags WHERE Tags.movie_id = ptbrmovie_id;
+    
+    SET tbr_tag_len = (SELECT COUNT(*) FROM tags_tbr); 
+    
     -- (2) Select Movies with similar tags
     DROP TEMPORARY TABLE IF EXISTS movie_similar_tag;
     CREATE TEMPORARY TABLE movie_similar_tag
     SELECT DISTINCT(movie_id) 
     FROM Tags 
-    WHERE tag IN (SELECT tag FROM Tags WHERE movie_id = ptbrmovie_id) AND movie_id != ptbrmovie_id; 
+    WHERE tag IN (SELECT * FROM tags_tbr) AND movie_id != ptbrmovie_id; 
     
     
     DROP TEMPORARY TABLE IF EXISTS similar_movies;
@@ -68,24 +75,19 @@ BEGIN
     -- [1] Preview panel with deviations from typical rating 
     DROP TEMPORARY TABLE IF EXISTS prev_pan_dev;
     CREATE TEMPORARY TABLE prev_pan_dev
-    SELECT prev_pan_sim_movies.user_id, similar_movies_w_ave.movie_id, 1 - ((prev_pan_sim_movies.rating - ave_rating) / ave_rating) AS deviation
+    SELECT prev_pan_sim_movies.user_id, similar_movies_w_ave.movie_id, 1 + ((prev_pan_sim_movies.rating - ave_rating) / ave_rating) AS deviation
     FROM similar_movies_w_ave 
     INNER JOIN prev_pan_sim_movies
     ON similar_movies_w_ave.movie_id = prev_pan_sim_movies.movie_id;  
-    
-    -- Tags of TBR movie
-    DROP TEMPORARY TABLE IF EXISTS tags_tbr;
-    CREATE TEMPORARY TABLE tags_tbr
-    SELECT Tag FROM Tags WHERE Tags.movie_id = ptbrmovie_id;
-    
-    SET tbr_tag_len = (SELECT COUNT(*) FROM tags_tbr); 
+
+
     
     -- [2] J score calc  (Tables: tags_similar_movies, intersect, union_tags, J_score)
     BEGIN
     -- STEP 1: Find tags of similar movies
     DROP TEMPORARY TABLE IF EXISTS tags_similar_movies;
     CREATE TEMPORARY TABLE tags_similar_movies 
-    SELECT movie_id, tag 
+    SELECT DISTINCT movie_id, tag 
     FROM Tags 
     WHERE movie_id IN (SELECT movie_id FROM similar_movies); 
     
@@ -101,24 +103,11 @@ BEGIN
     ON LOWER(tags_similar_movies.tag) = LOWER(tags_tbr.tag)
     GROUP BY tags_similar_movies.movie_id;
     
-    -- STEP 3: Get set union length between tbr tags and similar movie tags (not 100% accurate since intersect length is not accurate) 
-    DROP TEMPORARY TABLE IF EXISTS union_tags;
-    CREATE TEMPORARY TABLE union_tags 
-    SELECT intermediate.movie_id, (union_w_dupes - intersect.intersect_len) AS union_len
-    FROM
-        (SELECT tags_similar_movies.movie_id, COUNT(DISTINCT tags_similar_movies.tag) + tbr_tag_len AS union_w_dupes
-        FROM tags_similar_movies
-        GROUP BY tags_similar_movies.movie_id) AS intermediate
-    INNER JOIN intersect
-    ON intermediate.movie_id = intersect.movie_id ; 
-    
     -- STEP4: j_score = intersect/union
     DROP TEMPORARY TABLE IF EXISTS J_score;
     CREATE TEMPORARY TABLE J_score 
-    SELECT intersect.movie_id, intersect_len/union_len AS j_score
-    FROM intersect
-    INNER JOIN union_tags
-    ON intersect.movie_id = union_tags.movie_id; 
+    SELECT intersect.movie_id, intersect_len/tbr_tag_len AS j_score
+    FROM intersect;
     END;
     
     SET sum_jscore = (SELECT SUM(j_score) FROM J_score); 
@@ -141,7 +130,7 @@ BEGIN
         LEFT JOIN weighted_J_score 
         ON prev_pan_dev.movie_id = weighted_J_score.movie_id) AS intermediate
     GROUP BY user_id; 
-    
+        END;
     -- user_id, SUM([j_score]) => [4]
     DROP TEMPORARY TABLE IF EXISTS denom;
     CREATE TEMPORARY TABLE denom 
@@ -158,12 +147,12 @@ BEGIN
     FROM numer
     INNER JOIN denom 
     ON numer.user_id = denom.user_id; 
-    END;
+
     
     -- Weighted rating of TBR movie
     DROP TEMPORARY TABLE IF EXISTS weighted_ratings;
     CREATE TEMPORARY TABLE weighted_ratings 
-    SELECT preview_pan.user_id, (preview_pan.rating * user_weights.weight) AS weighted_rating
+    SELECT preview_pan.user_id, GREATEST(LEAST((preview_pan.rating / user_weights.weight),5),0.5) AS weighted_rating
     FROM preview_pan
     INNER JOIN user_weights
     ON preview_pan.user_id = user_weights.user_id; 
@@ -187,7 +176,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS user_weights;
     DROP TEMPORARY TABLE IF EXISTS numer;
     DROP TEMPORARY TABLE IF EXISTS denom;
-    END; 
+    END;
     
     SELECT SUM(weighted_rating)/count_similar_movie_ratings FROM weighted_ratings; 
 END$$

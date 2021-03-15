@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./Page.css";
 import MovieSearchForm from "../Components/Browse/MovieSearchForm";
-import DisplayMovies from "../Components/Browse/DisplayMovies.js";
+import DisplayMovies from "../Components/Browse/DisplayMovies";
 import { useLocation } from "react-router-dom";
 import CustomNavbar from "../Components/Navigation/CustomNavbar";
 

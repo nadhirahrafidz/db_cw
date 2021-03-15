@@ -1,0 +1,18 @@
+.runs-col {
+  display: flex;
+  justify-content: flex-end;
+  color: grey;
+}
+
+.white {
+  color: white;
+}
+
+h2 {
+  text-align: center;
+  color: grey;
+}
+
+.rating-prediction-table {
+  padding-top: 20px;
+}

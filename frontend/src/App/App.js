@@ -6,6 +6,7 @@ import Browse from "../pages/Browse";
 import Popular from "../pages/Popular";
 import Polarising from "../pages/Polarising";
 import Movie from "../pages/Movie";
+import Use5 from "../pages/Use5";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/popular" component={Popular} />
         <Route path="/polarising" component={Polarising} />
         <Route path="/movie/:id" component={Movie} />
+        <Route path="/use5" component={Use5} />
         <Route path="" component={Browse} />
       </Switch>
     </Router>

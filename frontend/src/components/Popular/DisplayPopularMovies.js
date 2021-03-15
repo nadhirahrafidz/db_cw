@@ -22,7 +22,6 @@ function DisplayPopularMovies(props) {
       offset: (props.pageNo - 1) * 12,
       timescale: props.popularityTimescale,
     };
-    console.log(params);
     if (props.genre !== "") {
       params.genre = props.genre;
     }

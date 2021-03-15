@@ -1,0 +1,10 @@
+.use5-form-container {
+  justify-content: center;
+  width: 100%;
+  margin: 0%;
+}
+
+.form-row {
+  padding-top: 5px;
+  align-items: center;
+}
