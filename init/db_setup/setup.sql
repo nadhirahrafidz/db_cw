@@ -6,8 +6,6 @@ CREATE TABLE Users (
 )
 ENGINE = InnoDB;
 
--- From movies_complete
--- runtime should be an integer
 CREATE TABLE Movies (
   movie_id INTEGER NOT NULL AUTO_INCREMENT,
   title VARCHAR(500),
@@ -225,6 +223,6 @@ IGNORE 1 LINES;
 -- -- CREATING NEW USERS
 
 CREATE USER 'admin'@'%' IDENTIFIED BY 'team11';
-GRANT ALL PRIVILEGES ON MovieLens.* TO 'admin'@'%';
+GRANT SELECT, CREATE TEMPORARY TABLES, CREATE ROUTINE, EXECUTE ON MovieLens.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 

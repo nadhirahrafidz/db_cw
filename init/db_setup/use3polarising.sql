@@ -1,9 +1,10 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use3_polarising`;
+-- DROP procedure IF EXISTS `use3_polarising`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use3_polarising`(
+CREATE DEFINER=`root`@`%` 
+PROCEDURE `use3_polarising`(
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 

@@ -7,13 +7,12 @@ pMovieID : Movie ID which exists in Movies table
 */
 
 USE `MovieLens`;
-DROP procedure IF EXISTS `use4`;
+-- DROP procedure IF EXISTS `use4`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE PROCEDURE `use4` (
-    IN pMovieID INT
-    )
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `use4` (IN pMovieID INT)
 
 BEGIN
     DECLARE genres_string VARCHAR(255);

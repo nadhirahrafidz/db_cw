@@ -1,33 +1,3 @@
--- -- /*
-
--- -- Input: To-be-released (TBR) movie id
--- -- Output: A Float score (1-7) of the following personality trait metrics:
--- -- 1. Openness
--- -- 2. Agreeableness
--- -- 3. Conscientiousness
--- -- 4. Emotional Stability
--- -- 5. Extraversion
-
--- -- J score is the Jaccard index of two sets of movie tags. It measures how similar one set is to the other. The higher the J score, the 
--- -- higher the similarity. A J score of 1 means that the two sets are identical. 
-
--- -- Outline of the procedure: 
--- -- 1. Get set of tags from TBR movies (TBR tags)
--- -- 2. Get movie_id if movies with similar tags to TBR tags. 
--- -- 3. Calculate J_scores of similar movies (SHOULD there be a threshold?)
--- -- 4. Find users from Personality Table who have rated the similar movies > 4 
--- -- 5. Calculate weighted j_score for each movie                                    [movie_weighted_score table]
--- -- 6. Calculate the number of user ratings for each movie                          [ratings_count_movie]
-
--- -- Then for each trait:
--- -- 7. Count the frequency of each score for each movie                                                     [**_freq table]
--- -- 8. Calculate the probability of each trait score for each movie                                         [**_prob table]
--- -- 9. Multiply j_score weights with each trait score probability for each movie
--- -- 10. Get the expected trait result by summing the weighted trait for each movie (calculated in step 9)    [**_res table]    
-
--- -- */
-
-
 USE `MovieLens`;
 DROP procedure IF EXISTS `use6`;
 
@@ -55,9 +25,6 @@ BEGIN
     
     SET tags_tbr_len = (SELECT COUNT(*) FROM tags_tbr); 
     
-    
-    -- Sub-tables for similar_movies: movie_similar_genre and movie_similar_tag
-    BEGIN
     -- (1) Select Movies with similar genres
     DROP TEMPORARY TABLE IF EXISTS movie_similar_genre;
     CREATE TEMPORARY TABLE movie_similar_genre
@@ -72,7 +39,6 @@ BEGIN
     SELECT DISTINCT(movie_id) 
     FROM Tags 
     WHERE tag IN (SELECT tag FROM Tags WHERE movie_id = pmovie_id) AND movie_id != pmovie_id; 
-    END;
     
     DROP TEMPORARY TABLE IF EXISTS similar_movies;
     CREATE TEMPORARY TABLE similar_movies
@@ -102,7 +68,7 @@ BEGIN
     SELECT intersect.movie_id, intersect_len/tags_tbr_len AS j_score
     FROM intersect;
     
-     SET @sum_jscore = (SELECT SUM(j_score) FROM J_score); 
+    -- SET @sum_jscore = (SELECT SUM(j_score) FROM J_score); 
 
 	/*
     DROP TEMPORARY TABLE IF EXISTS relevant_users;
@@ -129,15 +95,15 @@ BEGIN
     HAVING AVG(Personality_Ratings.rating) >= 4;
     
     
-    DROP TEMPORARY TABLE IF EXISTS relevant_users;
-    CREATE TEMPORARY TABLE relevant_users 
-    SELECT 
-    Personality_Ratings.user_id AS user_id
-    FROM similar_movies
-    LEFT JOIN Personality_Ratings 
-    ON (similar_movies.movie_id = Personality_Ratings.movie_id)
-    GROUP BY user_id
-    HAVING AVG(Personality_Ratings.rating) >= 4;
+    -- DROP TEMPORARY TABLE IF EXISTS relevant_users;
+    -- CREATE TEMPORARY TABLE relevant_users 
+    -- SELECT 
+    -- Personality_Ratings.user_id AS user_id
+    -- FROM similar_movies
+    -- LEFT JOIN Personality_Ratings 
+    -- ON (similar_movies.movie_id = Personality_Ratings.movie_id)
+    -- GROUP BY user_id
+    -- HAVING AVG(Personality_Ratings.rating) >= 4;
     
     DROP TEMPORARY TABLE IF EXISTS relevant_users_movies;
 	CREATE TEMPORARY TABLE relevant_users_movies 

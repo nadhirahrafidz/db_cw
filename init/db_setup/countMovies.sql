@@ -1,9 +1,10 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `countMovieIDs`;
+-- DROP procedure IF EXISTS `countMovieIDs`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE PROCEDURE `countMovieIDs` (
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `countMovieIDs` (
     IN genres_chosen INT,
     IN search_value VARCHAR(255)
     )

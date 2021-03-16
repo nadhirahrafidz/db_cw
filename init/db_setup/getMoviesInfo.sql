@@ -1,9 +1,10 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `getMoviesInfo`;
+-- DROP procedure IF EXISTS `getMoviesInfo`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE PROCEDURE `getMoviesInfo` (
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `getMoviesInfo` (
     IN movieIDs VARCHAR(255),
     IN order_by_paramater VARCHAR(255)
     )

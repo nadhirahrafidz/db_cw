@@ -14,7 +14,7 @@ function PredictionsVsAverage(props) {
       <Col>
         {props.trait}
         {props.predictions.map((item, index) => (
-          <Col key={index}>
+          <Col key={index} className="use6-bar">
             <ProgressBar
               variant={[variants[index]]}
               label={"Movie " + (index + 1) + " Prediction"}
@@ -22,7 +22,7 @@ function PredictionsVsAverage(props) {
             />
           </Col>
         ))}
-        <Col>
+        <Col className="use6-bar">
           <ProgressBar
             variant={"secondary"}
             label={"Average"}

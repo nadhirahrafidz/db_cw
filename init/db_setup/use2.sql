@@ -20,12 +20,13 @@ Example use in SQL:
 */
 
 USE `MovieLens`;
-DROP procedure IF EXISTS `use2`;
+-- DROP procedure IF EXISTS `use2`;
 
 DELIMITER $$
 USE `MovieLens`$$
 -- https://www.mysqltutorial.org/mysql-stored-procedures-return-multiple-values/
-CREATE PROCEDURE `use2` (
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `use2` (
     IN pMovieID INT, 
     OUT pratings_count INT, 
     OUT paverage_score FLOAT)

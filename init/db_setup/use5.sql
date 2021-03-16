@@ -1,11 +1,11 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use5`;
+-- DROP procedure IF EXISTS `use5`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use5`(
-                            IN psample_size INT, 
-                            IN ptbrmovie_id INT)
+CREATE DEFINER=`root`@`%` 
+PROCEDURE `use5`(   IN psample_size INT, 
+                    IN ptbrmovie_id INT)
 BEGIN   
     -- Declaring Variables
     DECLARE tbr_tag_len INT; 
@@ -17,7 +17,6 @@ BEGIN
 
             
     -- Note: Not selecting top 25 percentile of users who have the most number of ratings (MIN 20, MAX 2698) 
-    -- Weakness: some people from preview panel may never have seen ANY movie from similar movies
     DROP TEMPORARY TABLE IF EXISTS preview_pan;
     CREATE TEMPORARY TABLE preview_pan
     SELECT user_id, rating FROM Ratings WHERE movie_id = ptbrmovie_id ORDER BY RAND() LIMIT psample_size;

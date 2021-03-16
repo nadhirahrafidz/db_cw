@@ -1,8 +1,9 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use3_popular`;
+-- DROP procedure IF EXISTS `use3_popular`;
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `use3_popular`(
+CREATE DEFINER=`root`@`%` 
+PROCEDURE `use3_popular`(
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 
@@ -20,7 +21,7 @@ BEGIN
     DECLARE overall_average_rating FLOAT;
     DECLARE overall_average_rating_count FLOAT;
 
--- Get subset of movies
+
     IF  pGenre != 0 THEN
         DROP TEMPORARY TABLE IF EXISTS subset_movies;
         CREATE TEMPORARY TABLE subset_movies SELECT DISTINCT Genre_Movie.movie_id
