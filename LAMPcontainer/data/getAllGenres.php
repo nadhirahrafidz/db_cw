@@ -2,31 +2,9 @@
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type");
 $host = "db_cw_mySQLcontainer_1"; 
-$user = "admin"; 
+$user = "root"; 
 $password = "team11"; 
 $dbname = "MovieLens"; 
-// try {
-//         $redis = new \Predis\Client([
-//             'host' => env('REDIS_HOST', '') // docker container name, app_redis
-//         ]);
-//         $redis->set('name', 'Sami');
-    
-        
-//     } catch (Exception $e) {
-        
-//     }
-
-
-// try {
-//         $redis = new \Predis\Client([
-//             'host' => env('REDIS_HOST', 'app_redis') // docker container name, app_redis
-//         ]);
-//         return $redis->get('name');
-//     } catch (Exception $e) {
-        
-//     }
-
-// $redis = new Redis();
 
 
 $connection = mysqli_connect($host, $user, $password,$dbname)

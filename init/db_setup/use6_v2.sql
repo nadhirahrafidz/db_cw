@@ -13,11 +13,13 @@ BEGIN
     DECLARE res_con FLOAT;
     
     -- Whole table averages 
+    /*
     DECLARE ave_op FLOAT;
     DECLARE ave_ag FLOAT;
     DECLARE ave_es FLOAT;
     DECLARE ave_ex FLOAT;
     DECLARE ave_con FLOAT;
+    */
     
     -- J score and weight vars 
     DECLARE intersect_length INT; 
@@ -26,11 +28,13 @@ BEGIN
     DECLARE j_sum FLOAT; 
     DECLARE total_weights INT; 
     
+    /*
     SET ave_op = (SELECT AVG(openness) FROM Personality); 
     SET ave_ag = (SELECT AVG(agreeableness) FROM Personality); 
     SET ave_es = (SELECT AVG(emotional_stability) FROM Personality); 
     SET ave_ex = (SELECT AVG(extraversion) FROM Personality); 
     SET ave_con = (SELECT AVG(conscientiousness) FROM Personality); 
+    */
     
     -- Get the tags of TBR movie
     DROP TEMPORARY TABLE IF EXISTS tags_tbr;
@@ -85,31 +89,32 @@ BEGIN
     SELECT intersect.movie_id, intersect_len/tags_tbr_len AS j_score
     FROM intersect;
     
+	DROP TEMPORARY TABLE IF EXISTS pers_rating_movies;
+    CREATE TEMPORARY TABLE pers_rating_movies 
+    SELECT 
+    Personality_Ratings.user_id AS user_id, 
+    J_score.movie_id AS movie_id,
+    J_score.j_score AS score
+    FROM J_score
+    LEFT JOIN Personality_Ratings 
+    ON (J_score.movie_id = Personality_Ratings.movie_id)
+    WHERE Personality_Ratings.rating >=4;
+    
     -- Find relevant users
     DROP TEMPORARY TABLE IF EXISTS users_high_rate;
     CREATE TEMPORARY TABLE users_high_rate 
     SELECT 
-    Personality.user_id, 
-    J_score.movie_id AS movie_id,
-    J_score.j_score AS score, 
+    pers_rating_movies.user_id, 
+    pers_rating_movies.movie_id AS movie_id,
+    pers_rating_movies.score AS score, 
     Personality.openness AS openness, 
     Personality.agreeableness AS agreeableness,
     Personality.emotional_stability AS emotional_stability,
     Personality.conscientiousness AS conscientiousness,
     Personality.extraversion AS extraversion
-    FROM J_score
-    LEFT JOIN Personality 
-    ON (J_score.movie_id = Personality.movie_1) OR (J_score.movie_id = Personality.movie_2)
-    OR (J_score.movie_id = Personality.movie_3) OR (J_score.movie_id = Personality.movie_4)
-    OR (J_score.movie_id = Personality.movie_5) OR (J_score.movie_id = Personality.movie_6)
-    OR (J_score.movie_id = Personality.movie_7) OR (J_score.movie_id = Personality.movie_8)
-    OR (J_score.movie_id = Personality.movie_9) OR (J_score.movie_id = Personality.movie_10)
-    OR (J_score.movie_id = Personality.movie_11) OR (J_score.movie_id = Personality.movie_12)
-    WHERE 
-    enjoy_watching >= 4 AND 
-    (predicted_rating_1 >= 4 OR predicted_rating_2 >= 4 OR predicted_rating_3 >= 4 OR predicted_rating_4 >= 4 OR
-    predicted_rating_5 >= 4 OR predicted_rating_6 >= 4 OR predicted_rating_7 >= 4 OR predicted_rating_8 >= 4 OR
-    predicted_rating_9 >= 4 OR predicted_rating_10 >= 4 OR predicted_rating_11 >= 4 OR predicted_rating_12 >= 4);
+    FROM pers_rating_movies
+    LEFT JOIN Personality
+    ON (pers_rating_movies.user_id = Personality.user_id);
     
     SET j_sum = (SELECT SUM(score) FROM (SELECT DISTINCT movie_id, score FROM users_high_rate) AS aux_table);
     
@@ -295,11 +300,19 @@ BEGIN
         ON con_prob.movie_id = movie_weighted_score.movie_id) 
     AS aux);
     
+    /*
     SELECT (res_op - ave_op) AS openn, 
     (res_ag - ave_ag) As agree, 
     (res_con - ave_con) AS con, 
     (res_ex - ave_ex) AS extra, 
     (res_es - ave_es) AS emo_stab;
+    */
+    
+	SELECT res_op AS openn, 
+    res_ag As agree, 
+    res_con AS con, 
+    res_ex AS extra, 
+    res_es AS emo_stab;
     
     -- Housekeeping
     DROP TEMPORARY TABLE IF EXISTS tags_tbr;

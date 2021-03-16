@@ -95,7 +95,6 @@ with open('init/mysql_data/final_data/users.csv', 'w') as output:
 
 personality = pd.read_csv('/init/mysql_data/personality-isf2018/personality-data.csv')
 movies = pd.read_csv('/init/mysql_data/ml-latest-small/movies.csv')
-
 movie_ids = movies.movieId.unique()
 def stripping(row):
     row[' assigned metric'] = row[' assigned metric'].strip()
@@ -117,3 +116,11 @@ final_personality = personality2[
     (personality2[' movie_12'].isin(movie_ids))]
 final_personality = final_personality.drop_duplicates(keep='first') 
 final_personality.to_csv('init/mysql_data/final_data/personality.csv', index=False)
+
+
+pers_rating = pd.read_csv('/init/mysql_data/personality-isf2018/ratings.csv')
+unique_pers = personality.userid.unique()
+final_pers_rating = pers_rating[(pers_rating['useri'].isin(unique_pers)) & 
+                                (pers_rating[' movie_id'].isin(movie_ids))]
+final_pers_rating = final_pers_rating.drop_duplicates(keep='first') 
+final_pers_rating.to_csv('init/mysql_data/final_data/pers_rating.csv', index=False)

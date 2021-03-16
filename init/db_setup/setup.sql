@@ -124,6 +124,17 @@ CREATE TABLE Personality (
 )
 ENGINE = InnoDB;
 
+CREATE TABLE Personality_Ratings (
+  user_id VARCHAR(50) NOT NULL,
+  movie_id INTEGER,
+  rating FLOAT,
+  rating_timestamp DATETIME,
+  PRIMARY KEY (user_id, movie_id, rating_timestamp),
+  FOREIGN KEY (user_id) REFERENCES Personality(user_id) ON UPDATE CASCADE,
+  FOREIGN KEY (movie_id) REFERENCES Movies(movie_id) ON UPDATE CASCADE
+)
+ENGINE = InnoDB;
+
 -- -- LOADING DATA INTO TABLES
 
 LOAD DATA INFILE '/init/data/final_data/users.csv'
@@ -203,10 +214,17 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES;
 
+LOAD DATA INFILE '/init/data/final_data/pers_rating.csv'
+IGNORE 
+INTO TABLE Personality_Ratings
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
 
 -- -- CREATING NEW USERS
 
 CREATE USER 'admin'@'%' IDENTIFIED BY 'team11';
-GRANT all PRIVILEGES ON MovieLens.* TO 'admin'@'%';
+GRANT ALL PRIVILEGES ON MovieLens.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 
