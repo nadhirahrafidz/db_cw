@@ -11,15 +11,18 @@ const traits = [
 function DisplayUse6Results(props) {
   if (!props.data) return <div />;
   const data = props.data;
+  console.log(data);
 
   return (
     <div>
-      {traits.map((item, index) => (
-        <PredictionsVsAverage
-          prediction={data[item]}
-          average={data["average_" + item]}
-          trait={item}
-        />
+      {traits.map((trait, index) => (
+        <div key={index}>
+          <PredictionsVsAverage
+            trait={trait}
+            predictions={data.predictions}
+            average={data.averages}
+          />
+        </div>
       ))}
     </div>
   );

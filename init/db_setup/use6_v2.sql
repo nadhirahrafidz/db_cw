@@ -1,9 +1,9 @@
 USE `MovieLens`;
-DROP procedure IF EXISTS `use6`;
+DROP procedure IF EXISTS `use6_v2`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `use6`(IN pmovie_id INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `use6_v2`(IN pmovie_id INT)
 BEGIN
     -- Result Vars
     DECLARE res_op FLOAT;
@@ -28,11 +28,11 @@ BEGIN
     DECLARE j_sum FLOAT; 
     DECLARE total_weights INT; 
     
-    SET ave_op = (SELECT AVG(openness) FROM Personality); 
-    SET ave_ag = (SELECT AVG(agreeableness) FROM Personality); 
-    SET ave_es = (SELECT AVG(emotional_stability) FROM Personality); 
-    SET ave_ex = (SELECT AVG(extraversion) FROM Personality); 
-    SET ave_con = (SELECT AVG(conscientiousness) FROM Personality); 
+    SET @ave_op = (SELECT AVG(openness) FROM Personality); 
+    SET @ave_ag = (SELECT AVG(agreeableness) FROM Personality); 
+    SET @ave_es = (SELECT AVG(emotional_stability) FROM Personality); 
+    SET @ave_ex = (SELECT AVG(extraversion) FROM Personality); 
+    SET @ave_con = (SELECT AVG(conscientiousness) FROM Personality); 
     
     -- Get the tags of TBR movie
     DROP TEMPORARY TABLE IF EXISTS tags_tbr;

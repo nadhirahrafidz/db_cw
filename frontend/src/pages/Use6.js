@@ -12,13 +12,13 @@ function Use6() {
   function getPersonalityPredictions(movieID) {
     setLoading(true);
     var predictionParams = {
-      movie_id: movieID,
+      movie_id: JSON.stringify(movieID),
     };
 
     const predictionUrl =
       "http://localhost/getPersonalityPrediction.php?" +
       new URLSearchParams(predictionParams);
-
+    console.log(predictionUrl);
     fetch(predictionUrl, {
       method: "GET",
       headers: {
@@ -29,7 +29,6 @@ function Use6() {
       .then((data) => {
         setLoading(false);
         setPredictions(data);
-        console.log(data);
       })
       .catch((err) => {
         console.log(err);
