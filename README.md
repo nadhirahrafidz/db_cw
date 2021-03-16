@@ -1,12 +1,11 @@
-Team 11 Database Coursework repo
+## Team 11 COMP0022 Project Repository
 
-### Abstract
-MovieLens is a free movie recommendation service. And contains database two key datasets: ml-latest-small and personality-isf2018. Visit https://movielens.org/ to learn more about the data available. In this assignment we make use of the aforementioned datasets to create a LAMP Stack, N-tier Web Application can satisfies 6 different Use cases. Clients are about to search and filter through movies, see which movies are most popular, segment users based on tags and ratings, have a preview panel of users predict a rating of a "soon to be released movie" and predict traits of users who would give a high rating to a soon to be released movie.
-
-### Web Architecture Diagram
 <p align="center">
 <img src="https://user-images.githubusercontent.com/35294224/111269423-89942a00-8626-11eb-808b-82994fb62cce.png" width="460" height="300">
 </p>
+
+### Abstract
+MovieLens is a free movie recommendation service. And contains database two key datasets: ml-latest-small and personality-isf2018. Visit https://movielens.org/ to learn more about the data available. In this assignment we make use of the aforementioned datasets to create a LAMP Stack, N-tier Web Application can satisfies 6 different Use cases. Clients are about to search and filter through movies, see which movies are most popular, segment users based on tags and ratings, have a preview panel of users predict a rating of a "soon to be released movie" and predict traits of users who would give a high rating to a soon to be released movie.
 
 ### Launching Web App
 1. Clone this repo in your local directory
@@ -31,7 +30,7 @@ To check if the database has been set up and populated:
         password: team11
 3. Database MovieLens should exist with 8 tables. 
 
-## Docker Containers
+### Docker Containers
 Reference: https://www.youtube.com/watch?v=svlcIIp-S9w&ab_channel=TechOpenS.
 
 #### About docker-compose.yml
