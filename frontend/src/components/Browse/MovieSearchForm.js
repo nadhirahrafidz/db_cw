@@ -2,8 +2,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import { useState, useEffect } from "react";
-import GenreSelector from "./GenreSelector";
-import { useLocation } from "react-router-dom";
+import GenreSelector from "../Popular/GenreSelector";
 import SortByDropdown from "./SortByDropdown";
 import "./MovieSearchForm.css";
 
@@ -18,46 +17,15 @@ const sortingOptions = [
 function MovieSearchForm(props) {
   const [search, setSearch] = useState("");
   const [labels, setLabels] = useState();
-  const [genresSelected, setGenresSelected] = useState([]);
-  const [moreFilters, setMoreFilters] = useState(false);
+  const [genreSelected, setGenreSelected] = useState();
   const [currentOption, setCurrentOption] = useState(0);
-
-  let location = useLocation();
-
-  function handleCheck(e) {
-    const indexOfChange = e.target.getAttribute("data-index");
-    setGenresSelected(
-      genresSelected.map((selected, index) =>
-        index == indexOfChange ? e.target.checked : selected
-      )
-    );
-  }
 
   function handleSubmit(e) {
     e.preventDefault();
-    const genres = labels.filter((_, index) => genresSelected[index]);
-    props.onSubmit(search, genres, currentOption);
+    props.onSubmit(search, genreSelected, currentOption);
   }
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    setMoreFilters(urlParams.get("genres") !== null);
-  }, [location]);
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  useEffect(() => {
-    if (genresSelected.length > 0) {
-      var a = genresSelected.map((selected, index) =>
-        props.genres.includes(labels[index])
-      );
-      setGenresSelected(a);
-    }
-  }, [props.genres]);
-
-  function getData() {
     const url = "http://localhost/getAllGenres.php?";
     fetch(url, {
       method: "GET",
@@ -67,22 +35,14 @@ function MovieSearchForm(props) {
     })
       .then((res) => res.json())
       .then((data) => {
-        setLabels(data.map((data) => data[0].trim()));
-        setGenresSelected(new Array(data.length).fill(false));
+        setLabels(data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  }, []);
 
-  function toggleMoreFilters(isOn) {
-    if (!isOn) {
-      setGenresSelected(new Array(labels.length).fill(false));
-    }
-    setMoreFilters(isOn);
-  }
-
-  if (genresSelected.length > 0) {
+  if (labels) {
     return (
       <div className="search">
         <Form onSubmit={handleSubmit}>
@@ -99,22 +59,13 @@ function MovieSearchForm(props) {
                 paddingTop: "5px",
                 width: "100%",
               }}
-            >
-              <Badge
-                pill
-                variant={moreFilters ? "danger" : "success"}
-                style={{ cursor: "pointer" }}
-                onClick={() => toggleMoreFilters(!moreFilters)}
-              >
-                {moreFilters ? "Less Filters -" : "More Filters +"}
-              </Badge>
-            </div>
+            ></div>
 
-            <div style={moreFilters ? {} : { display: "None" }}>
+            <div>
               <GenreSelector
                 labels={labels}
-                handleCheck={handleCheck}
-                genresSelected={genresSelected}
+                setGenre={setGenreSelected}
+                genresSelected={genreSelected}
               />
             </div>
           </Form.Group>

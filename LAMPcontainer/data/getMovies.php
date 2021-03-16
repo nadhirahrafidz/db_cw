@@ -12,13 +12,9 @@ $connection = mysqli_connect($host, $user, $password, $dbname)
 $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 
 $search = "";
-$genres = "";
-$order_by = 0;
+$genre = isset($_GET['genre']) ? $_GET['genre'] : 0;
 
-if (isset($_GET['genres'])) {
-  $genres = json_decode($_GET['genres']);
-  $genres = implode("\r,",$genres)."\r";
-}
+$order_by = 0;
 
 if (isset($_GET['search'])) {
   $search = $_GET['search'].'%';
@@ -41,8 +37,8 @@ $movie_data_stmt = mysqli_prepare($connection, $movie_data_query);
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
 $count_stmt = mysqli_prepare($connection, $count_query);
 
-mysqli_stmt_bind_param($movieID_stmt, "issi", $offset, $genres, $search, $order_by);
-mysqli_stmt_bind_param($count_stmt, "ss", $genres, $search);
+mysqli_stmt_bind_param($movieID_stmt, "iisi", $offset, $genre, $search, $order_by);
+mysqli_stmt_bind_param($count_stmt, "is", $genre, $search);
 
 mysqli_stmt_execute($movieID_stmt);
 

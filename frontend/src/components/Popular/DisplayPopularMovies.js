@@ -22,7 +22,7 @@ function DisplayPopularMovies(props) {
       offset: (props.pageNo - 1) * 12,
       timescale: props.popularityTimescale,
     };
-    if (props.genre !== "") {
+    if (props.genre) {
       params.genre = props.genre;
     }
     var url;

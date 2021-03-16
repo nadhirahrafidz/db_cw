@@ -23,13 +23,14 @@ function DisplayMovies(props) {
     if (props.search !== "") {
       params.search = props.search;
     }
-    if (props.genres.length > 0) {
-      params.genres = JSON.stringify(props.genres);
+    if (props.genre) {
+      params.genre = props.genre;
     }
     if (props.sortOption !== 0) {
       params.sort = props.sortOption;
     }
     const url = "http://localhost/getMovies.php?" + new URLSearchParams(params);
+
     fetch(url, {
       method: "GET",
       headers: {
@@ -45,7 +46,7 @@ function DisplayMovies(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, [props.genres, props.search, props.pageNo]);
+  }, [props.genre, props.search, props.pageNo, props.sortOption]);
 
   var invalidPageNo = true;
   if (dataLoaded && props.pageNo > 0) {

@@ -139,11 +139,14 @@ BEGIN
     SET gWouldDislikeDidLike = (SELECT COUNT(*) FROM gWouldDislikeDidLikeTable);
                                                                     
     DROP TEMPORARY TABLE IF EXISTS tag_occurences;
-    CREATE TEMPORARY TABLE tag_occurences SELECT Common_Tags.tag
-                                    FROM Common_Tags
-                                    LEFT JOIN Tags ON Tags.tag = Common_Tags.tag
+    CREATE TEMPORARY TABLE tag_occurences SELECT common_tags.tag
+                                    FROM (SELECT tag, COUNT(tag) AS tag_count
+                                                    FROM Tags
+                                                    GROUP BY tag
+                                                    ORDER BY COUNT(tag) DESC)common_tags
+                                    LEFT JOIN Tags ON Tags.tag = common_tags.tag
                                     WHERE Tags.movie_id = pMovieID
-                                    GROUP BY movie_id, Common_Tags.tag
+                                    GROUP BY movie_id, common_tags.tag
                                     LIMIT 3;
 
     SET tags_string = (SELECT GROUP_CONCAT(DISTINCT tag SEPARATOR ',') FROM tag_occurences);

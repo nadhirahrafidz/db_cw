@@ -24,7 +24,7 @@ $dbname = "MovieLens";
 $timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
 $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 $limit = 12;
-$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
+$genre = isset($_GET['genre']) ? $_GET['genre'] : 0;
 
 $cache_ttl = 3600;
 
@@ -80,7 +80,7 @@ $movieID_query = 'CALL use3_popular(?, ?, ?, ?, @pCount)';
 $starttime = microtime(true);
 
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
-mysqli_stmt_bind_param($movieID_stmt, "iiis", $timescale, $offset, $limit, $genre);
+mysqli_stmt_bind_param($movieID_stmt, "iiii", $timescale, $offset, $limit, $genre);
 mysqli_stmt_execute($movieID_stmt);
 
 $movieID_result = mysqli_stmt_get_result($movieID_stmt);

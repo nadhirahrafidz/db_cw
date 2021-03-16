@@ -12,26 +12,10 @@ import GenreSelector from "../Components/Popular/GenreSelector";
 const timescaleOptions = [30, 365, 0];
 
 function Popular() {
-  const [genre, setGenre] = useState("");
-  const [pageNo, setPageNo] = useState(-1);
+  const [genre, setGenre] = useState(0);
+  const [pageNo, setPageNo] = useState(1);
   const [timescale, setTimescale] = useState(30);
   const [labels, setLabels] = useState();
-  let location = useLocation();
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const pathPageNo =
-      urlParams.get("page") === null ? 1 : urlParams.get("page");
-    // const pathGenres =
-    //   urlParams.get("genre") === null ? "" : urlParams.get("genre");
-    if (
-      pageNo != pathPageNo
-      // || genre != pathGenres
-    ) {
-      setPageNo(pathPageNo);
-      // setGenre(pathGenres);
-    }
-  }, [location]);
 
   useEffect(() => {
     const url = "http://localhost/getAllGenres.php?";
@@ -43,30 +27,15 @@ function Popular() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setLabels(data.map((data) => data[0].trim()));
+        setLabels(data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  function pushURL(newGenres, newPageNo) {
-    var params = {
-      page: newPageNo,
-    };
-    // if (newGenres.length > 0) {
-    //   params.genres = newGenres.join();
-    // }
-    window.history.pushState(
-      "pageNumber",
-      "Title",
-      "/popular?" + new URLSearchParams(params)
-    );
-  }
-
   function pageChange(newPageNo) {
     setPageNo(newPageNo);
-    pushURL(genre, newPageNo);
   }
 
   return (

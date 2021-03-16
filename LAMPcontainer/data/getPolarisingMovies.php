@@ -27,7 +27,7 @@ $cache_ttl = 3600;
 $timescale = isset($_GET['timescale']) ? $_GET['timescale'] : 7;
 $offset = isset($_GET['offset']) ? $_GET['offset'] : 0;
 $limit = 12;
-$genre = isset($_GET['genre']) ? $_GET['genre']."\r" : "";
+$genre = isset($_GET['genre']) ? $_GET['genre'] : 0;
 
 //idea is to include the parameters in the cache key
 $query_params_string =  $timescale . $offset . $genre;
@@ -63,7 +63,7 @@ if ($cached == true){
 $movieID_query = "/*qc=on*//*qc_ttl=86400*/" . 'CALL use3_polarising(?, ?, ?, ?, @pCount)';
 $starttime = microtime(true);
 $movieID_stmt = mysqli_prepare($connection, $movieID_query);
-mysqli_stmt_bind_param($movieID_stmt, "iiis", $timescale, $offset, $limit, $genre);
+mysqli_stmt_bind_param($movieID_stmt, "iiii", $timescale, $offset, $limit, $genre);
 mysqli_stmt_execute($movieID_stmt);
 
 $movieID_result = mysqli_stmt_get_result($movieID_stmt);

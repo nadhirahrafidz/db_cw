@@ -4,12 +4,16 @@ DROP procedure IF EXISTS `countMovieIDs`;
 DELIMITER $$
 USE `MovieLens`$$
 CREATE PROCEDURE `countMovieIDs` (
-    IN genres_chosen VARCHAR(1000),
+    IN genres_chosen INT,
     IN search_value VARCHAR(255)
     )
 
 BEGIN
-IF search_value = "" and genres_chosen = "" THEN
+
+SET @search_value = search_value; 
+SET @genres_chosen = genres_chosen;
+
+IF search_value = "" and genres_chosen = 0 THEN
     SELECT COUNT(DISTINCT Movies.movie_id)
     FROM Movies
     ;
@@ -18,28 +22,30 @@ ELSEIF search_value = "" THEN
 
 	SELECT COUNT(DISTINCT Movies.movie_id)
     FROM Movies
-    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
+    LEFT JOIN Genre_Movie ON
     Genre_Movie.movie_id = Movies.movie_id
-    WHERE find_in_set(Genres.genre, genres_chosen)
+    WHERE Genre_Movie.genre_id = genres_chosen
     ;
 
-ELSEIF genres_chosen = "" THEN
+ELSEIF genres_chosen = 0 THEN
+	SET @SQLstatement = "SELECT COUNT(DISTINCT Movies.movie_id)
+								FROM Movies
+								WHERE Movies.title LIKE ?";
 
-	SELECT COUNT(DISTINCT Movies.movie_id)
-    FROM Movies
-    WHERE Movies.title LIKE search_value
-    ;
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt USING @search_value;
     
 ELSE    
-    SELECT COUNT(DISTINCT Movies.movie_id)
-    FROM Movies
-    LEFT JOIN (Genre_Movie LEFT JOIN Genres ON Genre_Movie.genre_id = Genres.genre_id) ON
-    Genre_Movie.movie_id = Movies.movie_id
-    WHERE Movies.movie_id = Genre_Movie.movie_id 
-    AND Genre_Movie.genre_id = Genres.genre_id 
-    AND find_in_set(Genres.genre, genres_chosen)
-    AND Movies.title LIKE search_value
-    ;
+	SET @SQLstatement = "SELECT COUNT(DISTINCT Movies.movie_id)
+								FROM Movies
+								LEFT JOIN Genre_Movie ON
+								Genre_Movie.movie_id = Movies.movie_id
+								WHERE Genre_Movie.genre_id = ?
+								AND Movies.title LIKE ?";
+
+    PREPARE stmt FROM @SQLStatement;
+    EXECUTE stmt USING @genre_chose, @search_value;
+    
 END IF;
 END$$
 

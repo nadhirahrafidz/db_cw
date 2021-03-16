@@ -33,7 +33,7 @@ $connection = mysqli_connect($host, $user, $password,$dbname)
         or die('Error connecting to MySQL server.' . mysqli_error());
 
 // $genre_query = 'SELECT genre FROM Genres ORDER BY genre ASC';
-$new_query = "/*qc=on*//*qc_ttl=20*/" . "SELECT genre FROM Genres ORDER BY genre ASC";
+$new_query = "/*qc=on*//*qc_ttl=20*/" . "SELECT genre, genre_id FROM Genres ORDER BY genre ASC";
 
 $genre_stmt = mysqli_prepare($connection, $new_query);
 // $starttime = microtime(true);

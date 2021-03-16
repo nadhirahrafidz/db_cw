@@ -7,7 +7,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `use3_polarising`(
     IN pTimescale INT,
     IN pOffset INT,
     IN pLimit INT, 
-    IN pGenre VARCHAR(100),
+    IN pGenre INT,
     OUT pCount INT)
 BEGIN
     DECLARE vGenre_id INT;
@@ -19,12 +19,11 @@ BEGIN
 
     -- Polarising formula reference: http://www.keldlundgaard.com/Polarizing_imdb_movies.html
     -- Get subset of movies
-    IF  pGenre != "" THEN
-        SET vGenre_id = (SELECT genre_id FROM Genres WHERE Genres.genre = pGenre);
+    IF  pGenre != 0 THEN
         DROP TEMPORARY TABLE IF EXISTS subset_movies;
         CREATE TEMPORARY TABLE subset_movies SELECT DISTINCT Genre_Movie.movie_id
                                                 FROM Genre_Movie
-                                                WHERE genre_id = vGenre_id; 
+                                                WHERE genre_id = pGenre; 
     ELSE
             DROP TEMPORARY TABLE IF EXISTS subset_movies;
             CREATE TEMPORARY TABLE subset_movies SELECT DISTINCT movie_id FROM Movies; 

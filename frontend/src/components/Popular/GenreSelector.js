@@ -4,7 +4,7 @@ import "./GenreSelector.css";
 import { useState } from "react";
 
 function GenreSelector(props) {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState();
 
   function handleClick(newSelected) {
     setSelected(newSelected);
@@ -15,23 +15,20 @@ function GenreSelector(props) {
     return <div />;
   } else {
     return (
-      <div>
-        <span>Genres:</span>
-        <Form.Group className="genre-button-group">
-          {props.labels.map((input) => (
-            <div className="genre-button" key={input}>
-              <Button
-                onClick={() => handleClick(input)}
-                variant={(selected === input ? "" : "outline-") + "primary"}
-              >
-                {input}
-              </Button>
-            </div>
-          ))}
-          <div className="clear-genre-button">
-            <Button onClick={() => handleClick("")}>Clear</Button>
+      <div className="genre-button-group">
+        {props.labels.map((input) => (
+          <div className="genre-button" key={input}>
+            <Button
+              onClick={() => handleClick(input[1])}
+              variant={(selected === input[1] ? "" : "outline-") + "primary"}
+            >
+              {input[0]}
+            </Button>
           </div>
-        </Form.Group>
+        ))}
+        <div className="clear-genre-button">
+          <Button onClick={() => handleClick(0)}>Clear</Button>
+        </div>
       </div>
     );
   }
