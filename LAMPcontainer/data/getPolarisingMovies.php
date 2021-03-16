@@ -36,6 +36,7 @@ if (cache_get( "polarising" . $query_params_string) === null){
   $cached = false;
 } else {
   $lastupdated = cache_get("last_cached_polarising" . $query_params_string);
+  echo "reached";
   if (gmmktime(true) - $lastupdated > $cache_ttl){
     $cached = false;
   } else {
@@ -51,7 +52,7 @@ if ($cached == true){
   $value = cache_get("polarising" . $query_params_string);
   $endtime = microtime(true);
   $duration = $endtime - $starttime;
-  //echo $duration;
+  // echo  "cached" . $duration;
   echo $value;
 } else {
   $connection = mysqli_connect($host, $user, $password,$dbname)
@@ -84,7 +85,7 @@ $all_data = array(
 
 $endtime = microtime(true);
 $duration = $endtime - $starttime;
-//echo $duration;
+// echo "not cached" . $duration;
 
 echo json_encode($all_data);
 cache_set("polarising" . $query_params_string, json_encode($all_data));
