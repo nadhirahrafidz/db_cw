@@ -1,6 +1,5 @@
-## Team 11 COMP0022 Project Repository
-
 <p align="center">
+## Team 11 COMP0022 Project Repository
 <img src="https://user-images.githubusercontent.com/35294224/111269423-89942a00-8626-11eb-808b-82994fb62cce.png" width="460" height="300">
 </p>
 
