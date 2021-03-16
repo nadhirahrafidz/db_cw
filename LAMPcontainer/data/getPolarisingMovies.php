@@ -45,7 +45,7 @@ if (cache_get( "polarising" . $query_params_string) === null){
 }
 
 
-$cached = false;
+//$cached = false;
 
 if ($cached == true){
   $starttime = microtime(true);
