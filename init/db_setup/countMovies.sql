@@ -44,7 +44,7 @@ ELSE
 								AND Movies.title LIKE ?";
 
     PREPARE stmt FROM @SQLStatement;
-    EXECUTE stmt USING @genre_chose, @search_value;
+    EXECUTE stmt USING @genres_chosen, @search_value;
     
 END IF;
 END$$

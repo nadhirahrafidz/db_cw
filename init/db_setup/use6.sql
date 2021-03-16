@@ -28,11 +28,11 @@
 -- -- */
 
 USE `MovieLens`;
-DROP procedure IF EXISTS `use6`;
+DROP procedure IF EXISTS `use6_old`;
 
 DELIMITER $$
 USE `MovieLens`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `use6`(IN pmovie_id INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `use6_old`(IN pmovie_id INT)
 BEGIN
     -- Result Vars
     DECLARE res_op FLOAT;

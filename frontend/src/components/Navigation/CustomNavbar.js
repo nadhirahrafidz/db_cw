@@ -28,6 +28,9 @@ function CustomNavbar() {
           <LinkContainer className="nav-link-text" to="/use5">
             <NavItem>Use Case 5</NavItem>
           </LinkContainer>
+          <LinkContainer className="nav-link-text" to="/use6">
+            <NavItem>Use Case 6</NavItem>
+          </LinkContainer>
         </Nav>
         <Form inline action={window.location.origin + "/browse"}>
           <FormControl type="text" placeholder="Search Movie" name="search" />

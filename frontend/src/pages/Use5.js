@@ -14,6 +14,7 @@ function Use5() {
   const [actualRating, setActualRating] = useState();
 
   function getPredictions(movieID, panelSize, runs) {
+    setPredictionLoading(true);
     var predictionParams = {
       movie_id: movieID,
       panel_size: panelSize,
@@ -41,6 +42,7 @@ function Use5() {
   }
 
   function getActualRating(movieID) {
+    setRatingLoading(true);
     var params = {
       movie_id: movieID,
     };

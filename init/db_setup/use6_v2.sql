@@ -28,13 +28,11 @@ BEGIN
     DECLARE j_sum FLOAT; 
     DECLARE total_weights INT; 
     
-    /*
     SET ave_op = (SELECT AVG(openness) FROM Personality); 
     SET ave_ag = (SELECT AVG(agreeableness) FROM Personality); 
     SET ave_es = (SELECT AVG(emotional_stability) FROM Personality); 
     SET ave_ex = (SELECT AVG(extraversion) FROM Personality); 
     SET ave_con = (SELECT AVG(conscientiousness) FROM Personality); 
-    */
     
     -- Get the tags of TBR movie
     DROP TEMPORARY TABLE IF EXISTS tags_tbr;
@@ -308,11 +306,22 @@ BEGIN
     (res_es - ave_es) AS emo_stab;
     */
     
-	SELECT res_op AS openn, 
-    res_ag As agree, 
-    res_con AS con, 
-    res_ex AS extra, 
-    res_es AS emo_stab;
+	-- SELECT res_op AS openn, 
+    -- res_ag As agree, 
+    -- res_con AS con, 
+    -- res_ex AS extra, 
+    -- res_es AS emo_stab;
+
+    SELECT @ave_op AS average_openness, 
+    @ave_ag AS average_agreeableness, 
+    @ave_con AS average_conscientiousness, 
+    @ave_ex AS average_extraversion, 
+    @ave_es AS average_emotional_stability,
+    (res_op) AS openness, 
+    (res_ag) As agreeableness, 
+    (res_con) AS conscientiousness, 
+    (res_ex) AS extraversion, 
+    (res_es) AS emotional_stability;
     
     -- Housekeeping
     DROP TEMPORARY TABLE IF EXISTS tags_tbr;

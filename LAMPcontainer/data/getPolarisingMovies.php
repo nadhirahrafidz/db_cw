@@ -16,7 +16,7 @@ function cache_get($key) {
 header("Access-Control-Allow-Origin: http://localhost:3000");
 header("Access-Control-Allow-Headers: Content-Type");
 $host = "db_cw_mySQLcontainer_1"; 
-$user = "root"; 
+$user = "admin"; 
 $password = "team11"; 
 $dbname = "MovieLens"; 
 

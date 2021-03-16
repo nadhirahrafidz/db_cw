@@ -17,19 +17,18 @@ if (isset($_GET['movie_id'])) {
   die('Error: No movie_id specified');
 }
 
-$query =  'SELECT AVG(rating) FROM Ratings 
-          WHERE movie_id = ?';
+$query ='CALL use6(?)';
 
 $stmt = mysqli_prepare($connection, $query);
 
 mysqli_stmt_bind_param($stmt, "i", $movie_id);
 
-
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$rating = mysqli_fetch_all($result)[0][0]; 
 
-echo json_encode($rating);
+$data = mysqli_fetch_all($result, MYSQLI_ASSOC)[0];
+
+echo json_encode($data);
 
 mysqli_close($connection);
 ?>

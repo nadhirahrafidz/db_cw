@@ -7,6 +7,7 @@ import Popular from "../pages/Popular";
 import Polarising from "../pages/Polarising";
 import Movie from "../pages/Movie";
 import Use5 from "../pages/Use5";
+import Use6 from "../pages/Use6";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/polarising" component={Polarising} />
         <Route path="/movie/:id" component={Movie} />
         <Route path="/use5" component={Use5} />
+        <Route path="/use6" component={Use6} />
         <Route path="" component={Browse} />
       </Switch>
     </Router>
