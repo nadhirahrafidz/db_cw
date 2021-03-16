@@ -36,7 +36,7 @@ if (cache_get( "polarising" . $query_params_string) === null){
   $cached = false;
 } else {
   $lastupdated = cache_get("last_cached_polarising" . $query_params_string);
-  echo "reached";
+  //echo "reached";
   if (gmmktime(true) - $lastupdated > $cache_ttl){
     $cached = false;
   } else {
