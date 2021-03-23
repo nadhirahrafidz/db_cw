@@ -6,7 +6,7 @@ USE `MovieLens`$$
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `getMoviesInfo` (
     IN movieIDs VARCHAR(255),
-    IN order_by_paramater VARCHAR(255)
+    IN order_by_paramater INT
     )
 
 BEGIN

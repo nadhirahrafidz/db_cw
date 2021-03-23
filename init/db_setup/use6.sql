@@ -68,22 +68,6 @@ BEGIN
     SELECT intersect.movie_id, intersect_len/tags_tbr_len AS j_score
     FROM intersect;
     
-    -- SET @sum_jscore = (SELECT SUM(j_score) FROM J_score); 
-
-	/*
-    DROP TEMPORARY TABLE IF EXISTS relevant_users;
-    CREATE TEMPORARY TABLE relevant_users 
-    SELECT 
-    Personality_Ratings.user_id AS user_id,
-    group_concat(t1.movie_id)
-    FROM similar_movies LEFT JOIN Personality_Ratings 
-    ON (similar_movies.movie_id = Personality_Ratings.movie_id)
-    LEFT JOIN Personality_Ratings AS t1 
-    ON (similar_movies.movie_id = t1.movie_id)
-    GROUP BY user_id
-    HAVING AVG(Personality_Ratings.rating) >= 4;
-	*/
-    
 	DROP TEMPORARY TABLE IF EXISTS relevant_users;
     CREATE TEMPORARY TABLE relevant_users 
     SELECT 
@@ -93,17 +77,6 @@ BEGIN
     ON (similar_movies.movie_id = Personality_Ratings.movie_id)
     GROUP BY user_id
     HAVING AVG(Personality_Ratings.rating) >= 4;
-    
-    
-    -- DROP TEMPORARY TABLE IF EXISTS relevant_users;
-    -- CREATE TEMPORARY TABLE relevant_users 
-    -- SELECT 
-    -- Personality_Ratings.user_id AS user_id
-    -- FROM similar_movies
-    -- LEFT JOIN Personality_Ratings 
-    -- ON (similar_movies.movie_id = Personality_Ratings.movie_id)
-    -- GROUP BY user_id
-    -- HAVING AVG(Personality_Ratings.rating) >= 4;
     
     DROP TEMPORARY TABLE IF EXISTS relevant_users_movies;
 	CREATE TEMPORARY TABLE relevant_users_movies 

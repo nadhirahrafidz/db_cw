@@ -79,8 +79,6 @@ BEGIN
     INNER JOIN prev_pan_sim_movies
     ON similar_movies_w_ave.movie_id = prev_pan_sim_movies.movie_id;  
 
-
-    
     -- [2] J score calc  (Tables: tags_similar_movies, intersect, union_tags, J_score)
     BEGIN
     -- STEP 1: Find tags of similar movies
@@ -91,9 +89,6 @@ BEGIN
     WHERE movie_id IN (SELECT movie_id FROM similar_movies); 
     
     -- STEP 2: Get set intersection length between tbr tags and similar movie tags
-    -- Note: this is not 100% accurate.. 
-        -- If TBR movie has tags (pixar, pixar) & similar movie has tags (pixar, pixar)  => Intersect length is 1 
-        -- Cannot distinguish that these tags are unique bc they are made by different people.
     DROP TEMPORARY TABLE IF EXISTS intersect;
     CREATE TEMPORARY TABLE intersect 
     SELECT tags_similar_movies.movie_id, COUNT(DISTINCT tags_tbr.tag) AS intersect_len 
@@ -102,7 +97,7 @@ BEGIN
     ON LOWER(tags_similar_movies.tag) = LOWER(tags_tbr.tag)
     GROUP BY tags_similar_movies.movie_id;
     
-    -- STEP4: j_score = intersect/union
+    -- STEP4: j_score = intersect/(number of tags for TBR movie)
     DROP TEMPORARY TABLE IF EXISTS J_score;
     CREATE TEMPORARY TABLE J_score 
     SELECT intersect.movie_id, intersect_len/tbr_tag_len AS j_score

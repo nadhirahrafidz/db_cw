@@ -33,6 +33,7 @@ function MovieStrip(props) {
       </p>
     );
   }
+  console.log("rating-box " + props.type);
 
   return (
     <Col xs={12} sm={6} md={6} lg={4} xl={3}>
@@ -43,7 +44,7 @@ function MovieStrip(props) {
           onClick={() => routeToMovie(props.movie.movie_id)}
         />
         <div className="rating">
-          <div className="rating-box">{props.movie.rating}</div>
+          <div className={"rating-box " + props.type}>{props.movie.rating}</div>
         </div>
       </div>
 

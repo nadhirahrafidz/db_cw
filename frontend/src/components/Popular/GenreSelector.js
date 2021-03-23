@@ -1,4 +1,3 @@
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./GenreSelector.css";
 import { useState } from "react";
@@ -19,6 +18,7 @@ function GenreSelector(props) {
         {props.labels.map((input) => (
           <div className="genre-button" key={input}>
             <Button
+              disabled={props.loading}
               onClick={() => handleClick(input[1])}
               variant={(selected === input[1] ? "" : "outline-") + "primary"}
             >

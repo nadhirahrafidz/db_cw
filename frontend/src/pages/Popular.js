@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./Page.css";
 import DisplayPopularMovies from "../Components/Popular/DisplayPopularMovies";
-import { useLocation } from "react-router-dom";
+
 import CustomNavbar from "../Components/Navigation/CustomNavbar";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/esm/Row";
@@ -43,7 +43,7 @@ function Popular() {
       <CustomNavbar />
       <h1 className="header">Popular</h1>
       <Row style={{ justifyContent: "center" }}>
-        <Col xs={3}>
+        <Col xs={3} style={{ display: "flex", justifyContent: "center" }}>
           {timescaleOptions.map((option, index) => (
             <Button
               key={index}

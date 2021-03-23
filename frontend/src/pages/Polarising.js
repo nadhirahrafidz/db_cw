@@ -43,7 +43,7 @@ function Polarising() {
       <CustomNavbar />
       <h1 className="header">Polarising</h1>
       <Row style={{ justifyContent: "center" }}>
-        <Col xs={3}>
+        <Col xs={3} style={{ display: "flex", justifyContent: "center" }}>
           {timescaleOptions.map((option, index) => (
             <Button
               key={index}

@@ -70,7 +70,13 @@ function DisplayPopularMovies(props) {
         <Container>
           <Row>
             {movies.map((movie, index) => {
-              return <MovieStrip key={index} movie={movie}></MovieStrip>;
+              return (
+                <MovieStrip
+                  type={props.type}
+                  key={index}
+                  movie={movie}
+                ></MovieStrip>
+              );
             })}
           </Row>
         </Container>
